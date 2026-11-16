@@ -5,8 +5,9 @@ import 'package:mikro_manager_pro/main.dart';
 void main() {
   testWidgets('App smoke test initializes properly', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: MikroManagerApp()));
-    await tester.pumpAndSettle();
+    await tester.pump();
 
-    expect(find.text('MikroManager Pro'), findsOneWidget);
+    expect(find.byType(MikroManagerApp), findsOneWidget);
+    expect(find.text('الرئيسية'), findsOneWidget);
   });
 }

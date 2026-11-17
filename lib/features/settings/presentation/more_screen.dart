@@ -123,6 +123,16 @@ class MoreScreen extends ConsumerWidget {
                   onTap: () => context.push('/access-points'),
                 ),
 
+                // Network Topology & Users Map
+                _buildMenuItem(
+                  context,
+                  title: 'مخطط الشبكة',
+                  subtitle: 'توزيع المشتركين والخريطة',
+                  icon: Icons.hub_outlined,
+                  color: Colors.cyan,
+                  onTap: () => context.push('/topology'),
+                ),
+
                 // Settings
                 _buildMenuItem(
                   context,

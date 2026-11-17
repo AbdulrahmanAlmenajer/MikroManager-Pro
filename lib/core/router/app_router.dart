@@ -20,6 +20,7 @@ import '../../features/userman/presentation/userman_screen.dart';
 import '../../features/routers/presentation/routers_screen.dart';
 import '../../features/telegram_bot/presentation/telegram_settings_screen.dart';
 import '../../features/access_points/presentation/ap_devices_screen.dart';
+import '../../features/topology/presentation/network_topology_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ref.watch(sessionRefreshNotifierProvider);
@@ -124,6 +125,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/access-points',
         builder: (context, state) => const ApDevicesScreen(),
+      ),
+      GoRoute(
+        path: '/topology',
+        builder: (context, state) => const NetworkTopologyScreen(),
       ),
     ],
   );

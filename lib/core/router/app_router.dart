@@ -6,6 +6,8 @@ import 'route_guard.dart';
 import '../../features/auth/presentation/router_login_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/dashboard/presentation/interfaces_traffic_screen.dart';
+import '../../features/subscribers/presentation/subscribers_screen.dart';
+import '../../features/subscribers/presentation/card_inquiry_screen.dart';
 import '../../features/hotspot/presentation/hotspot_screen.dart';
 import '../../features/vouchers/presentation/voucher_generator_screen.dart';
 import '../../features/vouchers/presentation/print_preview_screen.dart';
@@ -55,6 +57,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const DashboardScreen(),
           ),
           GoRoute(
+            path: '/subscribers',
+            builder: (context, state) => const SubscribersScreen(),
+          ),
+          GoRoute(
             path: '/hotspot',
             builder: (context, state) => const HotspotScreen(),
           ),
@@ -74,6 +80,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // مسارات الشاشات الفرعية والخدمات
+      GoRoute(
+        path: '/card-inquiry',
+        builder: (context, state) => CardInquiryScreen(
+          initialCardName: state.uri.queryParameters['card'],
+        ),
+      ),
       GoRoute(
         path: '/userman',
         builder: (context, state) => const UsermanScreen(),
@@ -109,7 +121,7 @@ class MainShellNavigation extends StatelessWidget {
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
     if (location.startsWith('/dashboard')) return 0;
-    if (location.startsWith('/hotspot')) return 1;
+    if (location.startsWith('/subscribers') || location.startsWith('/hotspot')) return 1;
     if (location.startsWith('/vouchers')) return 2;
     if (location.startsWith('/reports')) return 3;
     if (location.startsWith('/more')) return 4;
@@ -129,7 +141,7 @@ class MainShellNavigation extends StatelessWidget {
               context.go('/dashboard');
               break;
             case 1:
-              context.go('/hotspot');
+              context.go('/subscribers');
               break;
             case 2:
               context.go('/vouchers');
@@ -149,9 +161,9 @@ class MainShellNavigation extends StatelessWidget {
             label: 'الرئيسية',
           ),
           NavigationDestination(
-            icon: Icon(Icons.wifi_outlined),
-            selectedIcon: Icon(Icons.wifi),
-            label: 'الهوتسبوت',
+            icon: Icon(Icons.people_outline),
+            selectedIcon: Icon(Icons.people),
+            label: 'المشتركون',
           ),
           NavigationDestination(
             icon: Icon(Icons.confirmation_number_outlined),

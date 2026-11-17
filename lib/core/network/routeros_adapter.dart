@@ -7,6 +7,7 @@ abstract class RouterOsAdapter {
   Future<bool> testConnection();
   void disconnect();
   bool get isConnected;
+  bool get isV7;
   Future<RouterOsResponse> executeSentence(List<String> words);
 
   // System & Resource Monitoring
@@ -77,6 +78,11 @@ abstract class RouterOsAdapter {
 /// Binary API Adapter Implementation (ports 8728 / 8729)
 class RouterOsBinaryAdapter implements RouterOsAdapter {
   final RouterOsSocketClient _client;
+  bool _isV7 = true;
+
+  @override
+  bool get isV7 => _isV7;
+  set isV7(bool v) => _isV7 = v;
 
   RouterOsBinaryAdapter({
     required String host,
@@ -352,6 +358,9 @@ class RouterOsRestAdapter implements RouterOsAdapter {
 
   @override
   bool get isConnected => _connected;
+
+  @override
+  bool get isV7 => true;
 
   @override
   Future<bool> connect() async {

@@ -1,5 +1,12 @@
 import 'package:drift/drift.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../database/app_database.dart';
+import '../database/database_provider.dart';
+
+final auditLoggerProvider = Provider<AuditLogger>((ref) {
+  final db = ref.watch(databaseProvider);
+  return AuditLogger(db);
+});
 
 class AuditLogger {
   final AppDatabase _db;

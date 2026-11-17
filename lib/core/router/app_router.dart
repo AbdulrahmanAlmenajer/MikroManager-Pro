@@ -22,6 +22,8 @@ import '../../features/telegram_bot/presentation/telegram_settings_screen.dart';
 import '../../features/access_points/presentation/ap_devices_screen.dart';
 import '../../features/topology/presentation/network_topology_screen.dart';
 import '../../features/backup/presentation/backup_screen.dart';
+import '../../features/settings/presentation/wireguard_helper_screen.dart';
+import '../../features/hotspot/presentation/hotspot_login_preview_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ref.watch(sessionRefreshNotifierProvider);
@@ -134,6 +136,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/backup',
         builder: (context, state) => const BackupScreen(),
+      ),
+      GoRoute(
+        path: '/wireguard',
+        builder: (context, state) => const WireguardHelperScreen(),
+      ),
+      GoRoute(
+        path: '/hotspot-preview',
+        builder: (context, state) => const HotspotLoginPreviewScreen(),
       ),
     ],
   );

@@ -143,6 +143,26 @@ class MoreScreen extends ConsumerWidget {
                   onTap: () => context.push('/backup'),
                 ),
 
+                // WireGuard VPN Helper
+                _buildMenuItem(
+                  context,
+                  title: 'مساعد WireGuard',
+                  subtitle: 'توليد إعدادات VPN v7',
+                  icon: Icons.vpn_lock,
+                  color: Colors.deepOrange,
+                  onTap: () => context.push('/wireguard'),
+                ),
+
+                // Hotspot Login Preview
+                _buildMenuItem(
+                  context,
+                  title: 'صفحة الهوتسبوت',
+                  subtitle: 'معاينة وتخصيص الدخول',
+                  icon: Icons.web,
+                  color: Colors.pinkAccent,
+                  onTap: () => context.push('/hotspot-preview'),
+                ),
+
                 // Settings
                 _buildMenuItem(
                   context,

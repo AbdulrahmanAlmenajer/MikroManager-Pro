@@ -1,4 +1,5 @@
 import '../network/routeros_adapter.dart';
+import '../network/routeros_command_scheduler.dart';
 
 enum UserRole {
   admin,
@@ -40,6 +41,7 @@ class RouterSession {
   final UserRole role;
   final RouterOsAdapter adapter;
   final DateTime loginTime;
+  late final RouterOsCommandScheduler scheduler;
 
   RouterSession({
     required this.connectionId,
@@ -55,7 +57,17 @@ class RouterSession {
     required this.role,
     required this.adapter,
     DateTime? loginTime,
-  }) : loginTime = loginTime ?? DateTime.now();
+  }) : loginTime = loginTime ?? DateTime.now() {
+    scheduler = RouterOsCommandScheduler(
+      adapter: adapter,
+      connectionId: connectionId,
+    );
+  }
 
   bool get isV7 => majorVersion >= 7;
+
+  void dispose() {
+    scheduler.dispose();
+  }
 }
+

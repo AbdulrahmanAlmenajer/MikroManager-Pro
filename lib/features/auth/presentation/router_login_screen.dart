@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/security/secure_storage_service.dart';
 import '../../../core/session/session_controller.dart';
+import '../../../core/utils/validators.dart';
 import '../../routers/domain/routers_notifier.dart';
 
 class RouterLoginScreen extends ConsumerStatefulWidget {
@@ -422,6 +423,42 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                 ),
               ],
             ),
+            if (!_useSsl && _portController.text.trim() == '8728') ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.warning.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.warning_amber_rounded, size: 18, color: AppColors.warning),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'المنفذ 8728 غير مشفر. استخدم 8729 (API-SSL) لتأمين الاتصال.',
+                        style: TextStyle(fontSize: 11, color: AppColors.warning, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _portController.text = '8729';
+                          _useSsl = true;
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      child: const Text('تفعيل 8729', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: 14),
 
             // Password
@@ -669,6 +706,48 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
     final username = _userController.text.trim();
     final password = _passController.text;
     final routerName = _nameController.text.trim();
+
+    // Port & TLS security policy check: require confirmation if connecting over public IP unencrypted
+    final isPrivate = AppValidators.isPrivateOrLoopbackHost(ip);
+    if (!isPrivate && !_useSsl && mounted) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.security, color: AppColors.danger),
+              SizedBox(width: 8),
+              Text('تحذير أمني: اتصال غير مشفر'),
+            ],
+          ),
+          content: Text(
+            'العنوان ($ip) ليس عنوان شبكة داخلية خاصة (RFC 1918).\n\n'
+            'الاتصال عبر المنفذ $port غير المشفر عبر الإنترنت العام يعرض بيانات الدخول لاعتراض المتسللين.\n\n'
+            'هل ترغب بالمتابعة على مسؤوليتك أو التبديل إلى المنفذ 8729 المشفر (API-SSL)؟',
+            style: const TextStyle(fontSize: 13),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop(false);
+                setState(() {
+                  _portController.text = '8729';
+                  _useSsl = true;
+                });
+              },
+              child: const Text('التبديل إلى 8729 (SSL)'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
+              child: const Text('متابعة بدون تشفير', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      );
+
+      if (confirm != true) return;
+    }
 
     final success = await ref.read(sessionControllerProvider.notifier).login(
           host: ip,

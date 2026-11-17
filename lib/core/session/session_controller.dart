@@ -242,6 +242,7 @@ class SessionController extends StateNotifier<SessionState> {
 
   Future<void> logout() async {
     try {
+      state.session?.dispose();
       state.session?.adapter.disconnect();
     } catch (_) {}
 

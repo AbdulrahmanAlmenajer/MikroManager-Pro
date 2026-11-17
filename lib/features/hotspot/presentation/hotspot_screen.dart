@@ -18,7 +18,7 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -43,16 +43,20 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
           unselectedLabelColor: Colors.white70,
           tabs: [
             Tab(
-              icon: const Icon(Icons.people_alt_outlined),
-              text: 'المتصلون (${state.activeUsers.length})',
-            ),
-            Tab(
               icon: const Icon(Icons.badge_outlined),
               text: 'المستخدمون (${state.users.length})',
             ),
             Tab(
+              icon: const Icon(Icons.people_alt_outlined),
+              text: 'المتصلون (${state.activeUsers.length})',
+            ),
+            Tab(
               icon: const Icon(Icons.tune_outlined),
               text: 'البروفايلات (${state.profiles.length})',
+            ),
+            Tab(
+              icon: const Icon(Icons.link_outlined),
+              text: 'ربط IP (${state.ipBindings.length})',
             ),
           ],
         ),
@@ -64,7 +68,7 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
           ),
         ],
       ),
-      floatingActionButton: _tabController.index == 1
+      floatingActionButton: _tabController.index == 0
           ? FloatingActionButton.extended(
               onPressed: () => _showAddUserDialog(context, state.profiles),
               backgroundColor: AppColors.cyanAccent,
@@ -110,9 +114,10 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
                       child: TabBarView(
                         controller: _tabController,
                         children: [
-                          _buildActiveUsersTab(state),
                           _buildUsersTab(state),
+                          _buildActiveUsersTab(state),
                           _buildProfilesTab(state),
+                          _buildIpBindingsTab(state),
                         ],
                       ),
                     ),
@@ -355,6 +360,79 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
     );
   }
 
+  Widget _buildIpBindingsTab(HotspotState state) {
+    final filtered = state.ipBindings.where((b) {
+      final mac = b['mac-address']?.toString().toLowerCase() ?? '';
+      final address = b['to-address']?.toString().toLowerCase() ?? '';
+      final comment = b['comment']?.toString().toLowerCase() ?? '';
+      return mac.contains(_searchQuery) || address.contains(_searchQuery) || comment.contains(_searchQuery);
+    }).toList();
+
+    if (filtered.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.link_off, size: 64, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+            const SizedBox(height: 12),
+            const Text('لا توجد سجلات ربط عناوين IP حالياً',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => ref.read(hotspotControllerProvider.notifier).refreshAll(),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: filtered.length,
+        itemBuilder: (context, index) {
+          final item = filtered[index];
+          final id = item['.id']?.toString() ?? '';
+          final mac = item['mac-address']?.toString() ?? '-';
+          final toAddress = item['to-address']?.toString() ?? 'Auto';
+          final type = item['type']?.toString() ?? 'bypassed';
+          final comment = item['comment']?.toString() ?? '';
+
+          Color typeColor = AppColors.success;
+          if (type == 'blocked') typeColor = AppColors.danger;
+          if (type == 'regular') typeColor = AppColors.warning;
+
+          return Card(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: typeColor.withValues(alpha: 0.15),
+                child: Icon(Icons.link, color: typeColor),
+              ),
+              title: Text(mac, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              subtitle: Text(
+                'العنوان: $toAddress | النوع: $type${comment.isNotEmpty ? " ($comment)" : ""}',
+                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Chip(
+                    label: Text(type, style: const TextStyle(fontSize: 11, color: Colors.white)),
+                    backgroundColor: typeColor,
+                  ),
+                  if (id.isNotEmpty)
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.danger),
+                      tooltip: 'حذف ربط IP',
+                      onPressed: () => _confirmDeleteIpBinding(context, id, mac),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildMiniInfo(IconData icon, String title, String val) {
     return Row(
       children: [
@@ -407,6 +485,28 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
             onPressed: () async {
               await ref.read(hotspotControllerProvider.notifier).removeUser(id, username);
               if (ctx.mounted) Navigator.pop(ctx);
+            },
+            child: const Text('حذف نهائياً'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteIpBinding(BuildContext context, String id, String mac) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('تأكيد حذف ربط IP'),
+        content: Text('هل أنت متأكد من حذف ربط IP للعنوان "$mac"؟'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
+            onPressed: () async {
+              // Remove IP binding and refresh
+              if (ctx.mounted) Navigator.pop(ctx);
+              await ref.read(hotspotControllerProvider.notifier).refreshAll();
             },
             child: const Text('حذف نهائياً'),
           ),

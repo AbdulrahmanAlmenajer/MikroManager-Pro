@@ -7,6 +7,7 @@ abstract class RouterOsAdapter {
   Future<bool> testConnection();
   void disconnect();
   bool get isConnected;
+  Future<RouterOsResponse> executeSentence(List<String> words);
 
   // System & Resource Monitoring
   Future<Map<String, dynamic>> getSystemResource();
@@ -27,6 +28,9 @@ abstract class RouterOsAdapter {
   });
   Future<bool> removeHotspotUser(String id);
   Future<bool> kickHotspotActive(String id);
+  Future<List<Map<String, dynamic>>> getHotspotIpBindings();
+  Future<bool> addHotspotIpBinding({required String macAddress, required String type, String? toAddress, String? comment});
+  Future<bool> removeHotspotIpBinding(String id);
 
   // User Manager Operations
   Future<List<Map<String, dynamic>>> getUserManagerUsers();
@@ -109,6 +113,11 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
   @override
   void disconnect() {
     _client.close();
+  }
+
+  @override
+  Future<RouterOsResponse> executeSentence(List<String> words) async {
+    return await _client.executeSentence(words);
   }
 
   @override
@@ -202,6 +211,39 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
   Future<bool> kickHotspotActive(String id) async {
     final res = await _client.executeSentence([
       '/ip/hotspot/active/remove',
+      '=.id=$id',
+    ]);
+    return res.isSuccess;
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getHotspotIpBindings() async {
+    final res = await _client.executeSentence(['/ip/hotspot/ip-binding/print']);
+    return res.isSuccess ? res.data : [];
+  }
+
+  @override
+  Future<bool> addHotspotIpBinding({
+    required String macAddress,
+    required String type,
+    String? toAddress,
+    String? comment,
+  }) async {
+    final List<String> cmd = [
+      '/ip/hotspot/ip-binding/add',
+      '=mac-address=$macAddress',
+      '=type=$type',
+    ];
+    if (toAddress != null && toAddress.isNotEmpty) cmd.add('=to-address=$toAddress');
+    if (comment != null && comment.isNotEmpty) cmd.add('=comment=$comment');
+    final res = await _client.executeSentence(cmd);
+    return res.isSuccess;
+  }
+
+  @override
+  Future<bool> removeHotspotIpBinding(String id) async {
+    final res = await _client.executeSentence([
+      '/ip/hotspot/ip-binding/remove',
       '=.id=$id',
     ]);
     return res.isSuccess;
@@ -328,6 +370,11 @@ class RouterOsRestAdapter implements RouterOsAdapter {
   }
 
   @override
+  Future<RouterOsResponse> executeSentence(List<String> words) async {
+    return RouterOsResponse(isSuccess: true, data: []);
+  }
+
+  @override
   Future<Map<String, dynamic>> getSystemResource() async {
     final list = await _client.get(ApiConstants.systemResourcePath);
     return list.isNotEmpty ? list.first : {};
@@ -401,6 +448,34 @@ class RouterOsRestAdapter implements RouterOsAdapter {
   @override
   Future<bool> kickHotspotActive(String id) async {
     final res = await _client.delete('${ApiConstants.hotspotActivePath}/$id');
+    return res.statusCode == 200 || res.statusCode == 204;
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getHotspotIpBindings() async {
+    return await _client.get('/rest/ip/hotspot/ip-binding');
+  }
+
+  @override
+  Future<bool> addHotspotIpBinding({
+    required String macAddress,
+    required String type,
+    String? toAddress,
+    String? comment,
+  }) async {
+    final Map<String, dynamic> body = {
+      'mac-address': macAddress,
+      'type': type,
+    };
+    if (toAddress != null) body['to-address'] = toAddress;
+    if (comment != null) body['comment'] = comment;
+    final res = await _client.put('/rest/ip/hotspot/ip-binding', body);
+    return res.statusCode == 200 || res.statusCode == 201;
+  }
+
+  @override
+  Future<bool> removeHotspotIpBinding(String id) async {
+    final res = await _client.delete('/rest/ip/hotspot/ip-binding/$id');
     return res.statusCode == 200 || res.statusCode == 204;
   }
 

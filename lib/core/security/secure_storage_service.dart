@@ -34,6 +34,11 @@ class SecureStorageService {
   }
 
   // Telegram Bot
+  static Future<void> saveTelegramConfig({required String token, required String chatId}) async {
+    await saveTelegramBotToken(token);
+    await saveTelegramChatId(chatId);
+  }
+
   static Future<void> saveTelegramBotToken(String token) async {
     await _storage.write(key: _telegramBotTokenKey, value: token);
   }

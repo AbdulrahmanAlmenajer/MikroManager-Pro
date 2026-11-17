@@ -29,6 +29,11 @@ class DashboardScreen extends ConsumerWidget {
             tooltip: 'الإعدادات العامة',
             onPressed: () => context.push('/settings'),
           ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'تسجيل الخروج من الراوتر',
+            onPressed: () => _confirmLogout(context, ref),
+          ),
         ],
       ),
       body: RefreshIndicator(
@@ -72,12 +77,16 @@ class DashboardScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      Chip(
-                        label: Text(
-                          dashState.isConnected ? 'متصل' : 'غير متصل',
-                          style: const TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.danger,
+                          side: const BorderSide(color: AppColors.danger),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          visualDensity: VisualDensity.compact,
                         ),
-                        backgroundColor: dashState.isConnected ? AppColors.success : AppColors.danger,
+                        onPressed: () => _confirmLogout(context, ref),
+                        icon: const Icon(Icons.power_settings_new, size: 16),
+                        label: const Text('خروج', style: TextStyle(fontSize: 12)),
                       ),
                     ],
                   ),
@@ -355,6 +364,30 @@ class DashboardScreen extends ConsumerWidget {
             Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: color)),
           ],
         ),
+      ),
+    );
+  }
+
+  void _confirmLogout(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('تأكيد تسجيل الخروج'),
+        content: const Text('هل أنت متأكد من قطع الاتصال بالراوتر وتسجيل الخروج؟ ستتم إعادتك لشاشة تسجيل الدخول.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              await ref.read(routersControllerProvider.notifier).logout();
+            },
+            child: const Text('قطع الاتصال', style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }

@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,6 +59,13 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
             tooltip: 'تصدير تقرير PDF',
             onPressed: () {
               summaryAsync.whenData((summary) => _exportPdfReport(context, summary));
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.table_chart_outlined),
+            tooltip: 'تصدير ملف CSV',
+            onPressed: () {
+              summaryAsync.whenData((summary) => _exportCsvReport(context, summary));
             },
           ),
           IconButton(
@@ -393,5 +402,21 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
       onLayout: (format) async => pdf.save(),
       name: 'MikroManager_Sales_Report.pdf',
     );
+  }
+
+  void _exportCsvReport(BuildContext context, SalesSummary summary) async {
+    final buffer = StringBuffer();
+    buffer.writeln('Date,Revenue');
+    for (final entry in summary.revenueByDate.entries) {
+      buffer.writeln('${entry.key},${entry.value}');
+    }
+    buffer.writeln('');
+    buffer.writeln('Profile,Quantity');
+    for (final entry in summary.vouchersByProfile.entries) {
+      buffer.writeln('${entry.key},${entry.value}');
+    }
+
+    final bytes = Uint8List.fromList(utf8.encode(buffer.toString()));
+    await Printing.sharePdf(bytes: bytes, filename: 'mikromanager_sales_report.csv');
   }
 }

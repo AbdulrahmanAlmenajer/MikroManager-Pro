@@ -101,7 +101,7 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
 
   void _startPolling() {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 4), (_) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) {
       refreshMetrics(silent: true);
     });
   }

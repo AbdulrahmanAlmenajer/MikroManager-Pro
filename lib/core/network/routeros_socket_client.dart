@@ -2,26 +2,34 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
+import 'routeros_exceptions.dart';
 
 class RouterOsSentence {
   final String command; // !re, !done, !trap, !fatal
   final Map<String, String> attributes;
+  final String? tag;
 
-  RouterOsSentence({required this.command, required this.attributes});
+  RouterOsSentence({
+    required this.command,
+    required this.attributes,
+    this.tag,
+  });
 
   @override
-  String toString() => '$command: $attributes';
+  String toString() => '$command [tag: $tag]: $attributes';
 }
 
 class RouterOsResponse {
   final bool isSuccess;
   final List<Map<String, String>> data;
   final String? errorMessage;
+  final String? tag;
 
   RouterOsResponse({
     required this.isSuccess,
     this.data = const [],
     this.errorMessage,
+    this.tag,
   });
 }
 
@@ -31,10 +39,19 @@ class RouterOsSocketClient {
   final String username;
   final String password;
   final bool useSsl;
+  final bool acceptSelfSigned;
   final Duration timeout;
 
   Socket? _socket;
+  StreamSubscription<List<int>>? _socketSub;
   bool _isConnected = false;
+  int _tagCounter = 0;
+
+  final List<int> _readBuffer = [];
+
+  // Stream controllers for active queries
+  final Map<String, Completer<RouterOsResponse>> _pendingRequests = {};
+  final Map<String, StreamController<Map<String, String>>> _activeStreams = {};
 
   RouterOsSocketClient({
     required this.host,
@@ -42,77 +59,128 @@ class RouterOsSocketClient {
     required this.username,
     required this.password,
     this.useSsl = false,
-    this.timeout = const Duration(seconds: 10),
+    this.acceptSelfSigned = true,
+    this.timeout = const Duration(seconds: 8),
   });
 
-  bool get isConnected => _isConnected;
+  bool get isConnected => _isConnected && _socket != null;
+
+  /// Connect to RouterOS with automatic retry (up to 3 times)
+  Future<bool> connectWithRetry({int maxRetries = 3}) async {
+    int attempts = 0;
+    while (attempts < maxRetries) {
+      attempts++;
+      try {
+        final success = await connect();
+        if (success) return true;
+      } catch (e) {
+        if (attempts >= maxRetries) rethrow;
+        await Future.delayed(Duration(milliseconds: 300 * attempts));
+      }
+    }
+    return false;
+  }
 
   /// Connect and authenticate with RouterOS
   Future<bool> connect() async {
+    close();
+
     try {
       if (useSsl) {
         _socket = await SecureSocket.connect(
           host,
           port,
           timeout: timeout,
-          onBadCertificate: (cert) => true, // Allow self-signed router certs
+          onBadCertificate: (cert) => acceptSelfSigned,
         );
       } else {
         _socket = await Socket.connect(host, port, timeout: timeout);
       }
 
       _isConnected = true;
+      _startSocketListener();
+
       return await _login();
+    } on SocketException catch (e) {
+      close();
+      final err = e.osError?.errorCode ?? 0;
+      final msg = e.message.toLowerCase();
+      if (err == 111 || err == 10061 || msg.contains('refused') || msg.contains('closed')) {
+        throw RouterOsPortClosedException(e.toString());
+      } else if (err == 113 || err == 10065 || msg.contains('no route') || msg.contains('unreachable')) {
+        throw RouterOsUnreachableException(e.toString());
+      }
+      throw RouterOsPortClosedException(e.toString());
+    } on TimeoutException catch (e) {
+      close();
+      throw RouterOsTimeoutException(e.toString());
+    } on HandshakeException catch (e) {
+      close();
+      throw RouterOsTlsException(e.toString());
+    } on TlsException catch (e) {
+      close();
+      throw RouterOsTlsException(e.toString());
     } catch (e) {
       close();
-      return false;
+      if (e is RouterOsException) rethrow;
+      throw RouterOsProtocolException('فشل الاتصال: ${e.toString()}');
     }
+  }
+
+  void _startSocketListener() {
+    _socketSub = _socket?.listen(
+      (data) {
+        _readBuffer.addAll(data);
+        _processBuffer();
+      },
+      onError: (err) {
+        close();
+      },
+      onDone: () {
+        close();
+      },
+      cancelOnError: true,
+    );
   }
 
   /// Login protocol: supports both Post-6.43 and Legacy MD5
   Future<bool> _login() async {
-    try {
-      // First attempt: Post-6.43 login
-      final firstAttempt = await executeSentence([
+    // 1. Post-6.43 direct login: /login =name= =password=
+    final firstAttempt = await executeSentence([
+      '/login',
+      '=name=$username',
+      '=password=$password',
+    ]);
+
+    if (firstAttempt.isSuccess) {
+      return true;
+    }
+
+    // 2. Legacy MD5 challenge flow (RouterOS < 6.43)
+    final challengeAttempt = await executeSentence(['/login']);
+    String? challenge;
+    for (final item in challengeAttempt.data) {
+      if (item.containsKey('ret')) {
+        challenge = item['ret'];
+        break;
+      }
+    }
+
+    if (challenge != null && challenge.isNotEmpty) {
+      final md5Response = computeLegacyMd5(password, challenge);
+      final legacyLogin = await executeSentence([
         '/login',
         '=name=$username',
-        '=password=$password',
+        '=response=$md5Response',
       ]);
-
-      if (firstAttempt.isSuccess) {
-        return true;
-      }
-
-      // If failed, check for legacy challenge (RouterOS < 6.43)
-      final challengeAttempt = await executeSentence(['/login']);
-      String? challenge;
-      for (final item in challengeAttempt.data) {
-        if (item.containsKey('ret')) {
-          challenge = item['ret'];
-          break;
-        }
-      }
-
-      if (challenge != null && challenge.isNotEmpty) {
-        // Compute legacy MD5 challenge
-        final md5Response = _computeLegacyMd5(password, challenge);
-        final legacyLogin = await executeSentence([
-          '/login',
-          '=name=$username',
-          '=response=$md5Response',
-        ]);
-        return legacyLogin.isSuccess;
-      }
-
-      return false;
-    } catch (e) {
-      return false;
+      if (legacyLogin.isSuccess) return true;
     }
+
+    throw const RouterOsAuthException('فشل التحقق من اسم المستخدم أو كلمة المرور');
   }
 
   /// Legacy MD5 login challenge hash
-  String _computeLegacyMd5(String password, String challengeHex) {
-    // Challenge is hex string
+  static String computeLegacyMd5(String password, String challengeHex) {
     final List<int> challengeBytes = [];
     for (int i = 0; i < challengeHex.length; i += 2) {
       challengeBytes.add(int.parse(challengeHex.substring(i, i + 2), radix: 16));
@@ -126,199 +194,263 @@ class RouterOsSocketClient {
     return '00${digest.toString()}';
   }
 
-  /// Execute a command sentence and return replies
+  /// Execute command and wait for response
   Future<RouterOsResponse> executeSentence(List<String> words) async {
-    if (_socket == null) {
-      return RouterOsResponse(
-        isSuccess: false,
-        errorMessage: 'الاتصال غير متوفر',
-      );
+    if (!isConnected) {
+      throw const RouterOsUnreachableException('الاتصال بميكروتك غير متاح');
     }
+
+    final tag = 'tag_${++_tagCounter}';
+    final completer = Completer<RouterOsResponse>();
+    _pendingRequests[tag] = completer;
+
+    // Send command with tag
+    final List<String> taggedWords = List.from(words)..add('.tag=$tag');
+    for (final word in taggedWords) {
+      _writeWord(word);
+    }
+    _writeWord(''); // Empty word terminates sentence
+    await _socket!.flush();
 
     try {
-      // Send words
-      for (final word in words) {
-        _writeWord(word);
-      }
-      _writeWord(''); // Empty word terminates sentence
-      await _socket!.flush();
-
-      // Read responses until !done or !trap or !fatal
-      final List<Map<String, String>> replies = [];
-      String? errorMessage;
-      bool isSuccess = false;
-
-      while (true) {
-        final sentence = await _readSentence();
-        if (sentence == null) break;
-
-        if (sentence.command == '!re') {
-          replies.add(sentence.attributes);
-        } else if (sentence.command == '!done') {
-          isSuccess = true;
-          if (sentence.attributes.isNotEmpty) {
-            replies.add(sentence.attributes);
-          }
-          break;
-        } else if (sentence.command == '!trap') {
-          errorMessage = sentence.attributes['message'] ?? 'خطأ في تنفيذ الأمر';
-          break;
-        } else if (sentence.command == '!fatal') {
-          errorMessage = 'خطأ جسيم في الاتصال بالراوتر';
-          close();
-          break;
-        }
-      }
-
-      return RouterOsResponse(
-        isSuccess: isSuccess,
-        data: replies,
-        errorMessage: errorMessage,
-      );
-    } catch (e) {
-      return RouterOsResponse(isSuccess: false, errorMessage: e.toString());
+      return await completer.future.timeout(timeout);
+    } on TimeoutException {
+      _pendingRequests.remove(tag);
+      throw RouterOsTimeoutException('انتهت مهلة انتظار رد الراوتر للأمر: ${words.first}');
     }
   }
 
-  /// Encode word length according to MikroTik RouterOS API spec
+  /// Stream continuous commands (e.g., /interface/monitor-traffic or /listen)
+  Stream<Map<String, String>> streamSentence(List<String> words) {
+    if (!isConnected) {
+      throw const RouterOsUnreachableException('الاتصال بميكروتك غير متاح');
+    }
+
+    final tag = 'stream_${++_tagCounter}';
+    final controller = StreamController<Map<String, String>>(
+      onCancel: () async {
+        if (isConnected) {
+          // Send cancel command with tag
+          try {
+            _writeWord('/cancel');
+            _writeWord('=tag=$tag');
+            _writeWord('');
+            await _socket?.flush();
+          } catch (_) {}
+        }
+        _activeStreams.remove(tag);
+      },
+    );
+
+    _activeStreams[tag] = controller;
+
+    final List<String> taggedWords = List.from(words)..add('.tag=$tag');
+    for (final word in taggedWords) {
+      _writeWord(word);
+    }
+    _writeWord('');
+    _socket?.flush();
+
+    return controller.stream;
+  }
+
+  void _processBuffer() {
+    while (true) {
+      final sentence = _tryParseSentence();
+      if (sentence == null) break;
+
+      final tag = sentence.tag;
+      if (tag != null) {
+        if (_activeStreams.containsKey(tag)) {
+          final stream = _activeStreams[tag]!;
+          if (sentence.command == '!re') {
+            stream.add(sentence.attributes);
+          } else if (sentence.command == '!done' || sentence.command == '!trap') {
+            stream.close();
+            _activeStreams.remove(tag);
+          }
+          continue;
+        }
+
+        if (_pendingRequests.containsKey(tag)) {
+          final completer = _pendingRequests[tag]!;
+          // Accumulate or finish
+          if (sentence.command == '!re') {
+            _tempReplies.putIfAbsent(tag, () => []).add(sentence.attributes);
+          } else if (sentence.command == '!done') {
+            final data = _tempReplies.remove(tag) ?? [];
+            if (sentence.attributes.isNotEmpty) {
+              data.add(sentence.attributes);
+            }
+            _pendingRequests.remove(tag);
+            completer.complete(RouterOsResponse(isSuccess: true, data: data, tag: tag));
+          } else if (sentence.command == '!trap') {
+            _tempReplies.remove(tag);
+            _pendingRequests.remove(tag);
+            completer.complete(RouterOsResponse(
+              isSuccess: false,
+              errorMessage: sentence.attributes['message'] ?? 'Trap error',
+              tag: tag,
+            ));
+          } else if (sentence.command == '!fatal') {
+            _tempReplies.remove(tag);
+            _pendingRequests.remove(tag);
+            close();
+            completer.complete(RouterOsResponse(
+              isSuccess: false,
+              errorMessage: 'Fatal connection error',
+              tag: tag,
+            ));
+          }
+        }
+      }
+    }
+  }
+
+  final Map<String, List<Map<String, String>>> _tempReplies = {};
+
+  RouterOsSentence? _tryParseSentence() {
+    final List<String> words = [];
+    int offset = 0;
+
+    while (true) {
+      final wordResult = _tryReadWord(offset);
+      if (wordResult == null) return null; // Incomplete data in buffer
+
+      offset = wordResult.newOffset;
+      if (wordResult.word.isEmpty) {
+        // Sentence boundary reached!
+        _readBuffer.removeRange(0, offset);
+        if (words.isEmpty) return null;
+
+        final command = words.first;
+        final Map<String, String> attributes = {};
+        String? tag;
+
+        for (int i = 1; i < words.length; i++) {
+          final w = words[i];
+          if (w.startsWith('.tag=')) {
+            tag = w.substring(5);
+          } else if (w.startsWith('=')) {
+            final eq = w.indexOf('=', 1);
+            if (eq != -1) {
+              attributes[w.substring(1, eq)] = w.substring(eq + 1);
+            } else {
+              attributes[w.substring(1)] = '';
+            }
+          }
+        }
+
+        return RouterOsSentence(command: command, attributes: attributes, tag: tag);
+      } else {
+        words.add(wordResult.word);
+      }
+    }
+  }
+
+  _WordReadResult? _tryReadWord(int offset) {
+    final lenResult = decodeLength(_readBuffer, offset);
+    if (lenResult == null) return null;
+
+    final length = lenResult.length;
+    final headerSize = lenResult.headerSize;
+    final dataStart = offset + headerSize;
+
+    if (_readBuffer.length < dataStart + length) return null;
+
+    final wordBytes = _readBuffer.sublist(dataStart, dataStart + length);
+    final word = utf8.decode(wordBytes, allowMalformed: true);
+    return _WordReadResult(word: word, newOffset: dataStart + length);
+  }
+
+  /// Write length-encoded word according to MikroTik specification
   void _writeWord(String word) {
     final bytes = utf8.encode(word);
-    final len = bytes.length;
-    final List<int> lenBytes = [];
+    final lenBytes = encodeLength(bytes.length);
+    _socket?.add(lenBytes);
+    _socket?.add(bytes);
+  }
 
+  /// Encode word length according to MikroTik 1 to 5 byte specification
+  static List<int> encodeLength(int len) {
     if (len < 0x80) {
-      lenBytes.add(len);
+      return [len];
     } else if (len < 0x4000) {
       final val = len | 0x8000;
-      lenBytes.add((val >> 8) & 0xFF);
-      lenBytes.add(val & 0xFF);
+      return [(val >> 8) & 0xFF, val & 0xFF];
     } else if (len < 0x200000) {
       final val = len | 0xC00000;
-      lenBytes.add((val >> 16) & 0xFF);
-      lenBytes.add((val >> 8) & 0xFF);
-      lenBytes.add(val & 0xFF);
+      return [(val >> 16) & 0xFF, (val >> 8) & 0xFF, val & 0xFF];
     } else if (len < 0x10000000) {
       final val = len | 0xE0000000;
-      lenBytes.add((val >> 24) & 0xFF);
-      lenBytes.add((val >> 16) & 0xFF);
-      lenBytes.add((val >> 8) & 0xFF);
-      lenBytes.add(val & 0xFF);
+      return [(val >> 24) & 0xFF, (val >> 16) & 0xFF, (val >> 8) & 0xFF, val & 0xFF];
     } else {
-      lenBytes.add(0xF0);
-      lenBytes.add((len >> 24) & 0xFF);
-      lenBytes.add((len >> 16) & 0xFF);
-      lenBytes.add((len >> 8) & 0xFF);
-      lenBytes.add(len & 0xFF);
+      return [
+        0xF0,
+        (len >> 24) & 0xFF,
+        (len >> 16) & 0xFF,
+        (len >> 8) & 0xFF,
+        len & 0xFF,
+      ];
     }
-
-    _socket!.add(lenBytes);
-    _socket!.add(bytes);
   }
 
-  /// Read one sentence from the socket
-  Future<RouterOsSentence?> _readSentence() async {
-    final List<String> words = [];
-    while (true) {
-      final word = await _readWord();
-      if (word == null) return null;
-      if (word.isEmpty) break; // End of sentence
-      words.add(word);
-    }
+  /// Decode length header bytes (1 to 5 bytes)
+  static LengthDecodeResult? decodeLength(List<int> bytes, [int offset = 0]) {
+    if (bytes.length <= offset) return null;
+    final b1 = bytes[offset];
 
-    if (words.isEmpty) return null;
-
-    final command = words.first;
-    final Map<String, String> attributes = {};
-
-    for (int i = 1; i < words.length; i++) {
-      final word = words[i];
-      if (word.startsWith('=')) {
-        final eqIdx = word.indexOf('=', 1);
-        if (eqIdx != -1) {
-          final key = word.substring(1, eqIdx);
-          final value = word.substring(eqIdx + 1);
-          attributes[key] = value;
-        } else {
-          final key = word.substring(1);
-          attributes[key] = '';
-        }
-      }
-    }
-
-    return RouterOsSentence(command: command, attributes: attributes);
-  }
-
-  final List<int> _buffer = [];
-
-  /// Read a single word with length prefix
-  Future<String?> _readWord() async {
-    final len = await _readLength();
-    if (len == null) return null;
-    if (len == 0) return '';
-
-    final bytes = await _readExactBytes(len);
-    if (bytes == null) return null;
-    return utf8.decode(bytes, allowMalformed: true);
-  }
-
-  /// Read length header bytes
-  Future<int?> _readLength() async {
-    final firstByte = await _readByte();
-    if (firstByte == null) return null;
-
-    if ((firstByte & 0x80) == 0x00) {
-      return firstByte;
-    } else if ((firstByte & 0xC0) == 0x80) {
-      final b2 = await _readByte();
-      if (b2 == null) return null;
-      return ((firstByte & 0x3F) << 8) | b2;
-    } else if ((firstByte & 0xE0) == 0xC0) {
-      final b2 = await _readByte();
-      final b3 = await _readByte();
-      if (b2 == null || b3 == null) return null;
-      return ((firstByte & 0x1F) << 16) | (b2 << 8) | b3;
-    } else if ((firstByte & 0xF0) == 0xE0) {
-      final b2 = await _readByte();
-      final b3 = await _readByte();
-      final b4 = await _readByte();
-      if (b2 == null || b3 == null || b4 == null) return null;
-      return ((firstByte & 0x0F) << 24) | (b2 << 16) | (b3 << 8) | b4;
-    } else if (firstByte == 0xF0) {
-      final b2 = await _readByte();
-      final b3 = await _readByte();
-      final b4 = await _readByte();
-      final b5 = await _readByte();
-      if (b2 == null || b3 == null || b4 == null || b5 == null) return null;
-      return (b2 << 24) | (b3 << 16) | (b4 << 8) | b5;
+    if ((b1 & 0x80) == 0x00) {
+      return LengthDecodeResult(length: b1, headerSize: 1);
+    } else if ((b1 & 0xC0) == 0x80) {
+      if (bytes.length < offset + 2) return null;
+      final b2 = bytes[offset + 1];
+      return LengthDecodeResult(length: ((b1 & 0x3F) << 8) | b2, headerSize: 2);
+    } else if ((b1 & 0xE0) == 0xC0) {
+      if (bytes.length < offset + 3) return null;
+      final b2 = bytes[offset + 1];
+      final b3 = bytes[offset + 2];
+      return LengthDecodeResult(length: ((b1 & 0x1F) << 16) | (b2 << 8) | b3, headerSize: 3);
+    } else if ((b1 & 0xF0) == 0xE0) {
+      if (bytes.length < offset + 4) return null;
+      final b2 = bytes[offset + 1];
+      final b3 = bytes[offset + 2];
+      final b4 = bytes[offset + 3];
+      return LengthDecodeResult(length: ((b1 & 0x0F) << 24) | (b2 << 16) | (b3 << 8) | b4, headerSize: 4);
+    } else if (b1 == 0xF0) {
+      if (bytes.length < offset + 5) return null;
+      final b2 = bytes[offset + 1];
+      final b3 = bytes[offset + 2];
+      final b4 = bytes[offset + 3];
+      final b5 = bytes[offset + 4];
+      return LengthDecodeResult(length: (b2 << 24) | (b3 << 16) | (b4 << 8) | b5, headerSize: 5);
     }
     return null;
   }
 
-  Future<int?> _readByte() async {
-    final bytes = await _readExactBytes(1);
-    return bytes?.first;
-  }
-
-  Future<List<int>?> _readExactBytes(int count) async {
-    while (_buffer.length < count) {
-      try {
-        final data = await _socket!.first.timeout(timeout);
-        _buffer.addAll(data);
-      } catch (e) {
-        return null;
-      }
-    }
-
-    final result = _buffer.sublist(0, count);
-    _buffer.removeRange(0, count);
-    return result;
-  }
-
-  /// Close connection
   void close() {
     _isConnected = false;
+    _socketSub?.cancel();
+    _socketSub = null;
     _socket?.destroy();
     _socket = null;
-    _buffer.clear();
+    _readBuffer.clear();
+    _pendingRequests.clear();
+    for (final s in _activeStreams.values) {
+      s.close();
+    }
+    _activeStreams.clear();
   }
+}
+
+class LengthDecodeResult {
+  final int length;
+  final int headerSize;
+  const LengthDecodeResult({required this.length, required this.headerSize});
+}
+
+class _WordReadResult {
+  final String word;
+  final int newOffset;
+  const _WordReadResult({required this.word, required this.newOffset});
 }

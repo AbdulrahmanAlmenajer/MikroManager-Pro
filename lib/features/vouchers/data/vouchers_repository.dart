@@ -74,31 +74,43 @@ class VouchersRepository {
     return deleted > 0;
   }
 
-  /// Upload batch directly to router
+  /// Upload batch directly to router in batches of 50 with progress
   Future<int> uploadToRouter({
     required RouterOsAdapter adapter,
     required List<VoucherCardData> vouchers,
     required bool isUserManager,
+    void Function(int current, int total)? onProgress,
+    bool Function()? isCancelled,
   }) async {
     int successCount = 0;
-    for (final voucher in vouchers) {
-      bool ok;
-      if (isUserManager) {
-        ok = await adapter.addUserManagerUser(
-          username: voucher.username,
-          password: voucher.password,
-          profile: voucher.profile,
-          comment: 'MikroManager-Batch',
-        );
-      } else {
-        ok = await adapter.addHotspotUser(
-          name: voucher.username,
-          password: voucher.password,
-          profile: voucher.profile,
-          comment: 'MikroManager-Batch',
-        );
+    const chunkSize = 50;
+
+    for (int i = 0; i < vouchers.length; i += chunkSize) {
+      if (isCancelled != null && isCancelled()) break;
+      final end = (i + chunkSize > vouchers.length) ? vouchers.length : i + chunkSize;
+      final chunk = vouchers.sublist(i, end);
+
+      for (final voucher in chunk) {
+        if (isCancelled != null && isCancelled()) break;
+        bool ok;
+        if (isUserManager) {
+          ok = await adapter.addUserManagerUser(
+            username: voucher.username,
+            password: voucher.password,
+            profile: voucher.profile,
+            comment: 'MikroManager-Batch',
+          );
+        } else {
+          ok = await adapter.addHotspotUser(
+            name: voucher.username,
+            password: voucher.password,
+            profile: voucher.profile,
+            comment: 'MikroManager-Batch',
+          );
+        }
+        if (ok) successCount++;
       }
-      if (ok) successCount++;
+      onProgress?.call(successCount, vouchers.length);
     }
     return successCount;
   }

@@ -18,6 +18,7 @@ class HotspotState {
   final List<Map<String, dynamic>> activeUsers;
   final List<Map<String, dynamic>> users;
   final List<Map<String, dynamic>> profiles;
+  final List<Map<String, dynamic>> ipBindings;
   final bool isLoading;
   final String? errorMessage;
 
@@ -25,6 +26,7 @@ class HotspotState {
     this.activeUsers = const [],
     this.users = const [],
     this.profiles = const [],
+    this.ipBindings = const [],
     this.isLoading = false,
     this.errorMessage,
   });
@@ -33,6 +35,7 @@ class HotspotState {
     List<Map<String, dynamic>>? activeUsers,
     List<Map<String, dynamic>>? users,
     List<Map<String, dynamic>>? profiles,
+    List<Map<String, dynamic>>? ipBindings,
     bool? isLoading,
     String? errorMessage,
   }) {
@@ -40,6 +43,7 @@ class HotspotState {
       activeUsers: activeUsers ?? this.activeUsers,
       users: users ?? this.users,
       profiles: profiles ?? this.profiles,
+      ipBindings: ipBindings ?? this.ipBindings,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
     );
@@ -66,11 +70,13 @@ class HotspotNotifier extends StateNotifier<HotspotState> {
       final active = await _repo.getActiveUsers(adapter);
       final users = await _repo.getUsers(adapter);
       final profiles = await _repo.getProfiles(adapter);
+      final bindings = await _repo.getIpBindings(adapter);
 
       state = state.copyWith(
         activeUsers: active,
         users: users,
         profiles: profiles,
+        ipBindings: bindings,
         isLoading: false,
       );
     } catch (e) {

@@ -18,6 +18,51 @@ class HotspotRepository {
     return await adapter.getHotspotProfiles();
   }
 
+  Future<List<Map<String, dynamic>>> getIpBindings(RouterOsAdapter adapter) async {
+    return await adapter.getHotspotIpBindings();
+  }
+
+  Future<bool> addIpBinding({
+    required RouterOsAdapter adapter,
+    required String macAddress,
+    required String type,
+    String? toAddress,
+    String? comment,
+  }) async {
+    final success = await adapter.addHotspotIpBinding(
+      macAddress: macAddress,
+      type: type,
+      toAddress: toAddress,
+      comment: comment,
+    );
+    if (success) {
+      await _auditLogger.log(
+        action: 'add_ip_binding',
+        entityType: 'ip_binding',
+        entityId: macAddress,
+        description: 'إضافة ربط IP جديد: MAC $macAddress (نوع: $type)',
+      );
+    }
+    return success;
+  }
+
+  Future<bool> removeIpBinding({
+    required RouterOsAdapter adapter,
+    required String id,
+    required String macAddress,
+  }) async {
+    final success = await adapter.removeHotspotIpBinding(id);
+    if (success) {
+      await _auditLogger.log(
+        action: 'delete_ip_binding',
+        entityType: 'ip_binding',
+        entityId: id,
+        description: 'حذف ربط IP Binding: $macAddress',
+      );
+    }
+    return success;
+  }
+
   Future<bool> addUser({
     required RouterOsAdapter adapter,
     required String name,

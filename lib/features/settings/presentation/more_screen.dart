@@ -133,6 +133,16 @@ class MoreScreen extends ConsumerWidget {
                   onTap: () => context.push('/topology'),
                 ),
 
+                // Backup & Restore
+                _buildMenuItem(
+                  context,
+                  title: 'النسخ الاحتياطي',
+                  subtitle: 'حفظ واستعادة البيانات والراوتر',
+                  icon: Icons.backup_outlined,
+                  color: Colors.blueGrey,
+                  onTap: () => context.push('/backup'),
+                ),
+
                 // Settings
                 _buildMenuItem(
                   context,

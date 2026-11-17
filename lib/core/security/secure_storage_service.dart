@@ -10,6 +10,29 @@ class SecureStorageService {
   static const String _selectedRouterKey = 'selected_router_id';
   static const String _telegramBotTokenKey = 'telegram_bot_token';
   static const String _telegramChatIdKey = 'telegram_chat_id';
+  static const String _apUserPrefix = 'ap_user_';
+  static const String _apPassPrefix = 'ap_pass_';
+
+  // AP credentials management
+  static Future<void> saveApCredentials(int apId, {String? username, String? password}) async {
+    if (username != null) {
+      await _storage.write(key: '$_apUserPrefix$apId', value: username);
+    }
+    if (password != null) {
+      await _storage.write(key: '$_apPassPrefix$apId', value: password);
+    }
+  }
+
+  static Future<Map<String, String?>> getApCredentials(int apId) async {
+    final user = await _storage.read(key: '$_apUserPrefix$apId');
+    final pass = await _storage.read(key: '$_apPassPrefix$apId');
+    return {'username': user, 'password': pass};
+  }
+
+  static Future<void> deleteApCredentials(int apId) async {
+    await _storage.delete(key: '$_apUserPrefix$apId');
+    await _storage.delete(key: '$_apPassPrefix$apId');
+  }
 
   // Router password management
   static Future<void> saveRouterPassword(int routerId, String password) async {

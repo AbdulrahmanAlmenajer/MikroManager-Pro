@@ -19,6 +19,7 @@ import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/userman/presentation/userman_screen.dart';
 import '../../features/routers/presentation/routers_screen.dart';
 import '../../features/telegram_bot/presentation/telegram_settings_screen.dart';
+import '../../features/access_points/presentation/ap_devices_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ref.watch(sessionRefreshNotifierProvider);
@@ -119,6 +120,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/pdf-archive',
         builder: (context, state) => const PdfArchiveScreen(),
+      ),
+      GoRoute(
+        path: '/access-points',
+        builder: (context, state) => const ApDevicesScreen(),
       ),
     ],
   );

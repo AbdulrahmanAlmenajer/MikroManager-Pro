@@ -113,6 +113,16 @@ class MoreScreen extends ConsumerWidget {
                   onTap: () => context.push('/routers'),
                 ),
 
+                // Access Points (AP Management)
+                _buildMenuItem(
+                  context,
+                  title: 'نقاط البث (APs)',
+                  subtitle: 'إدارة واكتشاف الأكسسات',
+                  icon: Icons.cell_tower,
+                  color: Colors.deepPurple,
+                  onTap: () => context.push('/access-points'),
+                ),
+
                 // Settings
                 _buildMenuItem(
                   context,

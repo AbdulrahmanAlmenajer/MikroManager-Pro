@@ -7,6 +7,12 @@ enum VoucherCodeType {
   alphaUpper, // A-Z
 }
 
+enum CredentialMode {
+  identical, // اسم مستخدم وكلمة مرور متطابقان
+  usernameOnly, // اسم مستخدم فقط (بدون كلمة مرور)
+  usernameAndPassword, // اسم مستخدم + كلمة مرور منفصلة
+}
+
 class VoucherGeneratorEngine {
   static const String _digits = '0123456789';
   static const String _safeAlphanumeric = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -20,7 +26,10 @@ class VoucherGeneratorEngine {
     String prefix = '',
     int codeLength = 8,
     VoucherCodeType codeType = VoucherCodeType.numeric,
-    bool sameUserAndPass = true,
+    CredentialMode credentialMode = CredentialMode.identical,
+    bool? sameUserAndPass, // For backward compatibility
+    int passwordLength = 4,
+    VoucherCodeType passwordCodeType = VoucherCodeType.numeric,
     String? validity,
     String? networkName,
   }) {
@@ -28,18 +37,25 @@ class VoucherGeneratorEngine {
     final Set<String> generatedCodes = {};
     final List<VoucherCardData> vouchers = [];
 
-    String charPool;
-    switch (codeType) {
-      case VoucherCodeType.numeric:
-        charPool = _digits;
-        break;
-      case VoucherCodeType.alphanumeric:
-        charPool = _safeAlphanumeric;
-        break;
-      case VoucherCodeType.alphaUpper:
-        charPool = _safeAlpha;
-        break;
+    // Map legacy parameter if provided
+    CredentialMode effectiveMode = credentialMode;
+    if (sameUserAndPass != null) {
+      effectiveMode = sameUserAndPass ? CredentialMode.identical : CredentialMode.usernameAndPassword;
     }
+
+    String getCharPool(VoucherCodeType type) {
+      switch (type) {
+        case VoucherCodeType.numeric:
+          return _digits;
+        case VoucherCodeType.alphanumeric:
+          return _safeAlphanumeric;
+        case VoucherCodeType.alphaUpper:
+          return _safeAlpha;
+      }
+    }
+
+    final charPool = getCharPool(codeType);
+    final passCharPool = getCharPool(passwordCodeType);
 
     final targetLength = codeLength - prefix.length;
     final int safeTargetLength = targetLength > 0 ? targetLength : 4;
@@ -54,13 +70,21 @@ class VoucherGeneratorEngine {
       if (!generatedCodes.contains(code)) {
         generatedCodes.add(code);
 
-        String password = code;
-        if (!sameUserAndPass) {
-          final StringBuffer passBuffer = StringBuffer();
-          for (int i = 0; i < 4; i++) {
-            passBuffer.write(_digits[random.nextInt(_digits.length)]);
-          }
-          password = passBuffer.toString();
+        String password;
+        switch (effectiveMode) {
+          case CredentialMode.identical:
+            password = code;
+            break;
+          case CredentialMode.usernameOnly:
+            password = '';
+            break;
+          case CredentialMode.usernameAndPassword:
+            final StringBuffer passBuffer = StringBuffer();
+            for (int i = 0; i < passwordLength; i++) {
+              passBuffer.write(passCharPool[random.nextInt(passCharPool.length)]);
+            }
+            password = passBuffer.toString();
+            break;
         }
 
         vouchers.add(

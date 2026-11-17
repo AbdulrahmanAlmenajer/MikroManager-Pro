@@ -26,8 +26,9 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
   final _netNameCtrl = TextEditingController(text: 'MikroManager Hotspot');
 
   int _codeLength = 6;
+  int _passwordLength = 4;
   VoucherCodeType _codeType = VoucherCodeType.numeric;
-  bool _sameUserAndPass = true;
+  CredentialMode _credentialMode = CredentialMode.identical;
   bool _uploadToRouter = true;
   bool _isUserManager = false;
   String _selectedProfile = 'default';
@@ -74,6 +75,11 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.palette_outlined),
+            tooltip: 'معرض القوالب',
+            onPressed: () => context.push('/templates'),
+          ),
           if (voucherState.currentVouchers.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.print),
@@ -300,14 +306,64 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
+                    const Text('نمط بيانات الدخول (الحساب):',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                     const SizedBox(height: 8),
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('اسم المستخدم = كلمة المرور'),
-                      subtitle: const Text('تسجيل دخول بضغطة واحدة أو إدخال الكود فقط'),
-                      value: _sameUserAndPass,
-                      onChanged: (val) => setState(() => _sameUserAndPass = val),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        ChoiceChip(
+                          label: const Text('متطابقان (اسم = كلمة سر)'),
+                          selected: _credentialMode == CredentialMode.identical,
+                          selectedColor: AppColors.cyanAccent,
+                          labelStyle: TextStyle(
+                            color: _credentialMode == CredentialMode.identical ? Colors.white : AppColors.textPrimary,
+                            fontSize: 11,
+                          ),
+                          onSelected: (_) => setState(() => _credentialMode = CredentialMode.identical),
+                        ),
+                        ChoiceChip(
+                          label: const Text('اسم مستخدم فقط'),
+                          selected: _credentialMode == CredentialMode.usernameOnly,
+                          selectedColor: AppColors.cyanAccent,
+                          labelStyle: TextStyle(
+                            color: _credentialMode == CredentialMode.usernameOnly ? Colors.white : AppColors.textPrimary,
+                            fontSize: 11,
+                          ),
+                          onSelected: (_) => setState(() => _credentialMode = CredentialMode.usernameOnly),
+                        ),
+                        ChoiceChip(
+                          label: const Text('اسم + كلمة سر منفصلة'),
+                          selected: _credentialMode == CredentialMode.usernameAndPassword,
+                          selectedColor: AppColors.cyanAccent,
+                          labelStyle: TextStyle(
+                            color: _credentialMode == CredentialMode.usernameAndPassword ? Colors.white : AppColors.textPrimary,
+                            fontSize: 11,
+                          ),
+                          onSelected: (_) => setState(() => _credentialMode = CredentialMode.usernameAndPassword),
+                        ),
+                      ],
                     ),
+                    if (_credentialMode == CredentialMode.usernameAndPassword) ...[
+                      const SizedBox(height: 10),
+                      DropdownButtonFormField<int>(
+                        decoration: const InputDecoration(
+                          labelText: 'طول كلمة السر المنفصلة',
+                          prefixIcon: Icon(Icons.pin),
+                        ),
+                        value: _passwordLength,
+                        items: const [
+                          DropdownMenuItem(value: 4, child: Text('4 أرقام (سريع وسهل)')),
+                          DropdownMenuItem(value: 6, child: Text('6 أرقام')),
+                          DropdownMenuItem(value: 8, child: Text('8 أرقام')),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) setState(() => _passwordLength = val);
+                        },
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -505,20 +561,117 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
     final price = double.tryParse(_priceCtrl.text.trim()) ?? 0.0;
     final prefix = _prefixCtrl.text.trim();
     final netName = _netNameCtrl.text.trim();
+    final totalAmount = quantity * price;
 
-    final success = await ref.read(vouchersControllerProvider.notifier).generateAndSave(
+    String modeText = 'اسم مستخدم وكلمة مرور متطابقان';
+    if (_credentialMode == CredentialMode.usernameOnly) {
+      modeText = 'اسم مستخدم فقط (بدون كلمة مرور)';
+    } else if (_credentialMode == CredentialMode.usernameAndPassword) {
+      modeText = 'اسم مستخدم + كلمة مرور منفصلة ($_passwordLength أرقام)';
+    }
+
+    // 1. Pre-execution Summary Dialog
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.assignment_outlined, color: AppColors.cyanAccent),
+            SizedBox(width: 8),
+            Text('ملخص عملية التوليد'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('• عدد الكروت: $quantity كرت'),
+            const SizedBox(height: 4),
+            Text('• البروفايل: $_selectedProfile'),
+            const SizedBox(height: 4),
+            Text('• السعر الإجمالي: $totalAmount ريال'),
+            const SizedBox(height: 4),
+            Text('• نمط الدخول: $modeText'),
+            const SizedBox(height: 4),
+            Text('• الوجهة: ${_uploadToRouter ? (_isUserManager ? 'User Manager' : 'Hotspot') : 'محلياً فقط'}'),
+            const Divider(height: 20),
+            const Text(
+              'هل ترغب في بدء التوليد والرفع إلى الراوتر الآن؟',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.cyanAccent, foregroundColor: Colors.white),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('تأكيد وبدء التوليد'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true || !mounted) return;
+
+    // 2. Execute generation with progress and cancel support
+    final future = ref.read(vouchersControllerProvider.notifier).generateAndSave(
           quantity: quantity,
           profile: _selectedProfile,
           price: price,
           prefix: prefix,
           codeLength: _codeLength,
           codeType: _codeType,
-          sameUserAndPass: _sameUserAndPass,
+          credentialMode: _credentialMode,
+          passwordLength: _passwordLength,
           uploadToRouter: _uploadToRouter,
           isUserManager: _isUserManager,
           networkName: netName.isNotEmpty ? netName : 'MikroManager Hotspot',
         );
 
+    // Show Progress Dialog
+    if (_uploadToRouter && mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogCtx) => Consumer(
+          builder: (context, ref, _) {
+            final state = ref.watch(vouchersControllerProvider);
+            if (!state.isGenerating && !state.isUploading) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (Navigator.canPop(dialogCtx)) Navigator.pop(dialogCtx);
+              });
+            }
+
+            return AlertDialog(
+              title: const Text('جاري رفع الكروت إلى الراوتر'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LinearProgressIndicator(value: state.uploadProgress > 0 ? state.uploadProgress : null),
+                  const SizedBox(height: 16),
+                  Text('تم رفع ${state.uploadedCount} من أصل ${state.totalCount} كرت...'),
+                  if (state.isCancelled)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: Text('جاري إيقاف العملية...', style: TextStyle(color: AppColors.warning)),
+                    ),
+                ],
+              ),
+              actions: [
+                if (!state.isCancelled)
+                  TextButton(
+                    onPressed: () => ref.read(vouchersControllerProvider.notifier).cancelGeneration(),
+                    child: const Text('إلغاء العملية', style: TextStyle(color: AppColors.danger)),
+                  ),
+              ],
+            );
+          },
+        ),
+      );
+    }
+
+    final success = await future;
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

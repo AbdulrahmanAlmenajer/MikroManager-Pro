@@ -192,11 +192,12 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
   @override
   void dispose() {
     _timer?.cancel();
+    _timer = null;
     super.dispose();
   }
 }
 
-final dashboardControllerProvider = StateNotifierProvider<DashboardNotifier, DashboardState>((ref) {
+final dashboardControllerProvider = StateNotifierProvider.autoDispose<DashboardNotifier, DashboardState>((ref) {
   final repo = ref.watch(dashboardRepositoryProvider);
   return DashboardNotifier(ref, repo);
 });

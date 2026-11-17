@@ -304,6 +304,16 @@ class DashboardScreen extends ConsumerWidget {
                       onTap: () => context.go('/reports'),
                     ),
                   ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildQuickActionButton(
+                      context,
+                      icon: Icons.hub_outlined,
+                      label: 'الواجهات',
+                      color: AppColors.warning,
+                      onTap: () => context.push('/interfaces'),
+                    ),
+                  ),
                 ],
               ),
             ],

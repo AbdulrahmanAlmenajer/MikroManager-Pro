@@ -5,6 +5,7 @@ import '../session/session_controller.dart';
 import 'route_guard.dart';
 import '../../features/auth/presentation/router_login_screen.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
+import '../../features/dashboard/presentation/interfaces_traffic_screen.dart';
 import '../../features/hotspot/presentation/hotspot_screen.dart';
 import '../../features/vouchers/presentation/voucher_generator_screen.dart';
 import '../../features/vouchers/presentation/print_preview_screen.dart';
@@ -92,6 +93,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/routers',
         builder: (context, state) => const RoutersScreen(),
+      ),
+      GoRoute(
+        path: '/interfaces',
+        builder: (context, state) => const InterfacesTrafficScreen(),
       ),
     ],
   );

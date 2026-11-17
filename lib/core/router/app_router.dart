@@ -9,6 +9,7 @@ import '../../features/dashboard/presentation/interfaces_traffic_screen.dart';
 import '../../features/subscribers/presentation/subscribers_screen.dart';
 import '../../features/subscribers/presentation/card_inquiry_screen.dart';
 import '../../features/vouchers/presentation/template_gallery_screen.dart';
+import '../../features/vouchers/presentation/pdf_archive_screen.dart';
 import '../../features/hotspot/presentation/hotspot_screen.dart';
 import '../../features/vouchers/presentation/voucher_generator_screen.dart';
 import '../../features/vouchers/presentation/print_preview_screen.dart';
@@ -114,6 +115,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/templates',
         builder: (context, state) => const TemplateGalleryScreen(),
+      ),
+      GoRoute(
+        path: '/pdf-archive',
+        builder: (context, state) => const PdfArchiveScreen(),
       ),
     ],
   );

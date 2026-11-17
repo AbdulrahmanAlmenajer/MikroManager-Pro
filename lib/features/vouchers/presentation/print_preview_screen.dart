@@ -1,9 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:printing/printing.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/pdf_generator_helper.dart';
+import '../../routers/domain/routers_notifier.dart';
+import '../data/pdf_archive_repository.dart';
 import '../domain/vouchers_notifier.dart';
 
 enum PrintLayoutType { a4Grid, thermal58, thermal80 }
@@ -30,6 +33,36 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
       appBar: AppBar(
         title: const Text('معاينة وطباعة الكروت'),
         actions: [
+          if (vouchers.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.bookmark_add_outlined),
+              tooltip: 'حفظ في أرشيف PDF',
+              onPressed: () async {
+                final bytes = await _buildPdfData(vouchers);
+                final activeRouter = ref.read(routersControllerProvider).activeRouter;
+                final connectionId = activeRouter?.id ?? 1;
+                final batchName = vouchers.first.profile;
+                await ref.read(pdfArchiveRepositoryProvider).saveToArchive(
+                      connectionId: connectionId,
+                      batchId: batchName,
+                      pdfBytes: bytes,
+                    );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('تم حفظ ملف PDF في الأرشيف بنجاح!'),
+                      backgroundColor: AppColors.success,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
+            ),
+          IconButton(
+            icon: const Icon(Icons.folder_zip_outlined),
+            tooltip: 'أرشيف PDF',
+            onPressed: () => context.push('/pdf-archive'),
+          ),
           IconButton(
             icon: const Icon(Icons.tune),
             tooltip: 'خيارات التخطيط',

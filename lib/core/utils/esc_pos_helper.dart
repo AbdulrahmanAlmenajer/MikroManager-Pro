@@ -1,7 +1,23 @@
+import 'dart:typed_data';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
+import 'pdf_generator_helper.dart';
 
 class EscPosHelper {
-  /// Generate ESC/POS receipt bytes for thermal printers (58mm or 80mm)
+  /// Generate printable Arabic thermal receipt bytes using raster PDF pipeline.
+  /// Solves the Arabic RTL shaping limitation of thermal ESC/POS printers by rasterizing the page.
+  static Future<Uint8List> generateThermalArabicReceiptPdf({
+    required VoucherCardData voucher,
+    String networkName = 'MikroManager Pro',
+    bool is80mm = false,
+  }) async {
+    return await PdfGeneratorHelper.generateThermalReceiptPdf(
+      voucher: voucher,
+      networkName: networkName,
+      is80mm: is80mm,
+    );
+  }
+
+  /// Generate ESC/POS receipt bytes for thermal printers (58mm or 80mm) in standard mode
   static Future<List<int>> generateThermalVoucher({
     required PaperSize paperSize,
     required String networkName,

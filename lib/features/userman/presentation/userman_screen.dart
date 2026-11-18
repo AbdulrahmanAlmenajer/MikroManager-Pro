@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../domain/userman_notifier.dart';
 
@@ -54,6 +55,11 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.health_and_safety_outlined),
+            tooltip: 'فاحص صحة User Manager',
+            onPressed: () => context.push('/um-diagnostic'),
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'تحديث البيانات',
@@ -160,19 +166,43 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
     }).toList();
 
     if (filtered.isEmpty) {
+      final isSearching = _searchQuery.isNotEmpty;
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.person_off_outlined,
-                size: 64,
-                color: AppColors.textSecondary.withValues(alpha: 0.5)),
+            Icon(
+              isSearching
+                  ? Icons.search_off_outlined
+                  : Icons.person_off_outlined,
+              size: 64,
+              color: AppColors.textSecondary.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: 12),
-            const Text('لا يوجد مستخدمون في User Manager',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary)),
+            Text(
+              isSearching
+                  ? 'لا توجد بطاقات مطابقة لبحثك "$_searchQuery"'
+                  : 'لا توجد بطاقات مسجلة في User Manager',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            if (isSearching) ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _searchCtrl.clear();
+                    _searchQuery = '';
+                  });
+                },
+                icon: const Icon(Icons.clear),
+                label: const Text('مسح البحث'),
+              ),
+            ],
           ],
         ),
       );
@@ -232,19 +262,43 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
     }).toList();
 
     if (filtered.isEmpty) {
+      final isSearching = _searchQuery.isNotEmpty;
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.flash_off_outlined,
-                size: 64,
-                color: AppColors.textSecondary.withValues(alpha: 0.5)),
+            Icon(
+              isSearching
+                  ? Icons.search_off_outlined
+                  : Icons.flash_off_outlined,
+              size: 64,
+              color: AppColors.textSecondary.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: 12),
-            const Text('لا توجد جلسات حية حالياً في User Manager',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary)),
+            Text(
+              isSearching
+                  ? 'لا توجد جلسات حية مطابقة لبحثك "$_searchQuery"'
+                  : 'لا توجد جلسات نشطة حالياً في User Manager',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            if (isSearching) ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _searchCtrl.clear();
+                    _searchQuery = '';
+                  });
+                },
+                icon: const Icon(Icons.clear),
+                label: const Text('مسح البحث'),
+              ),
+            ],
           ],
         ),
       );
@@ -380,7 +434,7 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
                       labelText: 'كلمة المرور *', prefixIcon: Icon(Icons.lock)),
                 ),
                 const SizedBox(height: 12),
-                if (profiles.isNotEmpty)
+                if (profiles.isNotEmpty) ...[
                   DropdownButtonFormField<String>(
                     decoration: const InputDecoration(
                         labelText: 'البروفايل', prefixIcon: Icon(Icons.tune)),
@@ -395,6 +449,34 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
                       }
                     },
                   ),
+                  () {
+                    final profMap = profiles.firstWhere(
+                      (p) => p['name'] == selectedProfile,
+                      orElse: () => {},
+                    );
+                    final owner = profMap['owner']?.toString();
+                    if (owner != null && owner.isNotEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.badge_outlined,
+                                size: 16, color: AppColors.cyanAccent),
+                            const SizedBox(width: 6),
+                            Text(
+                              'مالك البروفايل: $owner',
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }(),
+                ],
                 const SizedBox(height: 12),
                 TextField(
                   controller: commentCtrl,
@@ -420,10 +502,17 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
                   return;
                 }
 
+                final profMap = profiles.firstWhere(
+                  (p) => p['name'] == selectedProfile,
+                  orElse: () => {},
+                );
+                final owner = profMap['owner']?.toString();
+
                 await ref.read(usermanControllerProvider.notifier).addUser(
                       username: userCtrl.text.trim(),
                       password: passCtrl.text.trim(),
                       profile: selectedProfile,
+                      customer: owner,
                       comment: commentCtrl.text.trim().isNotEmpty
                           ? commentCtrl.text.trim()
                           : null,

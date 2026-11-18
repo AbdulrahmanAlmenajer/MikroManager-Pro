@@ -77,6 +77,7 @@ class UsermanNotifier extends StateNotifier<UsermanState> {
     required String username,
     required String password,
     String? profile,
+    String? customer,
     String? comment,
   }) async {
     try {
@@ -88,6 +89,7 @@ class UsermanNotifier extends StateNotifier<UsermanState> {
         username: username,
         password: password,
         profile: profile,
+        customer: customer,
         comment: comment,
       );
 

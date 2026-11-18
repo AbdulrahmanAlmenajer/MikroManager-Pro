@@ -2,6 +2,8 @@ import 'routeros_socket_client.dart';
 import 'routeros_rest_client.dart';
 import 'routeros_exceptions.dart';
 import '../constants/api_constants.dart';
+import '../../features/userman/data/user_manager_v6_adapter.dart';
+import '../../features/userman/data/user_manager_v7_adapter.dart';
 
 // ---------------------------------------------------------------------------
 // Timeout constants
@@ -112,6 +114,9 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
   /// True = RouterOS 7.x detected; False = RouterOS 6.x detected.
   /// Set to `null` until `connect()` has been called and version read.
   bool _isV7 = false;
+
+  UserManagerV6Adapter get umV6 => UserManagerV6Adapter(_client);
+  UserManagerV7Adapter get umV7 => UserManagerV7Adapter(_client);
 
   @override
   bool get isV7 => _isV7;

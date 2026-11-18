@@ -25,12 +25,14 @@ class UsermanRepository {
     required String username,
     required String password,
     String? profile,
+    String? customer,
     String? comment,
   }) async {
     final success = await adapter.addUserManagerUser(
       username: username,
       password: password,
       profile: profile,
+      customer: customer,
       comment: comment,
     );
 

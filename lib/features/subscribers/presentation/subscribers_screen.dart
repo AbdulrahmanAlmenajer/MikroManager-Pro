@@ -60,6 +60,8 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen>
         ],
         bottom: TabBar(
           controller: _tabController,
+          isScrollable: true,
+          tabAlignment: TabAlignment.start,
           labelColor: Colors.white,
           unselectedLabelColor: const Color(0xFF94A3B8),
           indicatorColor: AppColors.cyanAccent,

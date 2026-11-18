@@ -237,6 +237,18 @@ class FakeRouterOsServer {
       case '/user-manager/user-profile/add':
         _sendSentence(socket, '!done', {}, tag);
         break;
+      case '/user-manager/user/monitor':
+        _sendSentence(
+            socket,
+            '!re',
+            {
+              'status': 'active',
+              'user': attrs['user'] ?? '',
+              'uptime': '1h20m',
+            },
+            tag);
+        _sendSentence(socket, '!done', {}, tag);
+        break;
       default:
         _sendSentence(socket, '!done', {}, tag);
     }

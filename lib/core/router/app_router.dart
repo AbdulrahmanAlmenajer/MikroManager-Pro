@@ -18,6 +18,7 @@ import '../../features/reports/presentation/reports_screen.dart';
 import '../../features/settings/presentation/more_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/userman/presentation/userman_screen.dart';
+import '../../features/userman/presentation/um_diagnostic_screen.dart';
 import '../../features/routers/presentation/routers_screen.dart';
 import '../../features/telegram_bot/presentation/telegram_settings_screen.dart';
 
@@ -92,6 +93,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/userman',
         builder: (context, state) => const UsermanScreen(),
+      ),
+      GoRoute(
+        path: '/um-diagnostic',
+        builder: (context, state) => const UmDiagnosticScreen(),
       ),
       GoRoute(
         path: '/print-preview',

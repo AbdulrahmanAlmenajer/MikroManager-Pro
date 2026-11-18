@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/tasks/task_runner.dart';
 import '../../../core/utils/audit_logger.dart';
 import '../../../core/utils/pdf_generator_helper.dart';
 import '../../routers/domain/active_router_provider.dart';
@@ -150,32 +151,85 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
 
       // 2. Upload to Router in chunks of 50 with cancel check and progress
       int uploadedCount = 0;
+      final activeRouter = _ref.read(routersControllerProvider).activeRouter;
+      final routerId = activeRouter?.id ?? 1;
+      final taskRunner = _ref.read(taskRunnerProvider);
+      int? checkpointId;
+
       if (uploadToRouter) {
         state = state.copyWith(isUploading: true);
         final adapter = await _ref.read(activeAdapterProvider.future);
         if (adapter != null) {
-          uploadedCount = await _repo.uploadToRouter(
-            adapter: adapter,
-            vouchers: vouchers,
-            isUserManager: isUserManager,
-            onProgress: (current, total) {
-              if (mounted) {
-                state = state.copyWith(
-                  uploadedCount: current,
-                  totalCount: total,
-                  uploadProgress: total > 0 ? (current / total) : 0.0,
+          try {
+            checkpointId = await taskRunner.createCheckpoint(
+              taskId: 'voucher_upload_${DateTime.now().millisecondsSinceEpoch}',
+              connectionId: routerId,
+              taskType: 'voucher_upload',
+              totalItems: quantity,
+              payload: {
+                'profile': profile,
+                'price': price,
+                'quantity': quantity,
+                'isUserManager': isUserManager,
+              },
+            );
+          } on Object catch (e) {
+            _ref.read(auditLoggerProvider).log(
+                  action: 'checkpoint_create_failed',
+                  entityType: 'task_runner',
+                  description: 'فشل إنشاء نقطة فحص للمهمة: $e',
                 );
+          }
+
+          try {
+            uploadedCount = await _repo.uploadToRouter(
+              adapter: adapter,
+              vouchers: vouchers,
+              isUserManager: isUserManager,
+              onProgress: (current, total) {
+                if (mounted) {
+                  state = state.copyWith(
+                    uploadedCount: current,
+                    totalCount: total,
+                    uploadProgress: total > 0 ? (current / total) : 0.0,
+                  );
+                }
+                if (checkpointId != null) {
+                  taskRunner.updateProgress(
+                    checkpointId: checkpointId,
+                    processed: current,
+                    succeeded: current,
+                    failed: 0,
+                    status: _isCancelRequested ? 'failed' : 'running',
+                  );
+                }
+              },
+              isCancelled: () => _isCancelRequested,
+            );
+
+            if (checkpointId != null) {
+              if (_isCancelRequested) {
+                await taskRunner.failCheckpoint(
+                  checkpointId,
+                  'تم إيقاف عملية الرفع يدوياً بواسطة المستخدم',
+                );
+              } else {
+                await taskRunner.completeCheckpoint(checkpointId);
               }
-            },
-            isCancelled: () => _isCancelRequested,
-          );
+            }
+          } catch (uploadError) {
+            if (checkpointId != null) {
+              await taskRunner.failCheckpoint(
+                checkpointId,
+                uploadError.toString(),
+              );
+            }
+            rethrow;
+          }
         }
       }
 
       // 3. Save batch to Drift local database
-      final activeRouter = _ref.read(routersControllerProvider).activeRouter;
-      final routerId = activeRouter?.id ?? 1;
-
       await _repo.saveBatch(
         routerId: routerId,
         profileName: profile,

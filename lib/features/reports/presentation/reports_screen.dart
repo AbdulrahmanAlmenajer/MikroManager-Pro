@@ -20,7 +20,8 @@ class ReportsScreen extends ConsumerStatefulWidget {
   ConsumerState<ReportsScreen> createState() => _ReportsScreenState();
 }
 
-class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTickerProviderStateMixin {
+class _ReportsScreenState extends ConsumerState<ReportsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -63,14 +64,16 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
             icon: const Icon(Icons.picture_as_pdf),
             tooltip: 'تصدير تقرير PDF',
             onPressed: () {
-              honestReportAsync.whenData((data) => _exportPdfHonestReport(context, data));
+              honestReportAsync
+                  .whenData((data) => _exportPdfHonestReport(context, data));
             },
           ),
           IconButton(
             icon: const Icon(Icons.table_chart_outlined),
             tooltip: 'تصدير ملف CSV',
             onPressed: () {
-              honestReportAsync.whenData((data) => _exportCsvHonestReport(context, data));
+              honestReportAsync
+                  .whenData((data) => _exportCsvHonestReport(context, data));
             },
           ),
           IconButton(
@@ -119,7 +122,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
+              const Icon(Icons.error_outline,
+                  size: 48, color: AppColors.danger),
               const SizedBox(height: 12),
               Text('خطأ في تحميل التقرير: $e', textAlign: TextAlign.center),
               const SizedBox(height: 16),
@@ -154,7 +158,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.warning_amber_rounded, color: AppColors.warning),
+                      const Icon(Icons.warning_amber_rounded,
+                          color: AppColors.warning),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -173,10 +178,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
               // SECTION 1: Stock Summary (جرد المخزون الفعلي بالراوتر)
               const Row(
                 children: [
-                  Icon(Icons.inventory_2_outlined, color: AppColors.cyanAccent, size: 20),
+                  Icon(Icons.inventory_2_outlined,
+                      color: AppColors.cyanAccent, size: 20),
                   SizedBox(width: 8),
                   Text('جرد المخزون الحالي في الراوتر',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ],
               ),
               const SizedBox(height: 10),
@@ -228,16 +235,21 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                         children: [
                           const Row(
                             children: [
-                              Icon(Icons.trending_up, color: AppColors.cyanAccent, size: 20),
+                              Icon(Icons.trending_up,
+                                  color: AppColors.cyanAccent, size: 20),
                               SizedBox(width: 8),
                               Text('المبيعات التقديرية (بناءً على أول ظهور)',
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15)),
                             ],
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: AppColors.cyanAccent.withValues(alpha: 0.1),
+                              color:
+                                  AppColors.cyanAccent.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Text('أرقام صادقة ومطابقة',
@@ -251,7 +263,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                       const SizedBox(height: 8),
                       const Text(
                         'ميكروتيك لا يسجل تاريخ بيع الكرت للمشترك، بل يسجل لحظة بدء الاستهلاك، لذا يتم رصد أول ظهور للكارت لاحتساب المبيعات بدقة.',
-                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                        style: TextStyle(
+                            fontSize: 11, color: AppColors.textSecondary),
                       ),
                       const Divider(height: 24),
                       Row(
@@ -298,10 +311,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.account_balance, color: AppColors.success, size: 20),
+                          Icon(Icons.account_balance,
+                              color: AppColors.success, size: 20),
                           SizedBox(width: 8),
                           Text('المطابقة المالية والتحصيل',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -312,7 +327,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text('إجمالي التحصيل الفعلي المستلم',
-                                    style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        color: AppColors.textSecondary)),
                                 const SizedBox(height: 4),
                                 Text(
                                   '${payments.totalPayments.toStringAsFixed(0)} ر.ي',
@@ -329,7 +346,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text('فارق التحصيل (عجز / فائض)',
-                                    style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        color: AppColors.textSecondary)),
                                 const SizedBox(height: 4),
                                 Text(
                                   '${payments.balance >= 0 ? "+" : ""}${payments.balance.toStringAsFixed(0)} ر.ي',
@@ -385,14 +404,18 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: AppColors.cyanAccent.withValues(alpha: 0.15),
-                          child: const Icon(Icons.wifi, color: AppColors.cyanAccent, size: 18),
+                          backgroundColor:
+                              AppColors.cyanAccent.withValues(alpha: 0.15),
+                          child: const Icon(Icons.wifi,
+                              color: AppColors.cyanAccent, size: 18),
                         ),
                         title: Text(obs.cardName,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 14)),
                         subtitle: Text(
                           'الفئة: ${obs.profile}  |  ${DateFormat('yyyy/MM/dd HH:mm').format(obs.firstSeenAt)}',
-                          style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                          style: const TextStyle(
+                              fontSize: 11, color: AppColors.textSecondary),
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -400,13 +423,17 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                             if (obs.dateIsApproximate)
                               Container(
                                 margin: const EdgeInsets.only(left: 8),
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: AppColors.warning.withValues(alpha: 0.1),
+                                  color:
+                                      AppColors.warning.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: const Text('تاريخ تقريبي',
-                                    style: TextStyle(fontSize: 10, color: AppColors.warning)),
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: AppColors.warning)),
                               ),
                             Text('${price.toStringAsFixed(0)} ر.ي',
                                 style: const TextStyle(
@@ -448,7 +475,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.payments_outlined, size: 64, color: AppColors.textSecondary),
+                      Icon(Icons.payments_outlined,
+                          size: 64, color: AppColors.textSecondary),
                       SizedBox(height: 16),
                       Text('لا توجد دفعات أو تحصيلات مالية مسجلة بعد.',
                           style: TextStyle(color: AppColors.textSecondary)),
@@ -464,21 +492,27 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                       margin: const EdgeInsets.only(bottom: 10),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: AppColors.success.withValues(alpha: 0.15),
-                          child: const Icon(Icons.monetization_on, color: AppColors.success),
+                          backgroundColor:
+                              AppColors.success.withValues(alpha: 0.15),
+                          child: const Icon(Icons.monetization_on,
+                              color: AppColors.success),
                         ),
                         title: Text(
                           '${item.amount.toStringAsFixed(0)} ر.ي',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         subtitle: Text(
                           '${item.note ?? "بدون ملاحظات"}  •  ${DateFormat('yyyy/MM/dd HH:mm').format(item.receivedAt)}',
-                          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                          style: const TextStyle(
+                              fontSize: 12, color: AppColors.textSecondary),
                         ),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                          icon: const Icon(Icons.delete_outline,
+                              color: AppColors.danger),
                           tooltip: 'حذف التحصيل',
-                          onPressed: () => _confirmDeletePayment(context, item.id),
+                          onPressed: () =>
+                              _confirmDeletePayment(context, item.id),
                         ),
                       ),
                     );
@@ -520,19 +554,28 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
               margin: const EdgeInsets.only(bottom: 10),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor:
-                      isUnpriced ? AppColors.warning.withValues(alpha: 0.2) : AppColors.cyanAccent.withValues(alpha: 0.2),
+                  backgroundColor: isUnpriced
+                      ? AppColors.warning.withValues(alpha: 0.2)
+                      : AppColors.cyanAccent.withValues(alpha: 0.2),
                   child: Icon(
-                    isUnpriced ? Icons.warning_amber_rounded : Icons.label_important_outline,
-                    color: isUnpriced ? AppColors.warning : AppColors.cyanAccent,
+                    isUnpriced
+                        ? Icons.warning_amber_rounded
+                        : Icons.label_important_outline,
+                    color:
+                        isUnpriced ? AppColors.warning : AppColors.cyanAccent,
                   ),
                 ),
-                title: Text(profile, style: const TextStyle(fontWeight: FontWeight.bold)),
+                title: Text(profile,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text(
-                  isUnpriced ? 'غير مسعر بعد' : 'السعر الحالي: ${price.toStringAsFixed(0)} ر.ي',
+                  isUnpriced
+                      ? 'غير مسعر بعد'
+                      : 'السعر الحالي: ${price.toStringAsFixed(0)} ر.ي',
                   style: TextStyle(
                     fontSize: 12,
-                    color: isUnpriced ? AppColors.warning : AppColors.textSecondary,
+                    color: isUnpriced
+                        ? AppColors.warning
+                        : AppColors.textSecondary,
                   ),
                 ),
                 trailing: ElevatedButton.icon(
@@ -540,7 +583,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                     backgroundColor: AppColors.cardBackground,
                     foregroundColor: AppColors.cyanAccent,
                   ),
-                  onPressed: () => _showEditPriceDialog(context, profile, price ?? 0.0),
+                  onPressed: () =>
+                      _showEditPriceDialog(context, profile, price ?? 0.0),
                   icon: const Icon(Icons.edit, size: 14),
                   label: Text(isUnpriced ? 'تحديد السعر' : 'تعديل'),
                 ),
@@ -567,7 +611,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.history_edu,
-                    size: 64, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+                    size: 64,
+                    color: AppColors.textSecondary.withValues(alpha: 0.5)),
                 const SizedBox(height: 12),
                 const Text('لا توجد عمليات مسجلة في السجل',
                     style: TextStyle(
@@ -616,13 +661,17 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                   child: Icon(iconData, color: badgeColor),
                 ),
                 title: Text(log.description,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14)),
                 subtitle: Text('بواسطة: ${log.performedBy}  |  $timeStr',
-                    style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                    style: const TextStyle(
+                        fontSize: 11, color: AppColors.textSecondary)),
                 trailing: Chip(
                   label: Text(log.action,
                       style: TextStyle(
-                          fontSize: 10, color: badgeColor, fontWeight: FontWeight.bold)),
+                          fontSize: 10,
+                          color: badgeColor,
+                          fontWeight: FontWeight.bold)),
                   backgroundColor: badgeColor.withValues(alpha: 0.1),
                 ),
               ),
@@ -637,8 +686,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
   // Dialogs & Helpers
   // =========================================================================
 
-  Widget _buildStatCard(
-      String title, String mainValue, String subValue, IconData icon, Color color) {
+  Widget _buildStatCard(String title, String mainValue, String subValue,
+      IconData icon, Color color) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
@@ -649,34 +698,43 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
             Text(mainValue,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: color)),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 14, color: color)),
             const SizedBox(height: 2),
             Text(subValue,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
             const SizedBox(height: 4),
             Text(title,
                 maxLines: 2,
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+                style: const TextStyle(
+                    color: AppColors.textSecondary, fontSize: 10)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSalesMetricTile(String label, String count, String value, bool isApprox) {
+  Widget _buildSalesMetricTile(
+      String label, String count, String value, bool isApprox) {
     return Column(
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+        Text(label,
+            style:
+                const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
         const SizedBox(height: 4),
-        Text(count, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+        Text(count,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
         const SizedBox(height: 2),
         Text(value,
             style: const TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.cyanAccent)),
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: AppColors.cyanAccent)),
         if (isApprox)
           const Padding(
             padding: EdgeInsets.only(top: 2),
@@ -730,7 +788,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                 await ref.read(reportsRepositoryProvider).addPayment(
                       connectionId: connectionId,
                       amount: amount,
-                      note: noteController.text.trim().isEmpty ? null : noteController.text.trim(),
+                      note: noteController.text.trim().isEmpty
+                          ? null
+                          : noteController.text.trim(),
                     );
                 if (ctx.mounted) Navigator.pop(ctx);
                 ref.invalidate(honestReportProvider);
@@ -751,11 +811,14 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
         title: const Text('حذف التحصيل'),
         content: const Text('هل أنت متأكد من حذف هذا التحصيل المالي؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             onPressed: () async {
-              await ref.read(reportsRepositoryProvider).deletePayment(paymentId);
+              await ref
+                  .read(reportsRepositoryProvider)
+                  .deletePayment(paymentId);
               if (ctx.mounted) Navigator.pop(ctx);
               ref.invalidate(honestReportProvider);
               ref.invalidate(paymentsListProvider);
@@ -767,9 +830,10 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
     );
   }
 
-  void _showEditPriceDialog(BuildContext context, String profile, double currentPrice) {
-    final priceController =
-        TextEditingController(text: currentPrice > 0 ? currentPrice.toStringAsFixed(0) : '');
+  void _showEditPriceDialog(
+      BuildContext context, String profile, double currentPrice) {
+    final priceController = TextEditingController(
+        text: currentPrice > 0 ? currentPrice.toStringAsFixed(0) : '');
 
     showDialog(
       context: context,
@@ -784,7 +848,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             onPressed: () async {
               final price = double.tryParse(priceController.text.trim()) ?? 0.0;
@@ -810,7 +875,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
   // Export PDF & CSV
   // =========================================================================
 
-  void _exportPdfHonestReport(BuildContext context, HonestReportData data) async {
+  void _exportPdfHonestReport(
+      BuildContext context, HonestReportData data) async {
     final pdf = pw.Document();
 
     pdf.addPage(
@@ -827,15 +893,18 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
                     pw.Text('MikroManager Pro - Honest Numbers Report',
-                        style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
-                    pw.Text(DateFormat('yyyy/MM/dd HH:mm').format(DateTime.now()),
+                        style: pw.TextStyle(
+                            fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                    pw.Text(
+                        DateFormat('yyyy/MM/dd HH:mm').format(DateTime.now()),
                         style: const pw.TextStyle(fontSize: 12)),
                   ],
                 ),
               ),
               pw.SizedBox(height: 16),
               pw.Text('Stock Inventory Summary:',
-                  style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                  style: pw.TextStyle(
+                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 8),
               pw.Bullet(
                   text:
@@ -846,7 +915,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
               pw.Bullet(text: 'Expired: ${data.stock.expiredCards} cards'),
               pw.SizedBox(height: 16),
               pw.Text('Estimated Sales (First Usage Observation):',
-                  style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                  style: pw.TextStyle(
+                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 8),
               pw.Bullet(
                   text:
@@ -859,7 +929,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
                       'Last 30 Days: ${data.sales.last30Days.cardsCount} cards (${data.sales.last30Days.totalEstimatedAmount.toStringAsFixed(0)} YER)'),
               pw.SizedBox(height: 16),
               pw.Text('Reconciliation & Payments:',
-                  style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+                  style: pw.TextStyle(
+                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
               pw.SizedBox(height: 8),
               pw.Bullet(
                   text:
@@ -879,7 +950,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
     );
   }
 
-  void _exportCsvHonestReport(BuildContext context, HonestReportData data) async {
+  void _exportCsvHonestReport(
+      BuildContext context, HonestReportData data) async {
     final buffer = StringBuffer();
     buffer.writeln('Category,Metric,Value');
     buffer.writeln('Stock,Unused Cards,${data.stock.unusedCards}');
@@ -888,13 +960,18 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> with SingleTicker
     buffer.writeln('Stock,Active Value YER,${data.stock.activeValue}');
     buffer.writeln('Stock,Expired Cards,${data.stock.expiredCards}');
     buffer.writeln('Sales,Today Count,${data.sales.today.cardsCount}');
-    buffer.writeln('Sales,Today Estimated YER,${data.sales.today.totalEstimatedAmount}');
-    buffer.writeln('Sales,Last 30 Days Count,${data.sales.last30Days.cardsCount}');
-    buffer.writeln('Sales,Last 30 Days Estimated YER,${data.sales.last30Days.totalEstimatedAmount}');
-    buffer.writeln('Payments,Total Collected YER,${data.payments.totalPayments}');
+    buffer.writeln(
+        'Sales,Today Estimated YER,${data.sales.today.totalEstimatedAmount}');
+    buffer.writeln(
+        'Sales,Last 30 Days Count,${data.sales.last30Days.cardsCount}');
+    buffer.writeln(
+        'Sales,Last 30 Days Estimated YER,${data.sales.last30Days.totalEstimatedAmount}');
+    buffer
+        .writeln('Payments,Total Collected YER,${data.payments.totalPayments}');
     buffer.writeln('Payments,Balance YER,${data.payments.balance}');
 
     final bytes = Uint8List.fromList(utf8.encode(buffer.toString()));
-    await Printing.sharePdf(bytes: bytes, filename: 'mikromanager_honest_report.csv');
+    await Printing.sharePdf(
+        bytes: bytes, filename: 'mikromanager_honest_report.csv');
   }
 }

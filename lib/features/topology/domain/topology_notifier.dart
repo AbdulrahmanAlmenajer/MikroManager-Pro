@@ -68,7 +68,8 @@ class TopologyNotifier extends StateNotifier<TopologyState> {
       final aps = await apRepo.getAllAps(session.connectionId);
       List<SubscriberModel> subscribers = [];
       try {
-        subscribers = await subscribersRepo.getHotspotSubscribers(session.adapter);
+        subscribers =
+            await subscribersRepo.getHotspotSubscribers(session.adapter);
       } catch (_) {}
 
       // Match subscribers to APs using Evidence Ladder
@@ -97,7 +98,8 @@ class TopologyNotifier extends StateNotifier<TopologyState> {
         isLoading: false,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: 'تعذر تحليل تفرع الشبكة: $e');
+      state = state.copyWith(
+          isLoading: false, errorMessage: 'تعذر تحليل تفرع الشبكة: $e');
     }
   }
 
@@ -110,14 +112,19 @@ class TopologyNotifier extends StateNotifier<TopologyState> {
         'host': session.host,
         'boardName': session.boardName,
       },
-      'aps': state.aps.map((a) => {'id': a.id, 'name': a.name, 'ip': a.ip, 'vendor': a.vendor}).toList(),
-      'distribution': state.apUsersMap.map((key, val) => MapEntry(key.toString(), val.length)),
+      'aps': state.aps
+          .map((a) =>
+              {'id': a.id, 'name': a.name, 'ip': a.ip, 'vendor': a.vendor})
+          .toList(),
+      'distribution': state.apUsersMap
+          .map((key, val) => MapEntry(key.toString(), val.length)),
       'unmatchedCount': state.unmatchedUsers.length,
       'timestamp': DateTime.now().toIso8601String(),
     };
 
     try {
-      await _repo.saveSnapshot(connectionId: session.connectionId, graphData: graphData);
+      await _repo.saveSnapshot(
+          connectionId: session.connectionId, graphData: graphData);
       return true;
     } catch (_) {
       return false;

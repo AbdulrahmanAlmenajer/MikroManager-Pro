@@ -27,7 +27,9 @@ class ApDevicesScreen extends ConsumerWidget {
             onPressed: session == null
                 ? null
                 : () async {
-                    await ref.read(apNotifierProvider.notifier).discoverNeighbors(session.adapter);
+                    await ref
+                        .read(apNotifierProvider.notifier)
+                        .discoverNeighbors(session.adapter);
                     if (context.mounted) {
                       _showDiscoveredBottomSheet(context, ref, connectionId);
                     }
@@ -37,16 +39,20 @@ class ApDevicesScreen extends ConsumerWidget {
             icon: const Icon(Icons.network_ping),
             tooltip: 'فحص اتصال جميع الأجهزة',
             onPressed: () {
-              ref.read(apNotifierProvider.notifier).checkAllHealth(connectionId);
+              ref
+                  .read(apNotifierProvider.notifier)
+                  .checkAllHealth(connectionId);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('جاري فحص حالة اتصال جميع نقاط البث...')),
+                const SnackBar(
+                    content: Text('جاري فحص حالة اتصال جميع نقاط البث...')),
               );
             },
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'تحديث القائمة',
-            onPressed: () => ref.read(apNotifierProvider.notifier).loadDevices(connectionId),
+            onPressed: () =>
+                ref.read(apNotifierProvider.notifier).loadDevices(connectionId),
           ),
         ],
       ),
@@ -65,14 +71,17 @@ class ApDevicesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, WidgetRef ref, dynamic session) {
+  Widget _buildEmptyState(
+      BuildContext context, WidgetRef ref, dynamic session) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.router_outlined, size: 72, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+            Icon(Icons.router_outlined,
+                size: 72,
+                color: AppColors.textSecondary.withValues(alpha: 0.5)),
             const SizedBox(height: 16),
             const Text(
               'لا توجد نقاط بث مسجلة بعد',
@@ -95,9 +104,12 @@ class ApDevicesScreen extends ConsumerWidget {
                       foregroundColor: AppColors.cyanAccent,
                     ),
                     onPressed: () async {
-                      await ref.read(apNotifierProvider.notifier).discoverNeighbors(session.adapter);
+                      await ref
+                          .read(apNotifierProvider.notifier)
+                          .discoverNeighbors(session.adapter);
                       if (context.mounted) {
-                        _showDiscoveredBottomSheet(context, ref, session.connectionId);
+                        _showDiscoveredBottomSheet(
+                            context, ref, session.connectionId);
                       }
                     },
                     icon: const Icon(Icons.wifi_find),
@@ -105,7 +117,8 @@ class ApDevicesScreen extends ConsumerWidget {
                   ),
                 const SizedBox(width: 12),
                 ElevatedButton.icon(
-                  onPressed: () => _showAddApDialog(context, ref, session?.connectionId ?? 0),
+                  onPressed: () => _showAddApDialog(
+                      context, ref, session?.connectionId ?? 0),
                   icon: const Icon(Icons.add),
                   label: const Text('إضافة يدوية'),
                 ),
@@ -117,8 +130,8 @@ class ApDevicesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDevicesList(
-      BuildContext context, WidgetRef ref, List<ApDevicesTableData> devices, int connectionId) {
+  Widget _buildDevicesList(BuildContext context, WidgetRef ref,
+      List<ApDevicesTableData> devices, int connectionId) {
     return ListView.builder(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 80),
       itemCount: devices.length,
@@ -129,8 +142,8 @@ class ApDevicesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildApCard(
-      BuildContext context, WidgetRef ref, ApDevicesTableData ap, int connectionId) {
+  Widget _buildApCard(BuildContext context, WidgetRef ref,
+      ApDevicesTableData ap, int connectionId) {
     Color statusColor;
     String statusText;
     IconData statusIcon;
@@ -168,7 +181,8 @@ class ApDevicesScreen extends ConsumerWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: _getVendorColor(ap.vendor).withValues(alpha: 0.15),
+                  backgroundColor:
+                      _getVendorColor(ap.vendor).withValues(alpha: 0.15),
                   child: Icon(Icons.router, color: _getVendorColor(ap.vendor)),
                 ),
                 const SizedBox(width: 12),
@@ -178,7 +192,8 @@ class ApDevicesScreen extends ConsumerWidget {
                     children: [
                       Text(
                         ap.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       const SizedBox(height: 2),
                       Row(
@@ -192,9 +207,11 @@ class ApDevicesScreen extends ConsumerWidget {
                           ),
                           const SizedBox(width: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: _getVendorColor(ap.vendor).withValues(alpha: 0.1),
+                              color: _getVendorColor(ap.vendor)
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -211,11 +228,13 @@ class ApDevicesScreen extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: statusColor.withValues(alpha: 0.4)),
+                    border:
+                        Border.all(color: statusColor.withValues(alpha: 0.4)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -224,7 +243,9 @@ class ApDevicesScreen extends ConsumerWidget {
                       const SizedBox(width: 4),
                       Text(statusText,
                           style: TextStyle(
-                              color: statusColor, fontSize: 11, fontWeight: FontWeight.bold)),
+                              color: statusColor,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -238,7 +259,8 @@ class ApDevicesScreen extends ConsumerWidget {
                   ap.lastCheckAt != null
                       ? 'آخر فحص: ${DateFormat('HH:mm  yyyy/MM/dd').format(ap.lastCheckAt!)}'
                       : 'لم يتم الفحص بعد',
-                  style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                  style: const TextStyle(
+                      fontSize: 11, color: AppColors.textSecondary),
                 ),
                 Row(
                   children: [
@@ -248,18 +270,23 @@ class ApDevicesScreen extends ConsumerWidget {
                       onPressed: () async {
                         final repo = ref.read(apRepositoryProvider);
                         await repo.refreshApState(ap.id, ap.ip);
-                        ref.read(apNotifierProvider.notifier).loadDevices(connectionId);
+                        ref
+                            .read(apNotifierProvider.notifier)
+                            .loadDevices(connectionId);
                       },
                     ),
                     IconButton(
-                      icon: const Icon(Icons.open_in_browser, color: AppColors.cyanAccent),
+                      icon: const Icon(Icons.open_in_browser,
+                          color: AppColors.cyanAccent),
                       tooltip: 'فتح لوحة التحكم (Web UI)',
                       onPressed: () => _openApWebUi(context, ref, ap),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline, color: AppColors.danger, size: 20),
+                      icon: const Icon(Icons.delete_outline,
+                          color: AppColors.danger, size: 20),
                       tooltip: 'حذف',
-                      onPressed: () => _confirmDelete(context, ref, ap.id, connectionId),
+                      onPressed: () =>
+                          _confirmDelete(context, ref, ap.id, connectionId),
                     ),
                   ],
                 ),
@@ -285,18 +312,21 @@ class ApDevicesScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _openApWebUi(BuildContext context, WidgetRef ref, ApDevicesTableData ap) async {
+  Future<void> _openApWebUi(
+      BuildContext context, WidgetRef ref, ApDevicesTableData ap) async {
     final creds = await ref.read(apRepositoryProvider).getApCredentials(ap.id);
     final user = creds['username'];
     final pass = creds['password'];
 
-    if ((user != null && user.isNotEmpty) || (pass != null && pass.isNotEmpty)) {
+    if ((user != null && user.isNotEmpty) ||
+        (pass != null && pass.isNotEmpty)) {
       if (pass != null && pass.isNotEmpty) {
         await Clipboard.setData(ClipboardData(text: pass));
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('اسم المستخدم: $user  |  تم نسخ كلمة المرور للحافظة تلقائياً!'),
+              content: Text(
+                  'اسم المستخدم: $user  |  تم نسخ كلمة المرور للحافظة تلقائياً!'),
               backgroundColor: AppColors.success,
               duration: const Duration(seconds: 4),
             ),
@@ -317,7 +347,8 @@ class ApDevicesScreen extends ConsumerWidget {
     }
   }
 
-  void _showDiscoveredBottomSheet(BuildContext context, WidgetRef ref, int connectionId) {
+  void _showDiscoveredBottomSheet(
+      BuildContext context, WidgetRef ref, int connectionId) {
     final state = ref.read(apNotifierProvider);
     final discovered = state.discovered;
 
@@ -344,7 +375,8 @@ class ApDevicesScreen extends ConsumerWidget {
                     children: [
                       const Text(
                         'الأجهزة المكتشفة في الشبكة (MNDP/CDP)',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
@@ -355,7 +387,8 @@ class ApDevicesScreen extends ConsumerWidget {
                   const SizedBox(height: 8),
                   Text(
                     'تم العثور على ${discovered.length} جهاز متصل عبر بروتوكولات الاكتشاف.',
-                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColors.textSecondary),
                   ),
                   const Divider(height: 24),
                   if (discovered.isEmpty)
@@ -380,20 +413,24 @@ class ApDevicesScreen extends ConsumerWidget {
                             child: ListTile(
                               leading: const CircleAvatar(
                                 backgroundColor: AppColors.cyanAccent,
-                                child: Icon(Icons.wifi_tethering, color: Colors.white),
+                                child: Icon(Icons.wifi_tethering,
+                                    color: Colors.white),
                               ),
                               title: Text(item.identity,
-                                  style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
                               subtitle: Text(
                                 '${item.ip}  •  ${item.vendor}  •  ${item.interface}',
                                 style: const TextStyle(
-                                    fontSize: 11, color: AppColors.textSecondary),
+                                    fontSize: 11,
+                                    color: AppColors.textSecondary),
                               ),
                               trailing: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.success,
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12),
                                 ),
                                 onPressed: () async {
                                   final success = await ref
@@ -403,7 +440,8 @@ class ApDevicesScreen extends ConsumerWidget {
                                     Navigator.pop(ctx);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                          content: Text('تمت إضافة ${item.identity} بنجاح!')),
+                                          content: Text(
+                                              'تمت إضافة ${item.identity} بنجاح!')),
                                     );
                                   }
                                 },
@@ -463,11 +501,17 @@ class ApDevicesScreen extends ConsumerWidget {
                     prefixIcon: Icon(Icons.business_outlined),
                   ),
                   items: const [
-                    DropdownMenuItem(value: 'MikroTik', child: Text('MikroTik RouterOS')),
-                    DropdownMenuItem(value: 'Ubiquiti', child: Text('Ubiquiti AirMax / UniFi')),
-                    DropdownMenuItem(value: 'TP-Link', child: Text('TP-Link Pharos / CPE')),
-                    DropdownMenuItem(value: 'Cambium', child: Text('Cambium Networks')),
-                    DropdownMenuItem(value: 'Generic', child: Text('أخرى (Generic)')),
+                    DropdownMenuItem(
+                        value: 'MikroTik', child: Text('MikroTik RouterOS')),
+                    DropdownMenuItem(
+                        value: 'Ubiquiti',
+                        child: Text('Ubiquiti AirMax / UniFi')),
+                    DropdownMenuItem(
+                        value: 'TP-Link', child: Text('TP-Link Pharos / CPE')),
+                    DropdownMenuItem(
+                        value: 'Cambium', child: Text('Cambium Networks')),
+                    DropdownMenuItem(
+                        value: 'Generic', child: Text('أخرى (Generic)')),
                   ],
                   onChanged: (val) {
                     if (val != null) setState(() => selectedVendor = val);
@@ -476,7 +520,8 @@ class ApDevicesScreen extends ConsumerWidget {
                 const SizedBox(height: 14),
                 const Divider(),
                 const Text('بيانات دخول الويب (مشفرة في التخزين الآمن)',
-                    style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                    style: TextStyle(
+                        fontSize: 11, color: AppColors.textSecondary)),
                 const SizedBox(height: 8),
                 TextField(
                   controller: userCtrl,
@@ -512,8 +557,12 @@ class ApDevicesScreen extends ConsumerWidget {
                         name: name,
                         ip: ip,
                         vendor: selectedVendor,
-                        username: userCtrl.text.trim().isEmpty ? null : userCtrl.text.trim(),
-                        password: passCtrl.text.trim().isEmpty ? null : passCtrl.text.trim(),
+                        username: userCtrl.text.trim().isEmpty
+                            ? null
+                            : userCtrl.text.trim(),
+                        password: passCtrl.text.trim().isEmpty
+                            ? null
+                            : passCtrl.text.trim(),
                       );
                   if (ctx.mounted) Navigator.pop(ctx);
                 }
@@ -526,18 +575,22 @@ class ApDevicesScreen extends ConsumerWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, WidgetRef ref, int id, int connectionId) {
+  void _confirmDelete(
+      BuildContext context, WidgetRef ref, int id, int connectionId) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('حذف نقطة البث'),
         content: const Text('هل أنت متأكد من حذف نقطة البث وبيانات دخولها؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             onPressed: () async {
-              await ref.read(apNotifierProvider.notifier).deleteDevice(id, connectionId);
+              await ref
+                  .read(apNotifierProvider.notifier)
+                  .deleteDevice(id, connectionId);
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text('حذف'),

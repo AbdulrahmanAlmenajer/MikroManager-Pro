@@ -23,10 +23,13 @@ class FeatureFlags {
     bool? enablePdfArchive,
   }) {
     return FeatureFlags(
-      enableWireguardHelper: enableWireguardHelper ?? this.enableWireguardHelper,
+      enableWireguardHelper:
+          enableWireguardHelper ?? this.enableWireguardHelper,
       enableHotspotPreview: enableHotspotPreview ?? this.enableHotspotPreview,
-      enableInteractiveTopology: enableInteractiveTopology ?? this.enableInteractiveTopology,
-      enableRogueDhcpAlerts: enableRogueDhcpAlerts ?? this.enableRogueDhcpAlerts,
+      enableInteractiveTopology:
+          enableInteractiveTopology ?? this.enableInteractiveTopology,
+      enableRogueDhcpAlerts:
+          enableRogueDhcpAlerts ?? this.enableRogueDhcpAlerts,
       enablePdfArchive: enablePdfArchive ?? this.enablePdfArchive,
     );
   }

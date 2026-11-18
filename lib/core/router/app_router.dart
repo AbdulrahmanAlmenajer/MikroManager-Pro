@@ -19,11 +19,6 @@ import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/userman/presentation/userman_screen.dart';
 import '../../features/routers/presentation/routers_screen.dart';
 import '../../features/telegram_bot/presentation/telegram_settings_screen.dart';
-import '../../features/access_points/presentation/ap_devices_screen.dart';
-import '../../features/topology/presentation/network_topology_screen.dart';
-import '../../features/backup/presentation/backup_screen.dart';
-import '../../features/settings/presentation/wireguard_helper_screen.dart';
-import '../../features/hotspot/presentation/hotspot_login_preview_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refreshNotifier = ref.watch(sessionRefreshNotifierProvider);
@@ -125,26 +120,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/pdf-archive',
         builder: (context, state) => const PdfArchiveScreen(),
       ),
-      GoRoute(
-        path: '/access-points',
-        builder: (context, state) => const ApDevicesScreen(),
-      ),
-      GoRoute(
-        path: '/topology',
-        builder: (context, state) => const NetworkTopologyScreen(),
-      ),
-      GoRoute(
-        path: '/backup',
-        builder: (context, state) => const BackupScreen(),
-      ),
-      GoRoute(
-        path: '/wireguard',
-        builder: (context, state) => const WireguardHelperScreen(),
-      ),
-      GoRoute(
-        path: '/hotspot-preview',
-        builder: (context, state) => const HotspotLoginPreviewScreen(),
-      ),
     ],
   );
 });
@@ -156,7 +131,8 @@ class MainShellNavigation extends StatelessWidget {
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
     if (location.startsWith('/dashboard')) return 0;
-    if (location.startsWith('/subscribers') || location.startsWith('/hotspot')) return 1;
+    if (location.startsWith('/subscribers') || location.startsWith('/hotspot'))
+      return 1;
     if (location.startsWith('/vouchers')) return 2;
     if (location.startsWith('/reports')) return 3;
     if (location.startsWith('/more')) return 4;

@@ -9,13 +9,15 @@ class NetworkTopologyScreen extends ConsumerStatefulWidget {
   const NetworkTopologyScreen({super.key});
 
   @override
-  ConsumerState<NetworkTopologyScreen> createState() => _NetworkTopologyScreenState();
+  ConsumerState<NetworkTopologyScreen> createState() =>
+      _NetworkTopologyScreenState();
 }
 
 class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController =
+      TransformationController();
 
   @override
   void initState() {
@@ -54,11 +56,15 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
             icon: const Icon(Icons.camera_alt_outlined),
             tooltip: 'حفظ لقطة المخطط',
             onPressed: () async {
-              final ok = await ref.read(topologyNotifierProvider.notifier).saveCurrentSnapshot();
+              final ok = await ref
+                  .read(topologyNotifierProvider.notifier)
+                  .saveCurrentSnapshot();
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(ok ? 'تم حفظ لقطة المخطط بنجاح!' : 'تعذر حفظ لقطة المخطط'),
+                    content: Text(ok
+                        ? 'تم حفظ لقطة المخطط بنجاح!'
+                        : 'تعذر حفظ لقطة المخطط'),
                     backgroundColor: ok ? AppColors.success : AppColors.danger,
                   ),
                 );
@@ -68,7 +74,8 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'إعادة تحليل التفرع',
-            onPressed: () => ref.read(topologyNotifierProvider.notifier).refreshTopology(),
+            onPressed: () =>
+                ref.read(topologyNotifierProvider.notifier).refreshTopology(),
           ),
         ],
       ),
@@ -105,12 +112,15 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.wifi_off_outlined, size: 64, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+              Icon(Icons.wifi_off_outlined,
+                  size: 64,
+                  color: AppColors.textSecondary.withValues(alpha: 0.5)),
               const SizedBox(height: 16),
               const Text('لا توجد بيانات توزيع حالياً',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              const Text('تأكد من تسجيل نقاط البث ووجود مشتركين متصلين في الهوتسبوت.',
+              const Text(
+                  'تأكد من تسجيل نقاط البث ووجود مشتركين متصلين في الهوتسبوت.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: AppColors.textSecondary)),
             ],
@@ -129,15 +139,18 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
         Row(
           children: [
             Expanded(
-              child: _buildCountCard('المشتركون الموزعون', '$totalMatched', Icons.verified_user, AppColors.success),
+              child: _buildCountCard('المشتركون الموزعون', '$totalMatched',
+                  Icons.verified_user, AppColors.success),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _buildCountCard('غير محددين (Unmatched)', '$totalUnmatched', Icons.help_outline, AppColors.warning),
+              child: _buildCountCard('غير محددين (Unmatched)',
+                  '$totalUnmatched', Icons.help_outline, AppColors.warning),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _buildCountCard('نقاط البث المسجلة', '${state.aps.length}', Icons.cell_tower, AppColors.cyanAccent),
+              child: _buildCountCard('نقاط البث المسجلة', '${state.aps.length}',
+                  Icons.cell_tower, AppColors.cyanAccent),
             ),
           ],
         ),
@@ -155,14 +168,17 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
             child: ExpansionTile(
               leading: CircleAvatar(
                 backgroundColor: AppColors.cyanAccent.withValues(alpha: 0.15),
-                child: const Icon(Icons.cell_tower, color: AppColors.cyanAccent),
+                child:
+                    const Icon(Icons.cell_tower, color: AppColors.cyanAccent),
               ),
               title: Row(
                 children: [
-                  Text(ap.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(ap.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: AppColors.cyanAccent.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
@@ -170,19 +186,23 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
                     child: Text(
                       '${users.length} متصل',
                       style: const TextStyle(
-                          fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.cyanAccent),
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.cyanAccent),
                     ),
                   ),
                 ],
               ),
               subtitle: Text('${ap.ip}  •  ${ap.vendor}',
-                  style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                  style: const TextStyle(
+                      fontSize: 11, color: AppColors.textSecondary)),
               children: [
                 if (users.isEmpty)
                   const Padding(
                     padding: EdgeInsets.all(16),
                     child: Text('لا يوجد مشتركون متصلون عبر هذه النقطة حالياً.',
-                        style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                        style: TextStyle(
+                            color: AppColors.textSecondary, fontSize: 12)),
                   )
                 else
                   ListView.separated(
@@ -197,12 +217,17 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
                         dense: true,
                         leading: Icon(
                           Icons.person_pin_circle,
-                          color: isConfirmed ? AppColors.success : AppColors.warning,
+                          color: isConfirmed
+                              ? AppColors.success
+                              : AppColors.warning,
                         ),
-                        title: Text(u.username, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        title: Text(u.username,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text(
                           '${u.ipAddress ?? "بدون IP"}  •  ${u.evidence}',
-                          style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                          style: const TextStyle(
+                              fontSize: 10, color: AppColors.textSecondary),
                         ),
                         trailing: Chip(
                           label: Text(
@@ -210,11 +235,15 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
-                              color: isConfirmed ? AppColors.success : AppColors.warning,
+                              color: isConfirmed
+                                  ? AppColors.success
+                                  : AppColors.warning,
                             ),
                           ),
-                          backgroundColor:
-                              (isConfirmed ? AppColors.success : AppColors.warning).withValues(alpha: 0.1),
+                          backgroundColor: (isConfirmed
+                                  ? AppColors.success
+                                  : AppColors.warning)
+                              .withValues(alpha: 0.1),
                         ),
                       );
                     },
@@ -227,7 +256,10 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
         if (state.unmatchedUsers.isNotEmpty) ...[
           const SizedBox(height: 16),
           const Text('مشتركون بدون نقطة بث محددة:',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.warning)),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: AppColors.warning)),
           const SizedBox(height: 8),
           Card(
             child: ListView.separated(
@@ -239,14 +271,19 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
                 final u = state.unmatchedUsers[idx];
                 return ListTile(
                   dense: true,
-                  leading: const Icon(Icons.help_outline, color: AppColors.warning),
-                  title: Text(u.username, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  leading:
+                      const Icon(Icons.help_outline, color: AppColors.warning),
+                  title: Text(u.username,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text(
                     '${u.ipAddress ?? "IP غير معروف"}  •  ${u.evidence}',
-                    style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                    style: const TextStyle(
+                        fontSize: 10, color: AppColors.textSecondary),
                   ),
                   trailing: const Chip(
-                    label: Text('غير محدد', style: TextStyle(fontSize: 10, color: AppColors.warning)),
+                    label: Text('غير محدد',
+                        style:
+                            TextStyle(fontSize: 10, color: AppColors.warning)),
                   ),
                 );
               },
@@ -325,7 +362,8 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
     );
   }
 
-  Widget _buildCountCard(String title, String count, IconData icon, Color color) {
+  Widget _buildCountCard(
+      String title, String count, IconData icon, Color color) {
     return Card(
       elevation: 2,
       child: Padding(
@@ -334,12 +372,15 @@ class _NetworkTopologyScreenState extends ConsumerState<NetworkTopologyScreen>
           children: [
             Icon(icon, color: color, size: 24),
             const SizedBox(height: 6),
-            Text(count, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: color)),
+            Text(count,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 18, color: color)),
             const SizedBox(height: 4),
             Text(title,
                 textAlign: TextAlign.center,
                 maxLines: 2,
-                style: const TextStyle(fontSize: 10, color: AppColors.textSecondary)),
+                style: const TextStyle(
+                    fontSize: 10, color: AppColors.textSecondary)),
           ],
         ),
       ),
@@ -424,11 +465,13 @@ class TopologyPainter extends CustomPainter {
     final textPainter = TextPainter(
       text: TextSpan(
         text: routerName,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+        style: const TextStyle(
+            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
       ),
       textDirection: TextDirection.rtl,
     )..layout(maxWidth: 130);
-    textPainter.paint(canvas, Offset(pos.dx - textPainter.width / 2, pos.dy - 20));
+    textPainter.paint(
+        canvas, Offset(pos.dx - textPainter.width / 2, pos.dy - 20));
 
     // Text: IP
     final ipPainter = TextPainter(
@@ -441,7 +484,8 @@ class TopologyPainter extends CustomPainter {
     ipPainter.paint(canvas, Offset(pos.dx - ipPainter.width / 2, pos.dy + 2));
   }
 
-  void _drawApNode(Canvas canvas, Offset pos, String name, String ip, int usersCount) {
+  void _drawApNode(
+      Canvas canvas, Offset pos, String name, String ip, int usersCount) {
     final rect = Rect.fromCenter(center: pos, width: 120, height: 60);
     final paint = Paint()..color = const Color(0xFF1E293B);
     final borderPaint = Paint()
@@ -457,11 +501,13 @@ class TopologyPainter extends CustomPainter {
     final textPainter = TextPainter(
       text: TextSpan(
         text: name,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
+        style: const TextStyle(
+            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11),
       ),
       textDirection: TextDirection.rtl,
     )..layout(maxWidth: 110);
-    textPainter.paint(canvas, Offset(pos.dx - textPainter.width / 2, pos.dy - 18));
+    textPainter.paint(
+        canvas, Offset(pos.dx - textPainter.width / 2, pos.dy - 18));
 
     // IP
     final ipPainter = TextPainter(
@@ -482,11 +528,13 @@ class TopologyPainter extends CustomPainter {
       final badgeText = TextPainter(
         text: TextSpan(
           text: '$usersCount',
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+          style: const TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
-      badgeText.paint(canvas, Offset(badgeCenter.dx - badgeText.width / 2, badgeCenter.dy - 6));
+      badgeText.paint(canvas,
+          Offset(badgeCenter.dx - badgeText.width / 2, badgeCenter.dy - 6));
     }
   }
 

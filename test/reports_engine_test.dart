@@ -45,7 +45,8 @@ void main() {
       expect(prices['1Hour'], 120.0);
     });
 
-    test('recordUsageObservations detects first usage and prevents duplicates', () async {
+    test('recordUsageObservations detects first usage and prevents duplicates',
+        () async {
       final subscribers = [
         const SubscriberModel(
           id: '*1',
@@ -84,7 +85,8 @@ void main() {
 
       final obs = await repo.getUsageObservations(1);
       expect(obs.length, 2);
-      expect(obs.map((o) => o.cardName).toSet(), containsAll(['user_active', 'user_traffic_only']));
+      expect(obs.map((o) => o.cardName).toSet(),
+          containsAll(['user_active', 'user_traffic_only']));
 
       // Second run: no new usage, should insert 0 duplicates
       final count2 = await repo.recordUsageObservations(
@@ -94,7 +96,9 @@ void main() {
       expect(count2, 0);
     });
 
-    test('getHonestReportData accurately aggregates stock, unpriced profiles and estimated sales', () async {
+    test(
+        'getHonestReportData accurately aggregates stock, unpriced profiles and estimated sales',
+        () async {
       await repo.setProfilePrice(
         connectionId: 1,
         profileName: '1Hour',
@@ -156,8 +160,10 @@ void main() {
 
       // Stock checks
       expect(report.stock.totalCards, 4);
-      expect(report.stock.unusedCards, 2); // card_fresh (1Hour) and card_special (UnpricedPlan)
-      expect(report.stock.unusedValue, 100.0); // 100 from 1Hour + 0 from UnpricedPlan
+      expect(report.stock.unusedCards,
+          2); // card_fresh (1Hour) and card_special (UnpricedPlan)
+      expect(report.stock.unusedValue,
+          100.0); // 100 from 1Hour + 0 from UnpricedPlan
       expect(report.stock.activeCards, 1); // card_online
       expect(report.stock.activeValue, 100.0);
       expect(report.stock.expiredCards, 1); // card_done
@@ -168,26 +174,30 @@ void main() {
       expect(report.payments.payments.length, 1);
     });
 
-    test('cleanOldObservations removes observations older than retention period', () async {
+    test(
+        'cleanOldObservations removes observations older than retention period',
+        () async {
       // Insert old observation manually
       await db.into(db.usageObservationsTable).insert(
-        UsageObservationsTableCompanion.insert(
-          connectionId: 1,
-          cardName: 'old_card_1',
-          profile: '1Hour',
-          firstSeenAt: Value(DateTime.now().subtract(const Duration(days: 45))),
-        ),
-      );
+            UsageObservationsTableCompanion.insert(
+              connectionId: 1,
+              cardName: 'old_card_1',
+              profile: '1Hour',
+              firstSeenAt:
+                  Value(DateTime.now().subtract(const Duration(days: 45))),
+            ),
+          );
 
       // Insert recent observation
       await db.into(db.usageObservationsTable).insert(
-        UsageObservationsTableCompanion.insert(
-          connectionId: 1,
-          cardName: 'recent_card_2',
-          profile: '1Hour',
-          firstSeenAt: Value(DateTime.now().subtract(const Duration(days: 5))),
-        ),
-      );
+            UsageObservationsTableCompanion.insert(
+              connectionId: 1,
+              cardName: 'recent_card_2',
+              profile: '1Hour',
+              firstSeenAt:
+                  Value(DateTime.now().subtract(const Duration(days: 5))),
+            ),
+          );
 
       final deletedCount = await repo.cleanOldObservations(1, keepDays: 30);
       expect(deletedCount, 1);

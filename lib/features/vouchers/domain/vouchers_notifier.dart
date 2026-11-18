@@ -15,7 +15,8 @@ final vouchersRepositoryProvider = Provider<VouchersRepository>((ref) {
   return VouchersRepository(db, logger);
 });
 
-final voucherBatchesStreamProvider = StreamProvider<List<VoucherBatchesTableData>>((ref) {
+final voucherBatchesStreamProvider =
+    StreamProvider<List<VoucherBatchesTableData>>((ref) {
   final repo = ref.watch(vouchersRepositoryProvider);
   return repo.watchBatches();
 });
@@ -73,7 +74,8 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
   final VouchersRepository _repo;
   bool _isCancelRequested = false;
 
-  VouchersNotifier(this._ref, this._repo) : super(const VoucherGeneratorState());
+  VouchersNotifier(this._ref, this._repo)
+      : super(const VoucherGeneratorState());
 
   void setVouchersForPreview(List<VoucherCardData> vouchers) {
     state = state.copyWith(currentVouchers: vouchers);
@@ -82,7 +84,10 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
   void loadFromBatch(VoucherBatchesTableData batch) {
     try {
       final List decoded = jsonDecode(batch.vouchersJson) as List;
-      final vouchers = decoded.map((e) => VoucherCardData.fromJson(Map<String, dynamic>.from(e as Map))).toList();
+      final vouchers = decoded
+          .map((e) =>
+              VoucherCardData.fromJson(Map<String, dynamic>.from(e as Map)))
+          .toList();
       state = state.copyWith(currentVouchers: vouchers);
     } catch (_) {}
   }
@@ -177,13 +182,13 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
       // Record card_events in Drift
       final db = _ref.read(databaseProvider);
       await db.into(db.cardEventsTable).insert(
-        CardEventsTableCompanion.insert(
-          connectionId: routerId,
-          type: 'generated',
-          count: vouchers.length,
-          profile: profile,
-        ),
-      );
+            CardEventsTableCompanion.insert(
+              connectionId: routerId,
+              type: 'generated',
+              count: vouchers.length,
+              profile: profile,
+            ),
+          );
 
       state = state.copyWith(
         currentVouchers: vouchers,
@@ -212,7 +217,8 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
   }
 }
 
-final vouchersControllerProvider = StateNotifierProvider<VouchersNotifier, VoucherGeneratorState>((ref) {
+final vouchersControllerProvider =
+    StateNotifierProvider<VouchersNotifier, VoucherGeneratorState>((ref) {
   final repo = ref.watch(vouchersRepositoryProvider);
   return VouchersNotifier(ref, repo);
 });

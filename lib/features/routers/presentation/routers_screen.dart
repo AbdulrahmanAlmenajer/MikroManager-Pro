@@ -35,21 +35,28 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
         onPressed: () => _showAddOrEditRouterDialog(context),
         backgroundColor: AppColors.cyanAccent,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('إضافة راوتر', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        label: const Text('إضافة راوتر',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
       body: routersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('خطأ في تحميل الراوترات: $err')),
+        error: (err, stack) =>
+            Center(child: Text('خطأ في تحميل الراوترات: $err')),
         data: (routers) {
           if (routers.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.router_outlined, size: 72, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+                  Icon(Icons.router_outlined,
+                      size: 72,
+                      color: AppColors.textSecondary.withValues(alpha: 0.5)),
                   const SizedBox(height: 16),
                   const Text('لا توجد أجهزة راوتر مضافة حالياً',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary)),
                   const SizedBox(height: 8),
                   const Text('اضغط على "إضافة راوتر" لربط جهاز MikroTik جديد',
                       style: TextStyle(color: AppColors.textSecondary)),
@@ -69,7 +76,8 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
             itemCount: routers.length,
             itemBuilder: (context, index) {
               final router = routers[index];
-              final isActive = routerState.activeRouter?.id == router.id || router.isActive;
+              final isActive =
+                  routerState.activeRouter?.id == router.id || router.isActive;
               final testResult = _testStatus[router.id];
 
               return Card(
@@ -89,10 +97,13 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                       ListTile(
                         contentPadding: EdgeInsets.zero,
                         leading: CircleAvatar(
-                          backgroundColor: isActive ? AppColors.success : AppColors.navyPrimary.withValues(alpha: 0.1),
+                          backgroundColor: isActive
+                              ? AppColors.success
+                              : AppColors.navyPrimary.withValues(alpha: 0.1),
                           child: Icon(
                             isActive ? Icons.router : Icons.router_outlined,
-                            color: isActive ? Colors.white : AppColors.navyPrimary,
+                            color:
+                                isActive ? Colors.white : AppColors.navyPrimary,
                           ),
                         ),
                         title: Row(
@@ -100,19 +111,25 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                             Expanded(
                               child: Text(
                                 router.name,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                             ),
                             if (isActive)
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: AppColors.success.withValues(alpha: 0.15),
+                                  color:
+                                      AppColors.success.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Text(
                                   'الراوتر النشط',
-                                  style: TextStyle(color: AppColors.success, fontSize: 11, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: AppColors.success,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                           ],
@@ -123,26 +140,34 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                             'IP: ${router.ipAddress} | Port: ${router.apiPort} | User: ${router.username}'
                             '${router.useRestApi ? " | REST" : " | Socket"}'
                             '${router.useSsl ? " (SSL)" : ""}',
-                            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                            style: const TextStyle(
+                                fontSize: 12, color: AppColors.textSecondary),
                           ),
                         ),
                         trailing: PopupMenuButton<String>(
                           onSelected: (value) {
                             if (value == 'select') {
-                              ref.read(routersControllerProvider.notifier).selectActiveRouter(router);
+                              ref
+                                  .read(routersControllerProvider.notifier)
+                                  .selectActiveRouter(router);
                             } else if (value == 'edit') {
-                              _showAddOrEditRouterDialog(context, router: router);
+                              _showAddOrEditRouterDialog(context,
+                                  router: router);
                             } else if (value == 'delete') {
                               _confirmDelete(context, router);
                             }
                           },
                           itemBuilder: (ctx) => [
                             if (!isActive)
-                              const PopupMenuItem(value: 'select', child: Text('تعيين كالراوتر النشط')),
-                            const PopupMenuItem(value: 'edit', child: Text('تعديل البيانات')),
+                              const PopupMenuItem(
+                                  value: 'select',
+                                  child: Text('تعيين كالراوتر النشط')),
+                            const PopupMenuItem(
+                                value: 'edit', child: Text('تعديل البيانات')),
                             const PopupMenuItem(
                               value: 'delete',
-                              child: Text('حذف الراوتر', style: TextStyle(color: AppColors.danger)),
+                              child: Text('حذف الراوتر',
+                                  style: TextStyle(color: AppColors.danger)),
                             ),
                           ],
                         ),
@@ -155,13 +180,17 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                           OutlinedButton.icon(
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.cyanAccent,
-                              side: const BorderSide(color: AppColors.cyanAccent),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              side:
+                                  const BorderSide(color: AppColors.cyanAccent),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 8),
                             ),
                             onPressed: () => _testConnection(router),
                             icon: const Icon(Icons.network_check, size: 16),
-                            label: const Text('فحص الاتصال (Ping/Socket)', style: TextStyle(fontSize: 12)),
+                            label: const Text('فحص الاتصال (Ping/Socket)',
+                                style: TextStyle(fontSize: 12)),
                           ),
                           // Status Badge
                           if (testResult != null)
@@ -173,16 +202,23 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                               ),
                               label: Text(
                                 testResult ? 'الاتصال ناجح' : 'فشل الاتصال',
-                                style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
                               ),
-                              backgroundColor: testResult ? AppColors.success : AppColors.danger,
+                              backgroundColor: testResult
+                                  ? AppColors.success
+                                  : AppColors.danger,
                               padding: EdgeInsets.zero,
                             )
                           else if (!isActive)
                             TextButton(
-                              onPressed: () =>
-                                  ref.read(routersControllerProvider.notifier).selectActiveRouter(router),
-                              child: const Text('اتصال بهذا الراوتر', style: TextStyle(fontSize: 12)),
+                              onPressed: () => ref
+                                  .read(routersControllerProvider.notifier)
+                                  .selectActiveRouter(router),
+                              child: const Text('اتصال بهذا الراوتر',
+                                  style: TextStyle(fontSize: 12)),
                             ),
                         ],
                       ),
@@ -205,15 +241,17 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
       ),
     );
 
-    final password = await SecureStorageService.getRouterPassword(router.id) ?? '';
-    final success = await ref.read(routersControllerProvider.notifier).testConnection(
-          ipAddress: router.ipAddress,
-          apiPort: router.apiPort,
-          username: router.username,
-          password: password,
-          useSsl: router.useSsl,
-          useRestApi: router.useRestApi,
-        );
+    final password =
+        await SecureStorageService.getRouterPassword(router.id) ?? '';
+    final success =
+        await ref.read(routersControllerProvider.notifier).testConnection(
+              ipAddress: router.ipAddress,
+              apiPort: router.apiPort,
+              username: router.username,
+              password: password,
+              useSsl: router.useSsl,
+              useRestApi: router.useRestApi,
+            );
 
     setState(() {
       _testStatus[router.id] = success;
@@ -223,7 +261,9 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            success ? '✅ تم الاتصال بنجاح بـ ${router.name}' : '❌ تعذر الاتصال بـ ${router.name}، تحقق من الإعدادات',
+            success
+                ? '✅ تم الاتصال بنجاح بـ ${router.name}'
+                : '❌ تعذر الاتصال بـ ${router.name}، تحقق من الإعدادات',
           ),
           backgroundColor: success ? AppColors.success : AppColors.danger,
         ),
@@ -231,11 +271,14 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
     }
   }
 
-  void _showAddOrEditRouterDialog(BuildContext context, {RoutersTableData? router}) async {
+  void _showAddOrEditRouterDialog(BuildContext context,
+      {RoutersTableData? router}) async {
     final isEditing = router != null;
     final nameCtrl = TextEditingController(text: router?.name ?? '');
-    final ipCtrl = TextEditingController(text: router?.ipAddress ?? '192.168.88.1');
-    final portCtrl = TextEditingController(text: (router?.apiPort ?? 8728).toString());
+    final ipCtrl =
+        TextEditingController(text: router?.ipAddress ?? '192.168.88.1');
+    final portCtrl =
+        TextEditingController(text: (router?.apiPort ?? 8728).toString());
     final userCtrl = TextEditingController(text: router?.username ?? 'admin');
     final passCtrl = TextEditingController();
     bool useSsl = router?.useSsl ?? false;
@@ -243,7 +286,8 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
     final notesCtrl = TextEditingController(text: router?.notes ?? '');
 
     if (isEditing) {
-      final existingPass = await SecureStorageService.getRouterPassword(router.id);
+      final existingPass =
+          await SecureStorageService.getRouterPassword(router.id);
       passCtrl.text = existingPass ?? '';
     }
 
@@ -260,12 +304,16 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
               children: [
                 TextField(
                   controller: nameCtrl,
-                  decoration: const InputDecoration(labelText: 'اسم الراوتر *', prefixIcon: Icon(Icons.label_outline)),
+                  decoration: const InputDecoration(
+                      labelText: 'اسم الراوتر *',
+                      prefixIcon: Icon(Icons.label_outline)),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: ipCtrl,
-                  decoration: const InputDecoration(labelText: 'عنوان IP *', prefixIcon: Icon(Icons.language)),
+                  decoration: const InputDecoration(
+                      labelText: 'عنوان IP *',
+                      prefixIcon: Icon(Icons.language)),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -275,7 +323,9 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                       child: TextField(
                         controller: portCtrl,
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(labelText: 'بورت API *', prefixIcon: Icon(Icons.numbers)),
+                        decoration: const InputDecoration(
+                            labelText: 'بورت API *',
+                            prefixIcon: Icon(Icons.numbers)),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -283,7 +333,9 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                       flex: 3,
                       child: TextField(
                         controller: userCtrl,
-                        decoration: const InputDecoration(labelText: 'اسم المستخدم *', prefixIcon: Icon(Icons.person_outline)),
+                        decoration: const InputDecoration(
+                            labelText: 'اسم المستخدم *',
+                            prefixIcon: Icon(Icons.person_outline)),
                       ),
                     ),
                   ],
@@ -292,12 +344,15 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                 TextField(
                   controller: passCtrl,
                   obscureText: true,
-                  decoration: const InputDecoration(labelText: 'كلمة المرور', prefixIcon: Icon(Icons.lock_outline)),
+                  decoration: const InputDecoration(
+                      labelText: 'كلمة المرور',
+                      prefixIcon: Icon(Icons.lock_outline)),
                 ),
                 const SizedBox(height: 12),
                 CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('استخدام SSL (API-SSL)', style: TextStyle(fontSize: 14)),
+                  title: const Text('استخدام SSL (API-SSL)',
+                      style: TextStyle(fontSize: 14)),
                   value: useSsl,
                   onChanged: (val) {
                     setDialogState(() {
@@ -310,8 +365,10 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                 ),
                 CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('استخدام REST API (RouterOS v7+)', style: TextStyle(fontSize: 14)),
-                  subtitle: const Text('بورت 80 أو 443 للـ REST', style: TextStyle(fontSize: 11)),
+                  title: const Text('استخدام REST API (RouterOS v7+)',
+                      style: TextStyle(fontSize: 14)),
+                  subtitle: const Text('بورت 80 أو 443 للـ REST',
+                      style: TextStyle(fontSize: 11)),
                   value: useRest,
                   onChanged: (val) {
                     setDialogState(() {
@@ -326,7 +383,9 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                 ),
                 TextField(
                   controller: notesCtrl,
-                  decoration: const InputDecoration(labelText: 'ملاحظات إضافية (اختياري)', prefixIcon: Icon(Icons.notes)),
+                  decoration: const InputDecoration(
+                      labelText: 'ملاحظات إضافية (اختياري)',
+                      prefixIcon: Icon(Icons.notes)),
                   maxLines: 2,
                 ),
               ],
@@ -339,9 +398,11 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
-                if (nameCtrl.text.trim().isEmpty || ipCtrl.text.trim().isEmpty) {
+                if (nameCtrl.text.trim().isEmpty ||
+                    ipCtrl.text.trim().isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('يرجى ملء الحقول المطلوبة (*)')),
+                    const SnackBar(
+                        content: Text('يرجى ملء الحقول المطلوبة (*)')),
                   );
                   return;
                 }
@@ -349,16 +410,21 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                 final port = int.tryParse(portCtrl.text.trim()) ?? 8728;
 
                 if (isEditing) {
-                  await ref.read(routersControllerProvider.notifier).updateRouter(
+                  await ref
+                      .read(routersControllerProvider.notifier)
+                      .updateRouter(
                         id: router.id,
                         name: nameCtrl.text.trim(),
                         ipAddress: ipCtrl.text.trim(),
                         apiPort: port,
                         username: userCtrl.text.trim(),
-                        password: passCtrl.text.isNotEmpty ? passCtrl.text : null,
+                        password:
+                            passCtrl.text.isNotEmpty ? passCtrl.text : null,
                         useSsl: useSsl,
                         useRestApi: useRest,
-                        notes: notesCtrl.text.trim().isNotEmpty ? notesCtrl.text.trim() : null,
+                        notes: notesCtrl.text.trim().isNotEmpty
+                            ? notesCtrl.text.trim()
+                            : null,
                       );
                 } else {
                   await ref.read(routersControllerProvider.notifier).addRouter(
@@ -369,7 +435,9 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
                         password: passCtrl.text,
                         useSsl: useSsl,
                         useRestApi: useRest,
-                        notes: notesCtrl.text.trim().isNotEmpty ? notesCtrl.text.trim() : null,
+                        notes: notesCtrl.text.trim().isNotEmpty
+                            ? notesCtrl.text.trim()
+                            : null,
                       );
                 }
 
@@ -390,11 +458,14 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
         title: const Text('تأكيد حذف الراوتر'),
         content: Text('هل أنت متأكد من حذف الراوتر "${router.name}"؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () async {
-              await ref.read(routersControllerProvider.notifier).deleteRouter(router.id);
+              await ref
+                  .read(routersControllerProvider.notifier)
+                  .deleteRouter(router.id);
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text('حذف نهائياً'),
@@ -419,12 +490,14 @@ class _RoutersScreenState extends ConsumerState<RoutersScreen> {
             SizedBox(height: 6),
             Text('• بورت 80 / 443: REST API (RouterOS v7+)'),
             SizedBox(height: 12),
-            Text('ملاحظة: تأكد من تفعيل خدمة API في راوترك عبر:\nIP -> Services -> api / api-ssl / www-ssl',
+            Text(
+                'ملاحظة: تأكد من تفعيل خدمة API في راوترك عبر:\nIP -> Services -> api / api-ssl / www-ssl',
                 style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('حسناً')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('حسناً')),
         ],
       ),
     );

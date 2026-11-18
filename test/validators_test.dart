@@ -18,7 +18,8 @@ void main() {
       expect(AppValidators.isPrivateOrLoopbackHost('8.8.8.8'), isFalse);
       expect(AppValidators.isPrivateOrLoopbackHost('1.1.1.1'), isFalse);
       expect(AppValidators.isPrivateOrLoopbackHost('197.245.10.2'), isFalse);
-      expect(AppValidators.isPrivateOrLoopbackHost('mikrotik.myddns.com'), isFalse);
+      expect(AppValidators.isPrivateOrLoopbackHost('mikrotik.myddns.com'),
+          isFalse);
     });
 
     test('Validates host format', () {

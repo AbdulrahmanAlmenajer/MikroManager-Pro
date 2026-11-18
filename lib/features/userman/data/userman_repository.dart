@@ -10,11 +10,13 @@ class UsermanRepository {
     return await adapter.getUserManagerUsers();
   }
 
-  Future<List<Map<String, dynamic>>> getProfiles(RouterOsAdapter adapter) async {
+  Future<List<Map<String, dynamic>>> getProfiles(
+      RouterOsAdapter adapter) async {
     return await adapter.getUserManagerProfiles();
   }
 
-  Future<List<Map<String, dynamic>>> getSessions(RouterOsAdapter adapter) async {
+  Future<List<Map<String, dynamic>>> getSessions(
+      RouterOsAdapter adapter) async {
     return await adapter.getUserManagerSessions();
   }
 

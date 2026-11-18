@@ -5,7 +5,8 @@ class HotspotLoginPreviewScreen extends StatefulWidget {
   const HotspotLoginPreviewScreen({super.key});
 
   @override
-  State<HotspotLoginPreviewScreen> createState() => _HotspotLoginPreviewScreenState();
+  State<HotspotLoginPreviewScreen> createState() =>
+      _HotspotLoginPreviewScreenState();
 }
 
 class _HotspotLoginPreviewScreenState extends State<HotspotLoginPreviewScreen> {
@@ -52,14 +53,19 @@ class _HotspotLoginPreviewScreenState extends State<HotspotLoginPreviewScreen> {
                   height: 640,
                   decoration: BoxDecoration(
                     color: const Color(0xFF0F172A),
-                    borderRadius: BorderRadius.circular(_previewWidth < 600 ? 28 : 12),
+                    borderRadius:
+                        BorderRadius.circular(_previewWidth < 600 ? 28 : 12),
                     border: Border.all(color: Colors.white24, width: 4),
                     boxShadow: const [
-                      BoxShadow(color: Colors.black45, blurRadius: 20, spreadRadius: 4),
+                      BoxShadow(
+                          color: Colors.black45,
+                          blurRadius: 20,
+                          spreadRadius: 4),
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(_previewWidth < 600 ? 24 : 8),
+                    borderRadius:
+                        BorderRadius.circular(_previewWidth < 600 ? 24 : 8),
                     child: _buildCaptivePortalPage(),
                   ),
                 ),
@@ -82,7 +88,8 @@ class _HotspotLoginPreviewScreenState extends State<HotspotLoginPreviewScreen> {
                     Icon(Icons.palette_outlined, color: AppColors.cyanAccent),
                     SizedBox(width: 8),
                     Text('تخصيص الصفحة',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                   ],
                 ),
                 const Divider(height: 20),
@@ -93,12 +100,14 @@ class _HotspotLoginPreviewScreenState extends State<HotspotLoginPreviewScreen> {
                 ),
                 const SizedBox(height: 12),
                 TextField(
-                  decoration: const InputDecoration(labelText: 'رقم هاتف الدعم الفني'),
+                  decoration:
+                      const InputDecoration(labelText: 'رقم هاتف الدعم الفني'),
                   controller: TextEditingController(text: _supportPhone),
                   onChanged: (val) => setState(() => _supportPhone = val),
                 ),
                 const SizedBox(height: 16),
-                const Text('لون الهوية الرئيسي:', style: TextStyle(fontSize: 12)),
+                const Text('لون الهوية الرئيسي:',
+                    style: TextStyle(fontSize: 12)),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -113,7 +122,8 @@ class _HotspotLoginPreviewScreenState extends State<HotspotLoginPreviewScreen> {
                 ElevatedButton.icon(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('تم حفظ تفضيلات مظهر صفحة الهوتسبوت!')),
+                      const SnackBar(
+                          content: Text('تم حفظ تفضيلات مظهر صفحة الهوتسبوت!')),
                     );
                   },
                   icon: const Icon(Icons.check),
@@ -176,10 +186,12 @@ class _HotspotLoginPreviewScreenState extends State<HotspotLoginPreviewScreen> {
               const SizedBox(height: 24),
               TextField(
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 18, letterSpacing: 2, color: Colors.white),
+                style: const TextStyle(
+                    fontSize: 18, letterSpacing: 2, color: Colors.white),
                 decoration: InputDecoration(
                   hintText: 'رمز الكرت (PIN)',
-                  hintStyle: const TextStyle(color: Colors.white30, letterSpacing: 0),
+                  hintStyle:
+                      const TextStyle(color: Colors.white30, letterSpacing: 0),
                   filled: true,
                   fillColor: const Color(0xFF1E293B),
                   border: OutlineInputBorder(
@@ -198,17 +210,20 @@ class _HotspotLoginPreviewScreenState extends State<HotspotLoginPreviewScreen> {
                   backgroundColor: _brandColor,
                   foregroundColor: Colors.white,
                   minimumSize: const Size.fromHeight(48),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 onPressed: () {},
                 child: const Text('اتصال بالإنترنت',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ),
               const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.support_agent, size: 16, color: Colors.white38),
+                  const Icon(Icons.support_agent,
+                      size: 16, color: Colors.white38),
                   const SizedBox(width: 6),
                   Text(
                     'خدمة العملاء: $_supportPhone',

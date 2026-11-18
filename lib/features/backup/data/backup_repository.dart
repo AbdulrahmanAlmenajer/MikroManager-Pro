@@ -52,55 +52,69 @@ class BackupRepository {
         'exportedAt': DateTime.now().toIso8601String(),
         'connectionId': connectionId,
         'tables': {
-          'voucher_batches': batches.map((b) => {
-                'id': b.id,
-                'routerId': b.routerId,
-                'profileName': b.profileName,
-                'quantity': b.quantity,
-                'vouchersJson': b.vouchersJson,
-                'unitPrice': b.unitPrice,
-                'totalAmount': b.totalAmount,
-                'generatedAt': b.generatedAt.toIso8601String(),
-              }).toList(),
-          'templates': templates.map((t) => {
-                'id': t.id,
-                'name': t.name,
-                'headerText': t.headerText,
-                'footerText': t.footerText,
-                'showQrCode': t.showQrCode,
-              }).toList(),
-          'profile_prices': profilePrices.map((p) => {
-                'connectionId': p.connectionId,
-                'profileName': p.profileName,
-                'price': p.price,
-                'currency': p.currency,
-              }).toList(),
-          'payments': payments.map((pm) => {
-                'connectionId': pm.connectionId,
-                'amount': pm.amount,
-                'note': pm.note,
-                'receivedAt': pm.receivedAt.toIso8601String(),
-              }).toList(),
-          'ap_devices': aps.map((a) => {
-                'connectionId': a.connectionId,
-                'name': a.name,
-                'ip': a.ip,
-                'vendor': a.vendor,
-              }).toList(),
-          'alert_rules': alertRules.map((ar) => {
-                'connectionId': ar.connectionId,
-                'type': ar.type,
-                'target': ar.target,
-                'threshold': ar.threshold,
-                'destination': ar.destination,
-                'enabled': ar.enabled,
-              }).toList(),
-          'quiet_hours': quietHours.map((qh) => {
-                'connectionId': qh.connectionId,
-                'startMinute': qh.startMinute,
-                'endMinute': qh.endMinute,
-                'days': qh.days,
-              }).toList(),
+          'voucher_batches': batches
+              .map((b) => {
+                    'id': b.id,
+                    'routerId': b.routerId,
+                    'profileName': b.profileName,
+                    'quantity': b.quantity,
+                    'vouchersJson': b.vouchersJson,
+                    'unitPrice': b.unitPrice,
+                    'totalAmount': b.totalAmount,
+                    'generatedAt': b.generatedAt.toIso8601String(),
+                  })
+              .toList(),
+          'templates': templates
+              .map((t) => {
+                    'id': t.id,
+                    'name': t.name,
+                    'headerText': t.headerText,
+                    'footerText': t.footerText,
+                    'showQrCode': t.showQrCode,
+                  })
+              .toList(),
+          'profile_prices': profilePrices
+              .map((p) => {
+                    'connectionId': p.connectionId,
+                    'profileName': p.profileName,
+                    'price': p.price,
+                    'currency': p.currency,
+                  })
+              .toList(),
+          'payments': payments
+              .map((pm) => {
+                    'connectionId': pm.connectionId,
+                    'amount': pm.amount,
+                    'note': pm.note,
+                    'receivedAt': pm.receivedAt.toIso8601String(),
+                  })
+              .toList(),
+          'ap_devices': aps
+              .map((a) => {
+                    'connectionId': a.connectionId,
+                    'name': a.name,
+                    'ip': a.ip,
+                    'vendor': a.vendor,
+                  })
+              .toList(),
+          'alert_rules': alertRules
+              .map((ar) => {
+                    'connectionId': ar.connectionId,
+                    'type': ar.type,
+                    'target': ar.target,
+                    'threshold': ar.threshold,
+                    'destination': ar.destination,
+                    'enabled': ar.enabled,
+                  })
+              .toList(),
+          'quiet_hours': quietHours
+              .map((qh) => {
+                    'connectionId': qh.connectionId,
+                    'startMinute': qh.startMinute,
+                    'endMinute': qh.endMinute,
+                    'days': qh.days,
+                  })
+              .toList(),
         },
       };
 
@@ -112,17 +126,26 @@ class BackupRepository {
         'data': dataMap,
       };
 
-      final timestampStr = DateTime.now().toIso8601String().replaceAll(':', '-').split('.').first;
+      final timestampStr = DateTime.now()
+          .toIso8601String()
+          .replaceAll(':', '-')
+          .split('.')
+          .first;
       final fileName = 'mmpro_app_backup_$timestampStr.json';
       final file = File(p.join(backupDir.path, fileName));
       await file.writeAsString(jsonEncode(fullPayload));
 
       // Record in backup_log
-      await _logBackup(connectionId: connectionId, kind: 'app_data', path: file.path);
+      await _logBackup(
+          connectionId: connectionId, kind: 'app_data', path: file.path);
 
       return BackupResult(isSuccess: true, path: file.path, kind: 'app_data');
     } catch (e) {
-      return BackupResult(isSuccess: false, path: '', kind: 'app_data', errorMessage: e.toString());
+      return BackupResult(
+          isSuccess: false,
+          path: '',
+          kind: 'app_data',
+          errorMessage: e.toString());
     }
   }
 
@@ -139,9 +162,11 @@ class BackupRepository {
       if (checksum == null || dataMap == null) return false;
 
       // Verify SHA-256 integrity
-      final computedChecksum = sha256.convert(utf8.encode(jsonEncode(dataMap))).toString();
+      final computedChecksum =
+          sha256.convert(utf8.encode(jsonEncode(dataMap))).toString();
       if (checksum != computedChecksum) {
-        throw Exception('ملف النسخة الاحتياطية تالف أو تم التعديل عليه (Checksum Mismatch)');
+        throw Exception(
+            'ملف النسخة الاحتياطية تالف أو تم التعديل عليه (Checksum Mismatch)');
       }
 
       final tables = dataMap['tables'] as Map<String, dynamic>;
@@ -187,7 +212,8 @@ class BackupRepository {
                   connectionId: item['connectionId'] as int,
                   amount: (item['amount'] as num).toDouble(),
                   note: Value(item['note'] as String?),
-                  receivedAt: Value(DateTime.parse(item['receivedAt'] as String)),
+                  receivedAt:
+                      Value(DateTime.parse(item['receivedAt'] as String)),
                 ),
               );
         }
@@ -224,15 +250,21 @@ class BackupRepository {
     bool isScriptExport = false,
   }) async {
     try {
-      final timestampStr = DateTime.now().toIso8601String().replaceAll(':', '-').split('.').first;
-      final baseName = 'mmpro_${isScriptExport ? "export" : "backup"}_$timestampStr';
+      final timestampStr = DateTime.now()
+          .toIso8601String()
+          .replaceAll(':', '-')
+          .split('.')
+          .first;
+      final baseName =
+          'mmpro_${isScriptExport ? "export" : "backup"}_$timestampStr';
 
       if (isScriptExport) {
         // RouterOS /export file=name
         await adapter.executeSentence(['/export', '=file=$baseName']);
       } else {
         // RouterOS /system/backup/save name=name
-        await adapter.executeSentence(['/system/backup/save', '=name=$baseName']);
+        await adapter
+            .executeSentence(['/system/backup/save', '=name=$baseName']);
       }
 
       final ext = isScriptExport ? '.rsc' : '.backup';
@@ -270,23 +302,27 @@ class BackupRepository {
     required String path,
   }) async {
     return await _db.into(_db.backupLogTable).insert(
-      BackupLogTableCompanion.insert(
-        connectionId: connectionId,
-        kind: kind,
-        path: path,
-        createdAt: Value(DateTime.now()),
-      ),
-    );
+          BackupLogTableCompanion.insert(
+            connectionId: connectionId,
+            kind: kind,
+            path: path,
+            createdAt: Value(DateTime.now()),
+          ),
+        );
   }
 
   Future<List<BackupLogTableData>> getBackupHistory(int connectionId) async {
     return await (_db.select(_db.backupLogTable)
           ..where((t) => t.connectionId.equals(connectionId))
-          ..orderBy([(t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc)]))
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc)
+          ]))
         .get();
   }
 
   Future<int> deleteBackupLog(int id) async {
-    return await (_db.delete(_db.backupLogTable)..where((t) => t.id.equals(id))).go();
+    return await (_db.delete(_db.backupLogTable)..where((t) => t.id.equals(id)))
+        .go();
   }
 }

@@ -25,19 +25,20 @@ class PdfArchiveRepository {
     }
 
     final sanitizedBatch = batchId.replaceAll(RegExp(r'[^\w\-]'), '_');
-    final filePath = p.join(archiveDir.path, 'batch_${sanitizedBatch}_${DateTime.now().millisecondsSinceEpoch}.pdf');
+    final filePath = p.join(archiveDir.path,
+        'batch_${sanitizedBatch}_${DateTime.now().millisecondsSinceEpoch}.pdf');
     final file = File(filePath);
     await file.writeAsBytes(pdfBytes);
 
     return await _db.into(_db.pdfArchiveTable).insert(
-      PdfArchiveTableCompanion.insert(
-        connectionId: connectionId,
-        batchId: batchId,
-        filePath: filePath,
-        templateId: Value(templateId),
-        createdAt: Value(DateTime.now()),
-      ),
-    );
+          PdfArchiveTableCompanion.insert(
+            connectionId: connectionId,
+            batchId: batchId,
+            filePath: filePath,
+            templateId: Value(templateId),
+            createdAt: Value(DateTime.now()),
+          ),
+        );
   }
 
   /// Watch or get archived PDFs for connection
@@ -57,7 +58,9 @@ class PdfArchiveRepository {
 
   /// Delete archived PDF file and record
   Future<bool> deleteArchive(int id) async {
-    final record = await (_db.select(_db.pdfArchiveTable)..where((t) => t.id.equals(id))).getSingleOrNull();
+    final record = await (_db.select(_db.pdfArchiveTable)
+          ..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
     if (record != null) {
       final file = File(record.filePath);
       if (await file.exists()) {
@@ -65,7 +68,8 @@ class PdfArchiveRepository {
           await file.delete();
         } catch (_) {}
       }
-      await (_db.delete(_db.pdfArchiveTable)..where((t) => t.id.equals(id))).go();
+      await (_db.delete(_db.pdfArchiveTable)..where((t) => t.id.equals(id)))
+          .go();
       return true;
     }
     return false;

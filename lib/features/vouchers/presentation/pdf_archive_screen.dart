@@ -30,7 +30,8 @@ class PdfArchiveScreen extends ConsumerWidget {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('خطأ في تحميل الأرشيف: ${snapshot.error}'));
+            return Center(
+                child: Text('خطأ في تحميل الأرشيف: ${snapshot.error}'));
           }
 
           final archives = snapshot.data ?? [];
@@ -39,17 +40,23 @@ class PdfArchiveScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.folder_zip_outlined, size: 64, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+                  Icon(Icons.folder_zip_outlined,
+                      size: 64,
+                      color: AppColors.textSecondary.withValues(alpha: 0.5)),
                   const SizedBox(height: 16),
                   const Text(
                     'أرشيف PDF فارغ حالياً',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.textPrimary),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: AppColors.textPrimary),
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'عند تصدير أو طباعة دفعات الكروت يتم أرشفة ملفات PDF هنا تلقائياً لإعادة طباعتها بأي وقت',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    style:
+                        TextStyle(fontSize: 12, color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -65,11 +72,13 @@ class PdfArchiveScreen extends ConsumerWidget {
               final item = archives[index];
               final file = File(item.filePath);
               final exists = file.existsSync();
-              final sizeInKb = exists ? (file.lengthSync() / 1024).toStringAsFixed(1) : '0';
+              final sizeInKb =
+                  exists ? (file.lengthSync() / 1024).toStringAsFixed(1) : '0';
 
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
                 child: Padding(
                   padding: const EdgeInsets.all(14),
                   child: Row(
@@ -80,7 +89,8 @@ class PdfArchiveScreen extends ConsumerWidget {
                           color: AppColors.cyanAccent.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.picture_as_pdf, color: AppColors.cyanAccent, size: 28),
+                        child: const Icon(Icons.picture_as_pdf,
+                            color: AppColors.cyanAccent, size: 28),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -89,24 +99,31 @@ class PdfArchiveScreen extends ConsumerWidget {
                           children: [
                             Text(
                               'دفعة: ${item.batchId}',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 14),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               dateFormat.format(item.createdAt),
-                              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                              style: const TextStyle(
+                                  fontSize: 11, color: AppColors.textSecondary),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               'الحجم: $sizeInKb KB | الحالة: ${exists ? 'جاهز' : 'الملف مفقود'}',
-                              style: TextStyle(fontSize: 11, color: exists ? AppColors.navyPrimary : AppColors.danger),
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  color: exists
+                                      ? AppColors.navyPrimary
+                                      : AppColors.danger),
                             ),
                           ],
                         ),
                       ),
                       if (exists)
                         IconButton(
-                          icon: const Icon(Icons.print, color: AppColors.cyanAccent),
+                          icon: const Icon(Icons.print,
+                              color: AppColors.cyanAccent),
                           tooltip: 'إعادة الطباعة',
                           onPressed: () async {
                             final bytes = await file.readAsBytes();
@@ -117,7 +134,8 @@ class PdfArchiveScreen extends ConsumerWidget {
                           },
                         ),
                       IconButton(
-                        icon: const Icon(Icons.delete_outline, color: AppColors.danger, size: 20),
+                        icon: const Icon(Icons.delete_outline,
+                            color: AppColors.danger, size: 20),
                         tooltip: 'حذف من الأرشيف',
                         onPressed: () => _confirmDelete(context, repo, item.id),
                       ),
@@ -137,9 +155,11 @@ class PdfArchiveScreen extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('تأكيد حذف الملف من الأرشيف'),
-        content: const Text('هل أنت متأكد من حذف هذا الملف نهائياً من الأرشيف المحلي؟'),
+        content: const Text(
+            'هل أنت متأكد من حذف هذا الملف نهائياً من الأرشيف المحلي؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () async {

@@ -39,7 +39,8 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
               tooltip: 'حفظ في أرشيف PDF',
               onPressed: () async {
                 final bytes = await _buildPdfData(vouchers);
-                final activeRouter = ref.read(routersControllerProvider).activeRouter;
+                final activeRouter =
+                    ref.read(routersControllerProvider).activeRouter;
                 final connectionId = activeRouter?.id ?? 1;
                 final batchName = vouchers.first.profile;
                 await ref.read(pdfArchiveRepositoryProvider).saveToArchive(
@@ -75,12 +76,18 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.print_disabled_outlined, size: 64, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+                  Icon(Icons.print_disabled_outlined,
+                      size: 64,
+                      color: AppColors.textSecondary.withValues(alpha: 0.5)),
                   const SizedBox(height: 16),
                   const Text('لا توجد كروت جاهزة للطباعة حالياً',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.textPrimary)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: AppColors.textPrimary)),
                   const SizedBox(height: 8),
-                  const Text('قم بتوليد دفعة جديدة أولاً من شاشة "توليد الكروت"',
+                  const Text(
+                      'قم بتوليد دفعة جديدة أولاً من شاشة "توليد الكروت"',
                       style: TextStyle(color: AppColors.textSecondary)),
                   const SizedBox(height: 24),
                   ElevatedButton.icon(
@@ -95,17 +102,21 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
               children: [
                 // Layout selector bar
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   color: Colors.white,
                   child: Row(
                     children: [
-                      const Text('تنسيق الطباعة:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text('تنسيق الطباعة:',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(width: 12),
                       ChoiceChip(
                         label: const Text('ورق A4 (شبكة)'),
                         selected: _selectedLayout == PrintLayoutType.a4Grid,
                         onSelected: (val) {
-                          if (val) setState(() => _selectedLayout = PrintLayoutType.a4Grid);
+                          if (val)
+                            setState(
+                                () => _selectedLayout = PrintLayoutType.a4Grid);
                         },
                       ),
                       const SizedBox(width: 8),
@@ -113,7 +124,9 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
                         label: const Text('حراري 58mm'),
                         selected: _selectedLayout == PrintLayoutType.thermal58,
                         onSelected: (val) {
-                          if (val) setState(() => _selectedLayout = PrintLayoutType.thermal58);
+                          if (val)
+                            setState(() =>
+                                _selectedLayout = PrintLayoutType.thermal58);
                         },
                       ),
                       const SizedBox(width: 8),
@@ -121,7 +134,9 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
                         label: const Text('حراري 80mm'),
                         selected: _selectedLayout == PrintLayoutType.thermal80,
                         onSelected: (val) {
-                          if (val) setState(() => _selectedLayout = PrintLayoutType.thermal80);
+                          if (val)
+                            setState(() =>
+                                _selectedLayout = PrintLayoutType.thermal80);
                         },
                       ),
                     ],
@@ -136,7 +151,8 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
                     canDebug: false,
                     allowPrinting: true,
                     allowSharing: true,
-                    pdfFileName: 'Vouchers_MikroManager_${DateTime.now().millisecondsSinceEpoch}.pdf',
+                    pdfFileName:
+                        'Vouchers_MikroManager_${DateTime.now().millisecondsSinceEpoch}.pdf',
                   ),
                 ),
               ],
@@ -176,11 +192,13 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<int>(
-                decoration: const InputDecoration(labelText: 'عدد الكروت في كل صف'),
+                decoration:
+                    const InputDecoration(labelText: 'عدد الكروت في كل صف'),
                 value: _cardsPerRow,
                 items: const [
                   DropdownMenuItem(value: 2, child: Text('كرتان في الصف (2)')),
-                  DropdownMenuItem(value: 3, child: Text('3 كروت في الصف (مستحسن)')),
+                  DropdownMenuItem(
+                      value: 3, child: Text('3 كروت في الصف (مستحسن)')),
                   DropdownMenuItem(value: 4, child: Text('4 كروت في الصف (4)')),
                 ],
                 onChanged: (val) {
@@ -192,11 +210,13 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<int>(
-                decoration: const InputDecoration(labelText: 'إجمالي الكروت في الصفحة'),
+                decoration:
+                    const InputDecoration(labelText: 'إجمالي الكروت في الصفحة'),
                 value: _cardsPerPage,
                 items: const [
                   DropdownMenuItem(value: 8, child: Text('8 كروت بالصفحة')),
-                  DropdownMenuItem(value: 12, child: Text('12 كرت بالصفحة (مستحسن)')),
+                  DropdownMenuItem(
+                      value: 12, child: Text('12 كرت بالصفحة (مستحسن)')),
                   DropdownMenuItem(value: 15, child: Text('15 كرت بالصفحة')),
                   DropdownMenuItem(value: 18, child: Text('18 كرت بالصفحة')),
                 ],

@@ -5,7 +5,8 @@ class AppValidators {
     final trimmed = host.trim();
 
     // Check if valid IPv4
-    final ipMatch = RegExp(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$').firstMatch(trimmed);
+    final ipMatch = RegExp(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$')
+        .firstMatch(trimmed);
     if (ipMatch != null) {
       for (int i = 1; i <= 4; i++) {
         final octet = int.tryParse(ipMatch.group(i)!);
@@ -18,7 +19,9 @@ class AppValidators {
     if (trimmed.toLowerCase() == 'localhost') return true;
 
     // Check if valid hostname / domain
-    final hostMatch = RegExp(r'^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$').hasMatch(trimmed);
+    final hostMatch = RegExp(
+            r'^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$')
+        .hasMatch(trimmed);
     if (hostMatch) return true;
 
     // Simple single-label hostname (e.g. router, mikrotik)
@@ -34,7 +37,8 @@ class AppValidators {
       return true;
     }
 
-    final ipMatch = RegExp(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$').firstMatch(trimmed);
+    final ipMatch = RegExp(r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$')
+        .firstMatch(trimmed);
     if (ipMatch != null) {
       final o1 = int.tryParse(ipMatch.group(1)!) ?? 0;
       final o2 = int.tryParse(ipMatch.group(2)!) ?? 0;

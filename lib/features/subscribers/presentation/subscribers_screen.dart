@@ -12,7 +12,8 @@ class SubscribersScreen extends ConsumerStatefulWidget {
   ConsumerState<SubscribersScreen> createState() => _SubscribersScreenState();
 }
 
-class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with SingleTickerProviderStateMixin {
+class _SubscribersScreenState extends ConsumerState<SubscribersScreen>
+    with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   final _searchController = TextEditingController();
 
@@ -94,7 +95,8 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
                             },
                           )
                         : null,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -104,9 +106,11 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _buildFilterChip('الكل (${state.subscribers.length})', 'all', state, notifier),
+                      _buildFilterChip('الكل (${state.subscribers.length})',
+                          'all', state, notifier),
                       const SizedBox(width: 6),
-                      _buildFilterChip('المتصلون حالياً', 'active', state, notifier),
+                      _buildFilterChip(
+                          'المتصلون حالياً', 'active', state, notifier),
                       const SizedBox(width: 6),
                       _buildFilterChip('المعطلون', 'disabled', state, notifier),
                       const SizedBox(width: 6),
@@ -136,11 +140,13 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
                             onRefresh: () => notifier.loadSubscribers(),
                             child: ListView.builder(
                               physics: const AlwaysScrollableScrollPhysics(),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
                               itemCount: items.length,
                               itemBuilder: (context, index) {
                                 final sub = items[index];
-                                return _buildSubscriberCard(context, sub, notifier);
+                                return _buildSubscriberCard(
+                                    context, sub, notifier);
                               },
                             ),
                           ),
@@ -189,14 +195,20 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
             CircleAvatar(
               backgroundColor: sub.isActive
                   ? AppColors.success.withValues(alpha: 0.15)
-                  : (sub.isDisabled ? AppColors.danger.withValues(alpha: 0.15) : AppColors.surface),
+                  : (sub.isDisabled
+                      ? AppColors.danger.withValues(alpha: 0.15)
+                      : AppColors.surface),
               child: Icon(
                 sub.type == SubscriberType.pppoe
                     ? Icons.cable
-                    : (sub.type == SubscriberType.userMan ? Icons.person : Icons.wifi),
+                    : (sub.type == SubscriberType.userMan
+                        ? Icons.person
+                        : Icons.wifi),
                 color: sub.isActive
                     ? AppColors.success
-                    : (sub.isDisabled ? AppColors.danger : AppColors.navyPrimary),
+                    : (sub.isDisabled
+                        ? AppColors.danger
+                        : AppColors.navyPrimary),
               ),
             ),
             if (sub.isActive)
@@ -220,7 +232,8 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
             Expanded(
               child: Text(
                 sub.username,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -232,7 +245,10 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
               ),
               child: Text(
                 sub.profile,
-                style: const TextStyle(fontSize: 11, color: AppColors.cyanAccent, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.cyanAccent,
+                    fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -244,13 +260,25 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
             Row(
               children: [
                 if (sub.isActive) ...[
-                  Text('IP: ${sub.ipAddress ?? '-'}', style: const TextStyle(fontSize: 11, color: AppColors.success, fontWeight: FontWeight.w600)),
+                  Text('IP: ${sub.ipAddress ?? '-'}',
+                      style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.success,
+                          fontWeight: FontWeight.w600)),
                   const SizedBox(width: 8),
-                  Text('المدة: ${sub.uptime ?? '-'}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                  Text('المدة: ${sub.uptime ?? '-'}',
+                      style: const TextStyle(
+                          fontSize: 11, color: AppColors.textSecondary)),
                 ] else if (sub.isDisabled) ...[
-                  const Text('الحالة: معطل (Disabled)', style: TextStyle(fontSize: 11, color: AppColors.danger, fontWeight: FontWeight.w600)),
+                  const Text('الحالة: معطل (Disabled)',
+                      style: TextStyle(
+                          fontSize: 11,
+                          color: AppColors.danger,
+                          fontWeight: FontWeight.w600)),
                 ] else ...[
-                  Text('غير متصل | MAC: ${sub.macAddress ?? 'غير مقيد'}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                  Text('غير متصل | MAC: ${sub.macAddress ?? 'غير مقيد'}',
+                      style: const TextStyle(
+                          fontSize: 11, color: AppColors.textSecondary)),
                 ],
               ],
             ),
@@ -260,7 +288,8 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
           icon: const Icon(Icons.more_vert, size: 20),
           onSelected: (value) async {
             if (value == 'diagnose') {
-              context.push('/card-inquiry?card=${Uri.encodeComponent(sub.username)}');
+              context.push(
+                  '/card-inquiry?card=${Uri.encodeComponent(sub.username)}');
             } else if (value == 'kick') {
               _confirmKick(context, sub, notifier);
             } else if (value == 'toggle') {
@@ -274,7 +303,8 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
               value: 'diagnose',
               child: Row(
                 children: [
-                  Icon(Icons.troubleshoot, size: 18, color: AppColors.cyanAccent),
+                  Icon(Icons.troubleshoot,
+                      size: 18, color: AppColors.cyanAccent),
                   SizedBox(width: 8),
                   Text('تشخيص الكرت'),
                 ],
@@ -285,7 +315,8 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
                 value: 'kick',
                 child: Row(
                   children: [
-                    Icon(Icons.power_settings_new, size: 18, color: AppColors.danger),
+                    Icon(Icons.power_settings_new,
+                        size: 18, color: AppColors.danger),
                     SizedBox(width: 8),
                     Text('طرد الجلسة (Kick)'),
                   ],
@@ -318,14 +349,17 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
     );
   }
 
-  void _confirmKick(BuildContext context, SubscriberModel sub, SubscribersNotifier notifier) {
+  void _confirmKick(
+      BuildContext context, SubscriberModel sub, SubscribersNotifier notifier) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('تأكيد قطع اتصال المشترك'),
-        content: Text('هل تريد قطع اتصال المشترك (${sub.username}) وإنهاء جلسته الحالية فوراً؟'),
+        content: Text(
+            'هل تريد قطع اتصال المشترك (${sub.username}) وإنهاء جلسته الحالية فوراً؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () async {
@@ -333,11 +367,13 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
               final ok = await notifier.kickSubscriber(sub);
               if (ok && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('تم إنهاء جلسة ${sub.username} بنجاح')),
+                  SnackBar(
+                      content: Text('تم إنهاء جلسة ${sub.username} بنجاح')),
                 );
               }
             },
-            child: const Text('قطع الاتصال (Kick)', style: TextStyle(color: Colors.white)),
+            child: const Text('قطع الاتصال (Kick)',
+                style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -353,7 +389,9 @@ class _SubscribersScreenState extends ConsumerState<SubscribersScreen> with Sing
           children: [
             const Icon(Icons.error_outline, size: 54, color: AppColors.danger),
             const SizedBox(height: 16),
-            Text(message, textAlign: TextAlign.center, style: const TextStyle(fontSize: 14)),
+            Text(message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 14)),
             const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () => notifier.loadSubscribers(),

@@ -28,8 +28,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'تحديث السجل',
-            onPressed: () =>
-                ref.read(backupNotifierProvider.notifier).loadHistory(connectionId),
+            onPressed: () => ref
+                .read(backupNotifierProvider.notifier)
+                .loadHistory(connectionId),
           ),
         ],
       ),
@@ -49,7 +50,10 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 ),
                 child: const Row(
                   children: [
-                    SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+                    SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2)),
                     SizedBox(width: 12),
                     Text('جاري معالجة النسخة الاحتياطية...'),
                   ],
@@ -67,11 +71,13 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.check_circle_outline, color: AppColors.success),
+                    const Icon(Icons.check_circle_outline,
+                        color: AppColors.success),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(state.lastSuccessMessage!,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 13)),
                     ),
                   ],
                 ),
@@ -91,7 +97,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                     const Icon(Icons.error_outline, color: AppColors.danger),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: Text(state.errorMessage!, style: const TextStyle(fontSize: 13)),
+                      child: Text(state.errorMessage!,
+                          style: const TextStyle(fontSize: 13)),
                     ),
                   ],
                 ),
@@ -110,13 +117,15 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                         Icon(Icons.phone_android, color: AppColors.cyanAccent),
                         SizedBox(width: 8),
                         Text('بيانات التطبيق (App Data)',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
                       ],
                     ),
                     const SizedBox(height: 8),
                     const Text(
                       'يشمل حفظ الكروت المنشأة، القوالب، تسعير الفئات، التحصيلات المالية، وأجهزة البث مع فحص سلامة SHA-256.',
-                      style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                      style: TextStyle(
+                          fontSize: 11, color: AppColors.textSecondary),
                     ),
                     const Divider(height: 20),
                     Row(
@@ -153,7 +162,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                           child: OutlinedButton.icon(
                             onPressed: state.isProcessing
                                 ? null
-                                : () => _showRestoreDialog(context, connectionId),
+                                : () =>
+                                    _showRestoreDialog(context, connectionId),
                             icon: const Icon(Icons.download),
                             label: const Text('استعادة البيانات'),
                           ),
@@ -179,13 +189,15 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                         Icon(Icons.router_outlined, color: AppColors.success),
                         SizedBox(width: 8),
                         Text('نسخ إعدادات الراوتر (RouterOS)',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
                       ],
                     ),
                     const SizedBox(height: 8),
                     const Text(
                       'طلب إنشاء ملف نسخة احتياطية وحفظه في ذاكرة الراوتر (Files) للرجوع إليه وقت الطوارئ.',
-                      style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                      style: TextStyle(
+                          fontSize: 11, color: AppColors.textSecondary),
                     ),
                     const Divider(height: 20),
                     Row(
@@ -200,7 +212,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                                 ? null
                                 : () => ref
                                     .read(backupNotifierProvider.notifier)
-                                    .backupRouter(session.adapter, connectionId, isScriptExport: false),
+                                    .backupRouter(session.adapter, connectionId,
+                                        isScriptExport: false),
                             icon: const Icon(Icons.save_as),
                             label: const Text('نسخة كاملة (.backup)'),
                           ),
@@ -216,7 +229,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                                 ? null
                                 : () => ref
                                     .read(backupNotifierProvider.notifier)
-                                    .backupRouter(session.adapter, connectionId, isScriptExport: true),
+                                    .backupRouter(session.adapter, connectionId,
+                                        isScriptExport: true),
                             icon: const Icon(Icons.code),
                             label: const Text('تصدير سكربت (.rsc)'),
                           ),
@@ -283,13 +297,16 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                         child: Icon(icon, color: iconColor),
                       ),
                       title: Text(log.path.split(Platform.pathSeparator).last,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 13)),
                       subtitle: Text(
                         '$kindTitle  •  ${DateFormat('yyyy/MM/dd HH:mm').format(log.createdAt)}',
-                        style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                        style: const TextStyle(
+                            fontSize: 11, color: AppColors.textSecondary),
                       ),
                       trailing: IconButton(
-                        icon: const Icon(Icons.delete_outline, color: AppColors.danger, size: 20),
+                        icon: const Icon(Icons.delete_outline,
+                            color: AppColors.danger, size: 20),
                         tooltip: 'حذف السجل',
                         onPressed: () => ref
                             .read(backupNotifierProvider.notifier)
@@ -332,7 +349,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             onPressed: () async {
               final content = textCtrl.text.trim();
@@ -348,7 +366,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                       content: Text(ok
                           ? '✅ تمت استعادة البيانات بنجاح!'
                           : '❌ فشل الاستعادة، الملف تالف أو غير صالح.'),
-                      backgroundColor: ok ? AppColors.success : AppColors.danger,
+                      backgroundColor:
+                          ok ? AppColors.success : AppColors.danger,
                     ),
                   );
                 }

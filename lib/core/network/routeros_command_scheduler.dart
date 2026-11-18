@@ -148,10 +148,12 @@ class _PollingStreamController<T> {
       _consecutiveErrors++;
       // Exponential backoff
       final multiplier = 1 << (_consecutiveErrors > 5 ? 5 : _consecutiveErrors);
-      var nextDelay = Duration(milliseconds: baseInterval.inMilliseconds * multiplier);
+      var nextDelay =
+          Duration(milliseconds: baseInterval.inMilliseconds * multiplier);
       if (nextDelay > maxBackoff) nextDelay = maxBackoff;
 
-      debugPrint('[Scheduler] Error on $key, backing off for ${nextDelay.inSeconds}s: $e');
+      debugPrint(
+          '[Scheduler] Error on $key, backing off for ${nextDelay.inSeconds}s: $e');
       _scheduleNext(nextDelay);
     } finally {
       _isFetching = false;

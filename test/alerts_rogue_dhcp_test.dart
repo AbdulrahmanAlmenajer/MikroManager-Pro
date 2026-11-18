@@ -25,7 +25,8 @@ void main() {
       await db.close();
     });
 
-    test('addTrustedDhcpServer and getTrustedDhcpServers work correctly', () async {
+    test('addTrustedDhcpServer and getTrustedDhcpServers work correctly',
+        () async {
       final id = await repo.addTrustedDhcpServer(
         connectionId: 1,
         serverIp: '192.168.88.1',
@@ -39,7 +40,9 @@ void main() {
       expect(list.first.interface, 'bridge1');
     });
 
-    test('scanForRogueDhcp classifies servers and logs alert events for rogue servers', () async {
+    test(
+        'scanForRogueDhcp classifies servers and logs alert events for rogue servers',
+        () async {
       // 1. Setup trusted server
       await repo.addTrustedDhcpServer(
         connectionId: 1,
@@ -48,7 +51,8 @@ void main() {
       );
 
       // 2. Mock router alert response containing one valid and one unknown rogue server
-      when(() => mockAdapter.executeSentence(['/ip/dhcp-server/alert/print'])).thenAnswer(
+      when(() => mockAdapter.executeSentence(['/ip/dhcp-server/alert/print']))
+          .thenAnswer(
         (_) async => RouterOsResponse(
           isSuccess: true,
           data: [
@@ -119,7 +123,8 @@ void main() {
       expect(repo.isQuietHoursActive(mutedQuiet, dayTime), isTrue);
     });
 
-    test('generateNetwatchScript produces valid RouterOS command with token', () {
+    test('generateNetwatchScript produces valid RouterOS command with token',
+        () {
       final script = repo.generateNetwatchScript(
         apName: 'East-Sector',
         apIp: '192.168.88.50',

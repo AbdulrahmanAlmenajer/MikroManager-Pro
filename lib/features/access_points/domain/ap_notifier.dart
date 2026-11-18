@@ -53,7 +53,8 @@ class ApNotifier extends StateNotifier<ApState> {
       final list = await _repo.getAllAps(connectionId);
       state = state.copyWith(devices: list, isLoading: false);
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: 'تعذر تحميل الأجهزة: $e');
+      state = state.copyWith(
+          isLoading: false, errorMessage: 'تعذر تحميل الأجهزة: $e');
     }
   }
 
@@ -63,7 +64,8 @@ class ApNotifier extends StateNotifier<ApState> {
       final neighbors = await _repo.discoverNeighbors(adapter);
       state = state.copyWith(discovered: neighbors, isDiscovering: false);
     } catch (e) {
-      state = state.copyWith(isDiscovering: false, errorMessage: 'فشل اكتشاف الجيران: $e');
+      state = state.copyWith(
+          isDiscovering: false, errorMessage: 'فشل اكتشاف الجيران: $e');
     }
   }
 

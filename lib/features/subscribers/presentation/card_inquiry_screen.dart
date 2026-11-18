@@ -20,7 +20,9 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
     if (widget.initialCardName != null && widget.initialCardName!.isNotEmpty) {
       _searchController.text = widget.initialCardName!;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(cardDiagnosisProvider.notifier).diagnose(widget.initialCardName!);
+        ref
+            .read(cardDiagnosisProvider.notifier)
+            .diagnose(widget.initialCardName!);
       });
     }
   }
@@ -54,7 +56,8 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
           children: [
             // Search Input Card
             Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
               elevation: 2,
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -63,7 +66,8 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                   children: [
                     const Text(
                       'أدخل اسم أو رقم الكرت للفحص الفوري:',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                     ),
                     const SizedBox(height: 12),
                     Row(
@@ -75,7 +79,8 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                             onSubmitted: (_) => _runDiagnosis(),
                             decoration: InputDecoration(
                               hintText: 'مثال: card_105 أو 77123456',
-                              prefixIcon: const Icon(Icons.confirmation_number_outlined),
+                              prefixIcon: const Icon(
+                                  Icons.confirmation_number_outlined),
                               suffixIcon: _searchController.text.isNotEmpty
                                   ? IconButton(
                                       icon: const Icon(Icons.clear, size: 18),
@@ -85,7 +90,8 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                                       },
                                     )
                                   : null,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 12),
                             ),
                             onChanged: (_) => setState(() {}),
                           ),
@@ -97,14 +103,16 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                               ? const SizedBox(
                                   width: 16,
                                   height: 16,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.white),
                                 )
                               : const Icon(Icons.search),
                           label: const Text('فحص'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.cyanAccent,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 14),
                           ),
                         ),
                       ],
@@ -122,7 +130,8 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                 decoration: BoxDecoration(
                   color: AppColors.danger.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
+                  border: Border.all(
+                      color: AppColors.danger.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
@@ -131,7 +140,10 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                     Expanded(
                       child: Text(
                         state.errorMessage!,
-                        style: const TextStyle(color: AppColors.danger, fontSize: 13, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            color: AppColors.danger,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -146,7 +158,8 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                   children: [
                     CircularProgressIndicator(),
                     SizedBox(height: 16),
-                    Text('جاري فحص الكرت في جداول الهوتسبوت ومطابقة الجلسات...'),
+                    Text(
+                        'جاري فحص الكرت في جداول الهوتسبوت ومطابقة الجلسات...'),
                   ],
                 ),
               ),
@@ -184,14 +197,20 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                 CircleAvatar(
                   backgroundColor: !result.exists
                       ? AppColors.danger.withValues(alpha: 0.15)
-                      : (result.isCurrentlyActive ? AppColors.success.withValues(alpha: 0.15) : AppColors.cyanAccent.withValues(alpha: 0.15)),
+                      : (result.isCurrentlyActive
+                          ? AppColors.success.withValues(alpha: 0.15)
+                          : AppColors.cyanAccent.withValues(alpha: 0.15)),
                   child: Icon(
                     !result.exists
                         ? Icons.cancel
-                        : (result.isCurrentlyActive ? Icons.wifi : Icons.check_circle_outline),
+                        : (result.isCurrentlyActive
+                            ? Icons.wifi
+                            : Icons.check_circle_outline),
                     color: !result.exists
                         ? AppColors.danger
-                        : (result.isCurrentlyActive ? AppColors.success : AppColors.cyanAccent),
+                        : (result.isCurrentlyActive
+                            ? AppColors.success
+                            : AppColors.cyanAccent),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -201,17 +220,24 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                     children: [
                       Text(
                         'نتيجة الفحص: ${result.cardName}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       Text(
                         !result.exists
                             ? 'الكرت غير مسجل في الراوتر'
-                            : (result.isCurrentlyActive ? 'متصل حالياً بالشبكة' : (sub?.isDisabled == true ? 'الكرت معطل' : 'الكرت مسجل ومفعل')),
+                            : (result.isCurrentlyActive
+                                ? 'متصل حالياً بالشبكة'
+                                : (sub?.isDisabled == true
+                                    ? 'الكرت معطل'
+                                    : 'الكرت مسجل ومفعل')),
                         style: TextStyle(
                           fontSize: 12,
                           color: !result.exists
                               ? AppColors.danger
-                              : (result.isCurrentlyActive ? AppColors.success : AppColors.textSecondary),
+                              : (result.isCurrentlyActive
+                                  ? AppColors.success
+                                  : AppColors.textSecondary),
                         ),
                       ),
                     ],
@@ -224,11 +250,15 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
             // Subscriber Details Table
             if (sub != null) ...[
               _buildDetailRow('البروفايل (الباقة)', sub.profile),
-              _buildDetailRow('الحالة', sub.isDisabled ? 'معطل (Disabled)' : 'مفعل (Enabled)'),
-              _buildDetailRow('عنوان MAC المقيد', sub.macAddress ?? 'غير مقيّد (متاح لأي جهاز)'),
+              _buildDetailRow('الحالة',
+                  sub.isDisabled ? 'معطل (Disabled)' : 'مفعل (Enabled)'),
+              _buildDetailRow('عنوان MAC المقيد',
+                  sub.macAddress ?? 'غير مقيّد (متاح لأي جهاز)'),
               _buildDetailRow('المدة المستهلكة (Uptime)', sub.uptime ?? '0s'),
-              if (sub.limitUptime != null) _buildDetailRow('أقصى مدة مسموحة', sub.limitUptime!),
-              _buildDetailRow('استهلاك البيانات', '${_formatBytes(sub.bytesIn + sub.bytesOut)} / ${_formatBytes(sub.limitBytesTotal)}'),
+              if (sub.limitUptime != null)
+                _buildDetailRow('أقصى مدة مسموحة', sub.limitUptime!),
+              _buildDetailRow('استهلاك البيانات',
+                  '${_formatBytes(sub.bytesIn + sub.bytesOut)} / ${_formatBytes(sub.limitBytesTotal)}'),
               if (result.isCurrentlyActive) ...[
                 _buildDetailRow('IP الجلسة النشطة', result.activeIp ?? '-'),
                 _buildDetailRow('MAC المتصل حالياً', result.activeMac ?? '-'),
@@ -257,7 +287,8 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: result.rankedFailureReasons.asMap().entries.map((entry) {
+                children:
+                    result.rankedFailureReasons.asMap().entries.map((entry) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 6),
                     child: Row(
@@ -265,7 +296,9 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                       children: [
                         Text(
                           '${entry.key + 1}. ',
-                          style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.cyanAccent),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.cyanAccent),
                         ),
                         Expanded(
                           child: Text(
@@ -289,24 +322,36 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                 children: [
                   if (sub.isDisabled)
                     ElevatedButton.icon(
-                      onPressed: state.isActionInProgress ? null : () => notifier.reEnableCard(),
+                      onPressed: state.isActionInProgress
+                          ? null
+                          : () => notifier.reEnableCard(),
                       icon: const Icon(Icons.check, size: 16),
                       label: const Text('إعادة تفعيل الكرت'),
-                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.success, foregroundColor: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.success,
+                          foregroundColor: Colors.white),
                     ),
                   if (sub.macAddress != null && sub.macAddress!.isNotEmpty)
                     ElevatedButton.icon(
-                      onPressed: state.isActionInProgress ? null : () => notifier.resetMac(),
+                      onPressed: state.isActionInProgress
+                          ? null
+                          : () => notifier.resetMac(),
                       icon: const Icon(Icons.link_off, size: 16),
                       label: const Text('فك قيد MAC'),
-                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.warning, foregroundColor: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.warning,
+                          foregroundColor: Colors.white),
                     ),
                   if (result.isCurrentlyActive)
                     ElevatedButton.icon(
-                      onPressed: state.isActionInProgress ? null : () => notifier.kickSession(),
+                      onPressed: state.isActionInProgress
+                          ? null
+                          : () => notifier.kickSession(),
                       icon: const Icon(Icons.power_settings_new, size: 16),
                       label: const Text('قطع الجلسة الحالية (Kick)'),
-                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger, foregroundColor: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.danger,
+                          foregroundColor: Colors.white),
                     ),
                 ],
               ),
@@ -323,8 +368,14 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-          Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          Text(label,
+              style: const TextStyle(
+                  fontSize: 12, color: AppColors.textSecondary)),
+          Text(value,
+              style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary)),
         ],
       ),
     );

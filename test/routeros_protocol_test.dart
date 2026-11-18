@@ -74,7 +74,9 @@ void main() {
       expect(dec5.headerSize, equals(5));
     });
 
-    test('Legacy MD5 challenge response generation matches RouterOS specification', () {
+    test(
+        'Legacy MD5 challenge response generation matches RouterOS specification',
+        () {
       const password = 'test_password';
       const challenge = '1234567890abcdef1234567890abcdef';
 

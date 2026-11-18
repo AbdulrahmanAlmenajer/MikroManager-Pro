@@ -29,7 +29,8 @@ class VoucherCardData {
         'networkName': networkName,
       };
 
-  factory VoucherCardData.fromJson(Map<String, dynamic> json) => VoucherCardData(
+  factory VoucherCardData.fromJson(Map<String, dynamic> json) =>
+      VoucherCardData(
         username: json['username'] as String? ?? '',
         password: json['password'] as String? ?? '',
         profile: json['profile'] as String? ?? '',
@@ -54,7 +55,9 @@ class PdfGeneratorHelper {
     for (int i = 0; i < vouchers.length; i += cardsPerPage) {
       final pageVouchers = vouchers.sublist(
         i,
-        (i + cardsPerPage < vouchers.length) ? i + cardsPerPage : vouchers.length,
+        (i + cardsPerPage < vouchers.length)
+            ? i + cardsPerPage
+            : vouchers.length,
       );
 
       pdf.addPage(
@@ -85,7 +88,8 @@ class PdfGeneratorHelper {
     bool showQrCode,
   ) {
     final netName = voucher.networkName ?? defaultNetworkName;
-    final qrData = 'http://login.hotspot/?user=${voucher.username}&pass=${voucher.password}';
+    final qrData =
+        'http://login.hotspot/?user=${voucher.username}&pass=${voucher.password}';
 
     return pw.Container(
       decoration: pw.BoxDecoration(
@@ -144,12 +148,16 @@ class PdfGeneratorHelper {
                   children: [
                     pw.Text(
                       'Price: ${voucher.price.toStringAsFixed(0)}',
-                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10, color: PdfColors.teal800),
+                      style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 10,
+                          color: PdfColors.teal800),
                     ),
                     if (voucher.validity != null)
                       pw.Text(
                         voucher.validity!,
-                        style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey700),
+                        style: const pw.TextStyle(
+                            fontSize: 8, color: PdfColors.grey700),
                       ),
                   ],
                 ),
@@ -176,10 +184,12 @@ class PdfGeneratorHelper {
                     letterSpacing: 1.2,
                   ),
                 ),
-                if (voucher.password != voucher.username && voucher.password.isNotEmpty)
+                if (voucher.password != voucher.username &&
+                    voucher.password.isNotEmpty)
                   pw.Text(
                     'Pass: ${voucher.password}',
-                    style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey800),
+                    style: const pw.TextStyle(
+                        fontSize: 9, color: PdfColors.grey800),
                   ),
               ],
             ),
@@ -203,29 +213,45 @@ class PdfGeneratorHelper {
         pageFormat: PdfPageFormat(width, 100 * PdfPageFormat.mm),
         margin: const pw.EdgeInsets.all(6),
         build: (pw.Context context) {
-          final qrData = 'http://login.hotspot/?user=${voucher.username}&pass=${voucher.password}';
+          final qrData =
+              'http://login.hotspot/?user=${voucher.username}&pass=${voucher.password}';
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.center,
             children: [
-              pw.Text(networkName, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12)),
+              pw.Text(networkName,
+                  style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold, fontSize: 12)),
               pw.Divider(thickness: 0.5),
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text('Profile: ${voucher.profile}', style: const pw.TextStyle(fontSize: 9)),
+                  pw.Text('Profile: ${voucher.profile}',
+                      style: const pw.TextStyle(fontSize: 9)),
                   pw.Text('Price: ${voucher.price.toStringAsFixed(0)}',
-                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9)),
+                      style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold, fontSize: 9)),
                 ],
               ),
               pw.SizedBox(height: 6),
-              pw.BarcodeWidget(barcode: pw.Barcode.qrCode(), data: qrData, width: 44, height: 44),
+              pw.BarcodeWidget(
+                  barcode: pw.Barcode.qrCode(),
+                  data: qrData,
+                  width: 44,
+                  height: 44),
               pw.SizedBox(height: 6),
-              pw.Text('Code / Voucher:', style: const pw.TextStyle(fontSize: 8)),
-              pw.Text(voucher.username, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12)),
-              if (voucher.password != voucher.username && voucher.password.isNotEmpty)
-                pw.Text('Pass: ${voucher.password}', style: const pw.TextStyle(fontSize: 9)),
+              pw.Text('Code / Voucher:',
+                  style: const pw.TextStyle(fontSize: 8)),
+              pw.Text(voucher.username,
+                  style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold, fontSize: 12)),
+              if (voucher.password != voucher.username &&
+                  voucher.password.isNotEmpty)
+                pw.Text('Pass: ${voucher.password}',
+                    style: const pw.TextStyle(fontSize: 9)),
               pw.Divider(thickness: 0.5),
-              pw.Text('Thank you!', style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey700)),
+              pw.Text('Thank you!',
+                  style: const pw.TextStyle(
+                      fontSize: 8, color: PdfColors.grey700)),
             ],
           );
         },

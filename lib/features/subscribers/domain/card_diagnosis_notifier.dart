@@ -39,7 +39,8 @@ class CardDiagnosisNotifier extends StateNotifier<CardDiagnosisState> {
   final Ref _ref;
   final SubscribersRepository _repo;
 
-  CardDiagnosisNotifier(this._ref, this._repo) : super(const CardDiagnosisState());
+  CardDiagnosisNotifier(this._ref, this._repo)
+      : super(const CardDiagnosisState());
 
   Future<void> diagnose(String cardName) async {
     if (cardName.trim().isEmpty) return;
@@ -54,7 +55,8 @@ class CardDiagnosisNotifier extends StateNotifier<CardDiagnosisState> {
     try {
       final session = _ref.read(sessionControllerProvider).session;
       if (session == null) {
-        state = state.copyWith(isAnalyzing: false, errorMessage: 'لا توجد جلسة راوتر نشطة');
+        state = state.copyWith(
+            isAnalyzing: false, errorMessage: 'لا توجد جلسة راوتر نشطة');
         return;
       }
 
@@ -75,7 +77,8 @@ class CardDiagnosisNotifier extends StateNotifier<CardDiagnosisState> {
 
     state = state.copyWith(isActionInProgress: true);
     try {
-      final success = await _repo.toggleSubscriberStatus(session.adapter, sub, true);
+      final success =
+          await _repo.toggleSubscriberStatus(session.adapter, sub, true);
       if (success) {
         await diagnose(state.cardName);
       }
@@ -91,7 +94,8 @@ class CardDiagnosisNotifier extends StateNotifier<CardDiagnosisState> {
 
     state = state.copyWith(isActionInProgress: true);
     try {
-      final success = await _repo.resetMacBinding(session.adapter, state.cardName);
+      final success =
+          await _repo.resetMacBinding(session.adapter, state.cardName);
       if (success) {
         await diagnose(state.cardName);
       }
@@ -107,7 +111,8 @@ class CardDiagnosisNotifier extends StateNotifier<CardDiagnosisState> {
 
     state = state.copyWith(isActionInProgress: true);
     try {
-      final success = await _repo.kickHotspotActive(session.adapter, state.cardName);
+      final success =
+          await _repo.kickHotspotActive(session.adapter, state.cardName);
       if (success) {
         await diagnose(state.cardName);
       }
@@ -118,8 +123,8 @@ class CardDiagnosisNotifier extends StateNotifier<CardDiagnosisState> {
   }
 }
 
-final cardDiagnosisProvider =
-    StateNotifierProvider.autoDispose<CardDiagnosisNotifier, CardDiagnosisState>((ref) {
+final cardDiagnosisProvider = StateNotifierProvider.autoDispose<
+    CardDiagnosisNotifier, CardDiagnosisState>((ref) {
   final repo = ref.watch(subscribersRepositoryProvider);
   return CardDiagnosisNotifier(ref, repo);
 });

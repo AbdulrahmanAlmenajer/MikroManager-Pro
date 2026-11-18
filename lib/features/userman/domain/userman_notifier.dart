@@ -53,7 +53,8 @@ class UsermanNotifier extends StateNotifier<UsermanState> {
     try {
       final adapter = await _ref.read(activeAdapterProvider.future);
       if (adapter == null) {
-        state = state.copyWith(isLoading: false, errorMessage: 'لا يوجد راوتر محدد حالياً');
+        state = state.copyWith(
+            isLoading: false, errorMessage: 'لا يوجد راوتر محدد حالياً');
         return;
       }
 
@@ -104,7 +105,8 @@ class UsermanNotifier extends StateNotifier<UsermanState> {
       final adapter = await _ref.read(activeAdapterProvider.future);
       if (adapter == null) return false;
 
-      final success = await _repo.removeUser(adapter: adapter, id: id, username: username);
+      final success =
+          await _repo.removeUser(adapter: adapter, id: id, username: username);
       if (success) {
         await refreshAll();
       }
@@ -119,7 +121,8 @@ class UsermanNotifier extends StateNotifier<UsermanState> {
       final adapter = await _ref.read(activeAdapterProvider.future);
       if (adapter == null) return false;
 
-      final success = await _repo.kickSession(adapter: adapter, id: id, username: username);
+      final success =
+          await _repo.kickSession(adapter: adapter, id: id, username: username);
       if (success) {
         await refreshAll();
       }
@@ -130,7 +133,8 @@ class UsermanNotifier extends StateNotifier<UsermanState> {
   }
 }
 
-final usermanControllerProvider = StateNotifierProvider<UsermanNotifier, UsermanState>((ref) {
+final usermanControllerProvider =
+    StateNotifierProvider<UsermanNotifier, UsermanState>((ref) {
   final repo = ref.watch(usermanRepositoryProvider);
   return UsermanNotifier(ref, repo);
 });

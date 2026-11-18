@@ -55,7 +55,8 @@ class BackupNotifier extends StateNotifier<BackupState> {
   }
 
   Future<BackupResult> exportAppData(int connectionId) async {
-    state = state.copyWith(isProcessing: true, errorMessage: null, lastSuccessMessage: null);
+    state = state.copyWith(
+        isProcessing: true, errorMessage: null, lastSuccessMessage: null);
     final result = await _repo.exportAppDataBackup(connectionId);
     if (result.isSuccess) {
       state = state.copyWith(
@@ -86,7 +87,8 @@ class BackupNotifier extends StateNotifier<BackupState> {
     } else {
       state = state.copyWith(
         isProcessing: false,
-        errorMessage: 'فشلت الاستعادة: تأكد من صحة وسلامة ملف النسخة الاحتياطية.',
+        errorMessage:
+            'فشلت الاستعادة: تأكد من صحة وسلامة ملف النسخة الاحتياطية.',
       );
       return false;
     }
@@ -97,7 +99,8 @@ class BackupNotifier extends StateNotifier<BackupState> {
     int connectionId, {
     bool isScriptExport = false,
   }) async {
-    state = state.copyWith(isProcessing: true, errorMessage: null, lastSuccessMessage: null);
+    state = state.copyWith(
+        isProcessing: true, errorMessage: null, lastSuccessMessage: null);
     final result = await _repo.createRouterBackup(
       adapter: adapter,
       connectionId: connectionId,

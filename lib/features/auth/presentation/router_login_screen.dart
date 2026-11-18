@@ -73,7 +73,8 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
       _selectedSavedRouterId = null;
       _nameController.text = 'راوتر جديد';
       _ipController.text = '192.168.88.1';
-      _portController.text = _useRest ? (_useSsl ? '443' : '80') : (_useSsl ? '8729' : '8728');
+      _portController.text =
+          _useRest ? (_useSsl ? '443' : '80') : (_useSsl ? '8729' : '8728');
       _userController.text = 'admin';
       _passController.clear();
       _rememberMe = true;
@@ -135,13 +136,15 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: AppColors.danger.withValues(alpha: 0.1),
-                          border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
+                          border: Border.all(
+                              color: AppColors.danger.withValues(alpha: 0.3)),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.error_outline, color: AppColors.danger, size: 22),
+                            const Icon(Icons.error_outline,
+                                color: AppColors.danger, size: 22),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
@@ -250,7 +253,8 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
           children: [
             Row(
               children: [
-                const Icon(Icons.bookmarks_outlined, size: 18, color: AppColors.cyanAccent),
+                const Icon(Icons.bookmarks_outlined,
+                    size: 18, color: AppColors.cyanAccent),
                 const SizedBox(width: 8),
                 const Text(
                   'أجهزة الراوتر المحفوظة:',
@@ -260,9 +264,11 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                 TextButton.icon(
                   onPressed: _clearFormForNewRouter,
                   icon: const Icon(Icons.add, size: 16),
-                  label: const Text('راوتر جديد', style: TextStyle(fontSize: 12)),
+                  label:
+                      const Text('راوتر جديد', style: TextStyle(fontSize: 12)),
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     visualDensity: VisualDensity.compact,
                   ),
                 ),
@@ -283,7 +289,8 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                   label: Text('${r.name} (${r.ipAddress})'),
                   labelStyle: TextStyle(
                     color: isSelected ? Colors.white : AppColors.textPrimary,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                     fontSize: 12,
                   ),
                   selected: isSelected,
@@ -314,7 +321,8 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
           children: [
             const Row(
               children: [
-                Icon(Icons.lock_open_rounded, color: AppColors.cyanAccent, size: 20),
+                Icon(Icons.lock_open_rounded,
+                    color: AppColors.cyanAccent, size: 20),
                 SizedBox(width: 8),
                 Text(
                   'بيانات الاتصال والاعتماد',
@@ -342,7 +350,8 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
               controller: _ipController,
               keyboardType: TextInputType.url,
               validator: (val) {
-                if (val == null || val.trim().isEmpty) return 'يرجى إدخال عنوان IP أو اسم المضيف';
+                if (val == null || val.trim().isEmpty)
+                  return 'يرجى إدخال عنوان IP أو اسم المضيف';
                 return null;
               },
               decoration: const InputDecoration(
@@ -380,7 +389,8 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                   child: TextFormField(
                     controller: _userController,
                     validator: (val) {
-                      if (val == null || val.trim().isEmpty) return 'يرجى إدخال اسم المستخدم';
+                      if (val == null || val.trim().isEmpty)
+                        return 'يرجى إدخال اسم المستخدم';
                       return null;
                     },
                     decoration: const InputDecoration(
@@ -400,9 +410,12 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
               spacing: 6,
               runSpacing: 4,
               children: [
-                const Text('منافذ سريعة:', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                const Text('منافذ سريعة:',
+                    style: TextStyle(
+                        fontSize: 12, color: AppColors.textSecondary)),
                 ActionChip(
-                  label: const Text('8728 (عادي)', style: TextStyle(fontSize: 11)),
+                  label:
+                      const Text('8728 (عادي)', style: TextStyle(fontSize: 11)),
                   onPressed: () {
                     setState(() {
                       _portController.text = '8728';
@@ -412,7 +425,8 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                   },
                 ),
                 ActionChip(
-                  label: const Text('8729 (SSL)', style: TextStyle(fontSize: 11)),
+                  label:
+                      const Text('8729 (SSL)', style: TextStyle(fontSize: 11)),
                   onPressed: () {
                     setState(() {
                       _portController.text = '8729';
@@ -426,20 +440,26 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
             if (!_useSsl && _portController.text.trim() == '8728') ...[
               const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+                  border: Border.all(
+                      color: AppColors.warning.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.warning_amber_rounded, size: 18, color: AppColors.warning),
+                    const Icon(Icons.warning_amber_rounded,
+                        size: 18, color: AppColors.warning),
                     const SizedBox(width: 8),
                     const Expanded(
                       child: Text(
                         'المنفذ 8728 غير مشفر. استخدم 8729 (API-SSL) لتأمين الاتصال.',
-                        style: TextStyle(fontSize: 11, color: AppColors.warning, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                            fontSize: 11,
+                            color: AppColors.warning,
+                            fontWeight: FontWeight.w600),
                       ),
                     ),
                     TextButton(
@@ -450,10 +470,13 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                         });
                       },
                       style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
                         visualDensity: VisualDensity.compact,
                       ),
-                      child: const Text('تفعيل 8729', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                      child: const Text('تفعيل 8729',
+                          style: TextStyle(
+                              fontSize: 11, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
@@ -470,8 +493,11 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                 hintText: 'اتركه فارغاً إن لم تكن هناك كلمة سر',
                 prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(
-                  icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  icon: Icon(_obscurePassword
+                      ? Icons.visibility_off
+                      : Icons.visibility),
+                  onPressed: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
                 ),
               ),
             ),
@@ -480,7 +506,10 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
             // Protocol Selection
             const Text(
               'بروتوكول الاتصال:',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary),
             ),
             const SizedBox(height: 6),
             Row(
@@ -491,7 +520,8 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                     label: const Text('Socket API (8728)'),
                     labelStyle: TextStyle(
                       fontSize: 11,
-                      fontWeight: !_useRest ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          !_useRest ? FontWeight.bold : FontWeight.normal,
                       color: !_useRest ? Colors.white : AppColors.textPrimary,
                     ),
                     selected: !_useRest,
@@ -513,7 +543,8 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                     label: const Text('REST API (v7)'),
                     labelStyle: TextStyle(
                       fontSize: 11,
-                      fontWeight: _useRest ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          _useRest ? FontWeight.bold : FontWeight.normal,
                       color: _useRest ? Colors.white : AppColors.textPrimary,
                     ),
                     selected: _useRest,
@@ -535,7 +566,8 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
             // Switches: SSL & Self-Signed
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('استخدام تشفير TLS/SSL (منفذ 8729)', style: TextStyle(fontSize: 13)),
+              title: const Text('استخدام تشفير TLS/SSL (منفذ 8729)',
+                  style: TextStyle(fontSize: 13)),
               value: _useSsl,
               onChanged: (val) {
                 setState(() {
@@ -552,19 +584,22 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
             if (_useSsl) ...[
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('قبول الشهادات ذاتية التوقيع (Self-Signed)', style: TextStyle(fontSize: 12)),
+                title: const Text('قبول الشهادات ذاتية التوقيع (Self-Signed)',
+                    style: TextStyle(fontSize: 12)),
                 subtitle: const Text(
                   'تنبيه: قبول الشهادات غير الموثوقة قد يعرض الاتصال لاعتراض البيانات على الشبكة المحلية.',
                   style: TextStyle(fontSize: 10, color: AppColors.warning),
                 ),
                 value: _acceptSelfSigned,
-                onChanged: (val) => setState(() => _acceptSelfSigned = val ?? true),
+                onChanged: (val) =>
+                    setState(() => _acceptSelfSigned = val ?? true),
               ),
             ],
 
             CheckboxListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('تذكر هذا الاتصال وحفظه للاتصال السريع', style: TextStyle(fontSize: 13)),
+              title: const Text('تذكر هذا الاتصال وحفظه للاتصال السريع',
+                  style: TextStyle(fontSize: 13)),
               value: _rememberMe,
               onChanged: (val) => setState(() => _rememberMe = val ?? true),
             ),
@@ -582,12 +617,15 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
       children: [
         // Main Login Button
         ElevatedButton(
-          onPressed: (sessionState.isConnecting || isLocked) ? null : _handleLogin,
+          onPressed:
+              (sessionState.isConnecting || isLocked) ? null : _handleLogin,
           style: ElevatedButton.styleFrom(
-            backgroundColor: isLocked ? AppColors.textSecondary : AppColors.cyanAccent,
+            backgroundColor:
+                isLocked ? AppColors.textSecondary : AppColors.cyanAccent,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             elevation: 4,
           ),
           child: sessionState.isConnecting
@@ -597,12 +635,14 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                     SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2.5, color: Colors.white),
                     ),
                     SizedBox(width: 12),
                     Text(
                       'جاري التحقق والاتصال بالراوتر...',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                   ],
                 )
@@ -611,13 +651,15 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(isLocked ? Icons.lock_clock : Icons.login_rounded, size: 22),
+                      Icon(isLocked ? Icons.lock_clock : Icons.login_rounded,
+                          size: 22),
                       const SizedBox(width: 8),
                       Text(
                         isLocked
                             ? 'محظور مؤقتاً (${sessionState.remainingLockSeconds} ثانية)'
                             : 'تسجيل الدخول والاتصال بالراوتر',
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -638,12 +680,14 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.network_check_rounded, size: 18),
-                label: const Text('فحص الاتصال فقط (Ping/Port)', style: TextStyle(fontSize: 13)),
+                label: const Text('فحص الاتصال فقط (Ping/Port)',
+                    style: TextStyle(fontSize: 13)),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.navyPrimary,
                   side: const BorderSide(color: Color(0xFFCBD5E1)),
                   padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
               ),
             ),
@@ -655,10 +699,14 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                   color: Colors.white,
                   size: 16,
                 ),
-                backgroundColor: _testResult! ? AppColors.success : AppColors.danger,
+                backgroundColor:
+                    _testResult! ? AppColors.success : AppColors.danger,
                 label: Text(
                   _testResult! ? 'متاح' : 'غير متاح',
-                  style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -739,8 +787,10 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(ctx).pop(true),
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
-              child: const Text('متابعة بدون تشفير', style: TextStyle(color: Colors.white)),
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
+              child: const Text('متابعة بدون تشفير',
+                  style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -786,14 +836,15 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
     final username = _userController.text.trim();
     final password = _passController.text;
 
-    final ok = await ref.read(routersControllerProvider.notifier).testConnection(
-          ipAddress: ip,
-          apiPort: port,
-          username: username,
-          password: password,
-          useSsl: _useSsl,
-          useRestApi: _useRest,
-        );
+    final ok =
+        await ref.read(routersControllerProvider.notifier).testConnection(
+              ipAddress: ip,
+              apiPort: port,
+              username: username,
+              password: password,
+              useSsl: _useSsl,
+              useRestApi: _useRest,
+            );
 
     if (mounted) {
       setState(() {
@@ -804,7 +855,9 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            ok ? '✅ منفذ الراوتر والاتصال متاح بنجاح!' : '❌ تعذر الوصول إلى المنفذ $port على $ip',
+            ok
+                ? '✅ منفذ الراوتر والاتصال متاح بنجاح!'
+                : '❌ تعذر الوصول إلى المنفذ $port على $ip',
           ),
           backgroundColor: ok ? AppColors.success : AppColors.danger,
           duration: const Duration(seconds: 2),

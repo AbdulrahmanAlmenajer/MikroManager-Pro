@@ -12,7 +12,8 @@ class VoucherBatchesTable extends Table {
   RealColumn get totalAmount => real().withDefault(const Constant(0.0))();
   TextColumn get status => text().withDefault(const Constant('generated'))();
   TextColumn get notes => text().nullable()();
-  DateTimeColumn get generatedAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get generatedAt =>
+      dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get printedAt => dateTime().nullable()();
 
   @override

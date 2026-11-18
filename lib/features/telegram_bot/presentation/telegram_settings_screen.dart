@@ -9,7 +9,8 @@ class TelegramSettingsScreen extends ConsumerStatefulWidget {
   const TelegramSettingsScreen({super.key});
 
   @override
-  ConsumerState<TelegramSettingsScreen> createState() => _TelegramSettingsScreenState();
+  ConsumerState<TelegramSettingsScreen> createState() =>
+      _TelegramSettingsScreenState();
 }
 
 class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
@@ -106,7 +107,8 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                       Icon(Icons.send_rounded, color: AppColors.cyanAccent),
                       SizedBox(width: 8),
                       Text('بيانات اعتماد البوت',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
                     ],
                   ),
                   const Divider(height: 20),
@@ -140,37 +142,46 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('أنواع التنبيهات الفورية',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const Divider(height: 20),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text('تنبيه سقوط أو عودة الراوتر'),
-                    subtitle: const Text('إشعار فوري عند انقطاع الاتصال أو عودته',
-                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                    subtitle: const Text(
+                        'إشعار فوري عند انقطاع الاتصال أو عودته',
+                        style: TextStyle(
+                            fontSize: 11, color: AppColors.textSecondary)),
                     value: _alertDown,
                     onChanged: (val) => setState(() => _alertDown = val),
                   ),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text('تنبيه ارتفاع استهلاك المعالج عن 90%'),
-                    subtitle: const Text('إشعار عند حدوث ضغط غير طبيعي على المعالج',
-                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                    subtitle: const Text(
+                        'إشعار عند حدوث ضغط غير طبيعي على المعالج',
+                        style: TextStyle(
+                            fontSize: 11, color: AppColors.textSecondary)),
                     value: _alertCpu,
                     onChanged: (val) => setState(() => _alertCpu = val),
                   ),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text('تنبيه اقتراب نفاد كروت الهوتسبوت'),
-                    subtitle: const Text('إشعار عندما يقل رصيد الكروت الجاهزة عن الحد الأدنى',
-                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                    subtitle: const Text(
+                        'إشعار عندما يقل رصيد الكروت الجاهزة عن الحد الأدنى',
+                        style: TextStyle(
+                            fontSize: 11, color: AppColors.textSecondary)),
                     value: _alertVouchers,
                     onChanged: (val) => setState(() => _alertVouchers = val),
                   ),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text('تنبيه خادم DHCP دخيل (Rogue DHCP)'),
-                    subtitle: const Text('إشعار أحمر طارئ فوري عند ظهور سيرفر غير مصرح به',
-                        style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                    subtitle: const Text(
+                        'إشعار أحمر طارئ فوري عند ظهور سيرفر غير مصرح به',
+                        style: TextStyle(
+                            fontSize: 11, color: AppColors.textSecondary)),
                     value: _alertRogueDhcp,
                     onChanged: (val) => setState(() => _alertRogueDhcp = val),
                   ),
@@ -181,7 +192,9 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
           const SizedBox(height: 20),
           ElevatedButton.icon(
             onPressed: () async {
-              await ref.read(telegramBotControllerProvider.notifier).saveSettings(
+              await ref
+                  .read(telegramBotControllerProvider.notifier)
+                  .saveSettings(
                     botToken: _tokenCtrl.text.trim(),
                     chatId: _chatIdCtrl.text.trim(),
                     alertRouterDown: _alertDown,
@@ -191,7 +204,8 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                   );
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('✅ تم حفظ إعدادات البوت والتنبيهات بنجاح')),
+                  const SnackBar(
+                      content: Text('✅ تم حفظ إعدادات البوت والتنبيهات بنجاح')),
                 );
               }
             },
@@ -203,22 +217,26 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
             onPressed: state.isSending
                 ? null
                 : () async {
-                    final ok =
-                        await ref.read(telegramBotControllerProvider.notifier).sendTestMessage();
+                    final ok = await ref
+                        .read(telegramBotControllerProvider.notifier)
+                        .sendTestMessage();
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(ok
                               ? '✅ تم إرسال الرسالة التجريبية بنجاح إلى تيليجرام'
                               : '❌ فشل الإرسال، تحقق من الـ Token والـ Chat ID'),
-                          backgroundColor: ok ? AppColors.success : AppColors.danger,
+                          backgroundColor:
+                              ok ? AppColors.success : AppColors.danger,
                         ),
                       );
                     }
                   },
             icon: state.isSending
                 ? const SizedBox(
-                    width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2))
                 : const Icon(Icons.send),
             label: const Text('إرسال تنبيه تجريبي للاختبار'),
           ),
@@ -231,7 +249,8 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
   // Tab 2: Rogue DHCP Detection
   // =========================================================================
 
-  Widget _buildRogueDhcpTab(TelegramBotState state, dynamic session, int connectionId) {
+  Widget _buildRogueDhcpTab(
+      TelegramBotState state, dynamic session, int connectionId) {
     final rogueServers = state.rogueAlerts.where((r) => !r.isTrusted).toList();
 
     return ListView(
@@ -249,7 +268,8 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
             ),
             child: Row(
               children: [
-                const Icon(Icons.warning_rounded, color: AppColors.danger, size: 32),
+                const Icon(Icons.warning_rounded,
+                    color: AppColors.danger, size: 32),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -257,7 +277,9 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                     children: [
                       const Text('تحذير: تم اكتشاف خادم DHCP دخيل!',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.danger)),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: AppColors.danger)),
                       const SizedBox(height: 4),
                       Text(
                         'تم رصد خادم على IP: ${rogueServers.first.serverIp} الواجهة: ${rogueServers.first.interface}. قد يتسبب في فصل كروت المشتركين.',
@@ -290,7 +312,9 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                     },
               icon: state.isScanningDhcp
                   ? const SizedBox(
-                      width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2))
                   : const Icon(Icons.radar, size: 18),
               label: const Text('فحص الآن'),
             ),
@@ -308,7 +332,8 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                   state.isScanningDhcp
                       ? 'جاري فحص قائمة الـ Alerts وسجلات الراوتر...'
                       : 'اضغط على "فحص الآن" لاستعلام قائمة DHCP Alerts بالراوتر.',
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                  style: const TextStyle(
+                      color: AppColors.textSecondary, fontSize: 12),
                 ),
               ),
             ),
@@ -322,13 +347,15 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundColor:
-                      (isRogue ? AppColors.danger : AppColors.success).withValues(alpha: 0.15),
+                      (isRogue ? AppColors.danger : AppColors.success)
+                          .withValues(alpha: 0.15),
                   child: Icon(
                     isRogue ? Icons.gpp_bad : Icons.gpp_good,
                     color: isRogue ? AppColors.danger : AppColors.success,
                   ),
                 ),
-                title: Text(alert.serverIp, style: const TextStyle(fontWeight: FontWeight.bold)),
+                title: Text(alert.serverIp,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text('الواجهة: ${alert.interface}'),
                 trailing: Chip(
                   label: Text(
@@ -340,7 +367,8 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                     ),
                   ),
                   backgroundColor:
-                      (isRogue ? AppColors.danger : AppColors.success).withValues(alpha: 0.1),
+                      (isRogue ? AppColors.danger : AppColors.success)
+                          .withValues(alpha: 0.1),
                 ),
               ),
             );
@@ -365,8 +393,10 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Center(
-              child: Text('لم يتم تسجيل خوادم موثوقة بعد. أضف سيرفر الراوتر الأساسي.',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              child: Text(
+                  'لم يتم تسجيل خوادم موثوقة بعد. أضف سيرفر الراوتر الأساسي.',
+                  style:
+                      TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             ),
           )
         else
@@ -375,11 +405,14 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
               margin: const EdgeInsets.only(bottom: 6),
               child: ListTile(
                 dense: true,
-                leading: const Icon(Icons.verified, color: AppColors.success, size: 20),
-                title: Text(srv.serverIp, style: const TextStyle(fontWeight: FontWeight.bold)),
+                leading: const Icon(Icons.verified,
+                    color: AppColors.success, size: 20),
+                title: Text(srv.serverIp,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
                 subtitle: Text('الواجهة: ${srv.interface}'),
                 trailing: IconButton(
-                  icon: const Icon(Icons.delete_outline, color: AppColors.danger, size: 18),
+                  icon: const Icon(Icons.delete_outline,
+                      color: AppColors.danger, size: 18),
                   onPressed: () => ref
                       .read(telegramBotControllerProvider.notifier)
                       .removeTrustedServer(srv.id, connectionId),
@@ -395,7 +428,8 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
   // Tab 3: Quiet Hours & Router Netwatch Script Generator
   // =========================================================================
 
-  Widget _buildQuietHoursAndNetwatchTab(TelegramBotState state, int connectionId) {
+  Widget _buildQuietHoursAndNetwatchTab(
+      TelegramBotState state, int connectionId) {
     final quiet = state.quietHours;
     final startHour = (quiet?.startMinute ?? 0) ~/ 60;
     final startMin = (quiet?.startMinute ?? 0) % 60;
@@ -420,13 +454,15 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                       Icon(Icons.bedtime_outlined, color: AppColors.cyanAccent),
                       SizedBox(width: 8),
                       Text('ساعات الهدوء (كتم الإشعارات غير الحرجة)',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
                     ],
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'يتم كتم التنبيهات العادية خلال هذه الساعات (مثلاً وقت النوم)، مع استمرار إرسال التنبيهات الطارئة (سقوط الراوتر أو DHCP دخيل).',
-                    style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                    style:
+                        TextStyle(fontSize: 11, color: AppColors.textSecondary),
                   ),
                   const Divider(height: 20),
                   Row(
@@ -439,11 +475,14 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                         onPressed: () async {
                           final t = await showTimePicker(
                             context: context,
-                            initialTime: TimeOfDay(hour: startHour, minute: startMin),
+                            initialTime:
+                                TimeOfDay(hour: startHour, minute: startMin),
                           );
                           if (t != null) {
                             final newStart = t.hour * 60 + t.minute;
-                            await ref.read(telegramBotControllerProvider.notifier).setQuietHours(
+                            await ref
+                                .read(telegramBotControllerProvider.notifier)
+                                .setQuietHours(
                                   connectionId: connectionId,
                                   startMinute: newStart,
                                   endMinute: quiet?.endMinute ?? 360,
@@ -458,11 +497,14 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                         onPressed: () async {
                           final t = await showTimePicker(
                             context: context,
-                            initialTime: TimeOfDay(hour: endHour, minute: endMin),
+                            initialTime:
+                                TimeOfDay(hour: endHour, minute: endMin),
                           );
                           if (t != null) {
                             final newEnd = t.hour * 60 + t.minute;
-                            await ref.read(telegramBotControllerProvider.notifier).setQuietHours(
+                            await ref
+                                .read(telegramBotControllerProvider.notifier)
+                                .setQuietHours(
                                   connectionId: connectionId,
                                   startMinute: quiet?.startMinute ?? 0,
                                   endMinute: newEnd,
@@ -478,15 +520,18 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                     children: [
                       OutlinedButton.icon(
                         onPressed: () {
-                          final muteUntil = DateTime.now().add(const Duration(hours: 4));
+                          final muteUntil =
+                              DateTime.now().add(const Duration(hours: 4));
                           ref
                               .read(telegramBotControllerProvider.notifier)
                               .muteQuietHoursUntil(connectionId, muteUntil);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('تم كتم التنبيهات لمدة 4 ساعات')),
+                            const SnackBar(
+                                content: Text('تم كتم التنبيهات لمدة 4 ساعات')),
                           );
                         },
-                        icon: const Icon(Icons.notifications_off_outlined, size: 16),
+                        icon: const Icon(Icons.notifications_off_outlined,
+                            size: 16),
                         label: const Text('كتم مؤقت 4 ساعات'),
                       ),
                     ],
@@ -510,13 +555,15 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                       Icon(Icons.terminal, color: AppColors.cyanAccent),
                       SizedBox(width: 8),
                       Text('مولد سكربت Netwatch للراوتر',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
                     ],
                   ),
                   const SizedBox(height: 8),
                   const Text(
                     'يتيح للراوتر إرسال تنبيهات Telegram مباشرة عبر /tool/netwatch حتى لو كان تطبيق الهاتف مغلقاً تماماً.',
-                    style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                    style:
+                        TextStyle(fontSize: 11, color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: 12),
 
@@ -530,12 +577,14 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                     ),
                     child: const Row(
                       children: [
-                        Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: 24),
+                        Icon(Icons.warning_amber_rounded,
+                            color: AppColors.warning, size: 24),
                         SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             '⚠️ تنبيه أمني: السكربت المولد سيحتوي على توكن البوت. لا تضعه في راوتر يدخل عليه أشخاص غير موثوقين.',
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 11, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -590,16 +639,21 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
                       child: SelectableText(
                         _generatedNetwatchScript,
                         style: const TextStyle(
-                            fontFamily: 'monospace', fontSize: 11, color: Colors.greenAccent),
+                            fontFamily: 'monospace',
+                            fontSize: 11,
+                            color: Colors.greenAccent),
                       ),
                     ),
                     const SizedBox(height: 8),
                     ElevatedButton.icon(
                       onPressed: () async {
-                        await Clipboard.setData(ClipboardData(text: _generatedNetwatchScript));
+                        await Clipboard.setData(
+                            ClipboardData(text: _generatedNetwatchScript));
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('تم نسخ سكربت Netwatch للحافظة!')),
+                            const SnackBar(
+                                content:
+                                    Text('تم نسخ سكربت Netwatch للحافظة!')),
                           );
                         }
                       },
@@ -645,7 +699,8 @@ class _TelegramSettingsScreenState extends ConsumerState<TelegramSettingsScreen>
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             onPressed: () async {
               final ip = ipCtrl.text.trim();

@@ -12,7 +12,8 @@ class VoucherGeneratorScreen extends ConsumerStatefulWidget {
   const VoucherGeneratorScreen({super.key});
 
   @override
-  ConsumerState<VoucherGeneratorScreen> createState() => _VoucherGeneratorScreenState();
+  ConsumerState<VoucherGeneratorScreen> createState() =>
+      _VoucherGeneratorScreenState();
 }
 
 class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
@@ -57,7 +58,8 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
 
     // Update profile if available
     if (hotspotState.profiles.isNotEmpty && _selectedProfile == 'default') {
-      _selectedProfile = hotspotState.profiles.first['name']?.toString() ?? 'default';
+      _selectedProfile =
+          hotspotState.profiles.first['name']?.toString() ?? 'default';
     }
 
     return Scaffold(
@@ -70,8 +72,12 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
           tabs: const [
-            Tab(icon: Icon(Icons.generating_tokens_outlined), text: 'توليد دفعة جديدة'),
-            Tab(icon: Icon(Icons.history_outlined), text: 'سجل الدفعات المولدة'),
+            Tab(
+                icon: Icon(Icons.generating_tokens_outlined),
+                text: 'توليد دفعة جديدة'),
+            Tab(
+                icon: Icon(Icons.history_outlined),
+                text: 'سجل الدفعات المولدة'),
           ],
         ),
         actions: [
@@ -100,7 +106,8 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
     );
   }
 
-  Widget _buildGeneratorForm(VoucherGeneratorState voucherState, HotspotState hotspotState) {
+  Widget _buildGeneratorForm(
+      VoucherGeneratorState voucherState, HotspotState hotspotState) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Form(
@@ -125,16 +132,20 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                     Expanded(
                       child: Text(
                         voucherState.message!,
-                        style: const TextStyle(color: AppColors.success, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            color: AppColors.success,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.success,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                       ),
                       onPressed: () => context.push('/print-preview'),
-                      child: const Text('معاينة وطباعة', style: TextStyle(fontSize: 12)),
+                      child: const Text('معاينة وطباعة',
+                          style: TextStyle(fontSize: 12)),
                     ),
                   ],
                 ),
@@ -156,7 +167,9 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                     Expanded(
                       child: Text(
                         voucherState.errorMessage!,
-                        style: const TextStyle(color: AppColors.danger, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            color: AppColors.danger,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -171,7 +184,8 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('بيانات الشبكة والبروفايل',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 12),
                     TextField(
                       controller: _netNameCtrl,
@@ -189,18 +203,26 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                               labelText: 'البروفايل *',
                               prefixIcon: Icon(Icons.tune),
                             ),
-                            value: hotspotState.profiles.any((p) => p['name'] == _selectedProfile)
+                            value: hotspotState.profiles
+                                    .any((p) => p['name'] == _selectedProfile)
                                 ? _selectedProfile
                                 : null,
                             hint: const Text('اختر البروفايل'),
                             items: hotspotState.profiles.isEmpty
-                                ? [const DropdownMenuItem(value: 'default', child: Text('default'))]
+                                ? [
+                                    const DropdownMenuItem(
+                                        value: 'default',
+                                        child: Text('default'))
+                                  ]
                                 : hotspotState.profiles.map((p) {
-                                    final name = p['name']?.toString() ?? 'default';
-                                    return DropdownMenuItem(value: name, child: Text(name));
+                                    final name =
+                                        p['name']?.toString() ?? 'default';
+                                    return DropdownMenuItem(
+                                        value: name, child: Text(name));
                                   }).toList(),
                             onChanged: (val) {
-                              if (val != null) setState(() => _selectedProfile = val);
+                              if (val != null)
+                                setState(() => _selectedProfile = val);
                             },
                           ),
                         ),
@@ -213,7 +235,8 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                               labelText: 'سعر الكرت *',
                               prefixIcon: Icon(Icons.attach_money),
                             ),
-                            validator: (val) => val == null || val.isEmpty ? 'مطلوب' : null,
+                            validator: (val) =>
+                                val == null || val.isEmpty ? 'مطلوب' : null,
                           ),
                         ),
                       ],
@@ -232,7 +255,8 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('خصائص كود الكرت',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 12),
                     Row(
                       children: [
@@ -246,7 +270,8 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                             ),
                             validator: (val) {
                               final q = int.tryParse(val ?? '');
-                              if (q == null || q <= 0) return 'أدخل عدداً صحيحاً';
+                              if (q == null || q <= 0)
+                                return 'أدخل عدداً صحيحاً';
                               if (q > 500) return 'الحد الأقصى 500 كرت بالدفعة';
                               return null;
                             },
@@ -276,13 +301,18 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                             ),
                             value: _codeLength,
                             items: const [
-                              DropdownMenuItem(value: 4, child: Text('4 خانات')),
-                              DropdownMenuItem(value: 6, child: Text('6 خانات (مستحسن)')),
-                              DropdownMenuItem(value: 8, child: Text('8 خانات')),
-                              DropdownMenuItem(value: 10, child: Text('10 خانات')),
+                              DropdownMenuItem(
+                                  value: 4, child: Text('4 خانات')),
+                              DropdownMenuItem(
+                                  value: 6, child: Text('6 خانات (مستحسن)')),
+                              DropdownMenuItem(
+                                  value: 8, child: Text('8 خانات')),
+                              DropdownMenuItem(
+                                  value: 10, child: Text('10 خانات')),
                             ],
                             onChanged: (val) {
-                              if (val != null) setState(() => _codeLength = val);
+                              if (val != null)
+                                setState(() => _codeLength = val);
                             },
                           ),
                         ),
@@ -295,9 +325,15 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                             ),
                             value: _codeType,
                             items: const [
-                              DropdownMenuItem(value: VoucherCodeType.numeric, child: Text('أرقام فقط (0-9)')),
-                              DropdownMenuItem(value: VoucherCodeType.alphanumeric, child: Text('أرقام وحروف إنجليزية')),
-                              DropdownMenuItem(value: VoucherCodeType.alphaUpper, child: Text('حروف فقط (A-Z)')),
+                              DropdownMenuItem(
+                                  value: VoucherCodeType.numeric,
+                                  child: Text('أرقام فقط (0-9)')),
+                              DropdownMenuItem(
+                                  value: VoucherCodeType.alphanumeric,
+                                  child: Text('أرقام وحروف إنجليزية')),
+                              DropdownMenuItem(
+                                  value: VoucherCodeType.alphaUpper,
+                                  child: Text('حروف فقط (A-Z)')),
                             ],
                             onChanged: (val) {
                               if (val != null) setState(() => _codeType = val);
@@ -308,7 +344,8 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                     ),
                     const SizedBox(height: 12),
                     const Text('نمط بيانات الدخول (الحساب):',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 13)),
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,
@@ -319,34 +356,48 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                           selected: _credentialMode == CredentialMode.identical,
                           selectedColor: AppColors.cyanAccent,
                           labelStyle: TextStyle(
-                            color: _credentialMode == CredentialMode.identical ? Colors.white : AppColors.textPrimary,
+                            color: _credentialMode == CredentialMode.identical
+                                ? Colors.white
+                                : AppColors.textPrimary,
                             fontSize: 11,
                           ),
-                          onSelected: (_) => setState(() => _credentialMode = CredentialMode.identical),
+                          onSelected: (_) => setState(
+                              () => _credentialMode = CredentialMode.identical),
                         ),
                         ChoiceChip(
                           label: const Text('اسم مستخدم فقط'),
-                          selected: _credentialMode == CredentialMode.usernameOnly,
+                          selected:
+                              _credentialMode == CredentialMode.usernameOnly,
                           selectedColor: AppColors.cyanAccent,
                           labelStyle: TextStyle(
-                            color: _credentialMode == CredentialMode.usernameOnly ? Colors.white : AppColors.textPrimary,
+                            color:
+                                _credentialMode == CredentialMode.usernameOnly
+                                    ? Colors.white
+                                    : AppColors.textPrimary,
                             fontSize: 11,
                           ),
-                          onSelected: (_) => setState(() => _credentialMode = CredentialMode.usernameOnly),
+                          onSelected: (_) => setState(() =>
+                              _credentialMode = CredentialMode.usernameOnly),
                         ),
                         ChoiceChip(
                           label: const Text('اسم + كلمة سر منفصلة'),
-                          selected: _credentialMode == CredentialMode.usernameAndPassword,
+                          selected: _credentialMode ==
+                              CredentialMode.usernameAndPassword,
                           selectedColor: AppColors.cyanAccent,
                           labelStyle: TextStyle(
-                            color: _credentialMode == CredentialMode.usernameAndPassword ? Colors.white : AppColors.textPrimary,
+                            color: _credentialMode ==
+                                    CredentialMode.usernameAndPassword
+                                ? Colors.white
+                                : AppColors.textPrimary,
                             fontSize: 11,
                           ),
-                          onSelected: (_) => setState(() => _credentialMode = CredentialMode.usernameAndPassword),
+                          onSelected: (_) => setState(() => _credentialMode =
+                              CredentialMode.usernameAndPassword),
                         ),
                       ],
                     ),
-                    if (_credentialMode == CredentialMode.usernameAndPassword) ...[
+                    if (_credentialMode ==
+                        CredentialMode.usernameAndPassword) ...[
                       const SizedBox(height: 10),
                       DropdownButtonFormField<int>(
                         decoration: const InputDecoration(
@@ -355,12 +406,14 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                         ),
                         value: _passwordLength,
                         items: const [
-                          DropdownMenuItem(value: 4, child: Text('4 أرقام (سريع وسهل)')),
+                          DropdownMenuItem(
+                              value: 4, child: Text('4 أرقام (سريع وسهل)')),
                           DropdownMenuItem(value: 6, child: Text('6 أرقام')),
                           DropdownMenuItem(value: 8, child: Text('8 أرقام')),
                         ],
                         onChanged: (val) {
-                          if (val != null) setState(() => _passwordLength = val);
+                          if (val != null)
+                            setState(() => _passwordLength = val);
                         },
                       ),
                     ],
@@ -378,12 +431,15 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('وجهة الرفع والمزامنة',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 8),
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('رفع الكروت مباشرة إلى الراوتر عند التوليد'),
-                      subtitle: const Text('إضافة المستخدمين إلى سيرفر الميكروتك فوراً'),
+                      title: const Text(
+                          'رفع الكروت مباشرة إلى الراوتر عند التوليد'),
+                      subtitle: const Text(
+                          'إضافة المستخدمين إلى سيرفر الميكروتك فوراً'),
                       value: _uploadToRouter,
                       onChanged: (val) => setState(() => _uploadToRouter = val),
                     ),
@@ -394,19 +450,23 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                           Expanded(
                             child: RadioListTile<bool>(
                               contentPadding: EdgeInsets.zero,
-                              title: const Text('Hotspot', style: TextStyle(fontSize: 14)),
+                              title: const Text('Hotspot',
+                                  style: TextStyle(fontSize: 14)),
                               value: false,
                               groupValue: _isUserManager,
-                              onChanged: (val) => setState(() => _isUserManager = val ?? false),
+                              onChanged: (val) =>
+                                  setState(() => _isUserManager = val ?? false),
                             ),
                           ),
                           Expanded(
                             child: RadioListTile<bool>(
                               contentPadding: EdgeInsets.zero,
-                              title: const Text('User Manager', style: TextStyle(fontSize: 14)),
+                              title: const Text('User Manager',
+                                  style: TextStyle(fontSize: 14)),
                               value: true,
                               groupValue: _isUserManager,
-                              onChanged: (val) => setState(() => _isUserManager = val ?? true),
+                              onChanged: (val) =>
+                                  setState(() => _isUserManager = val ?? true),
                             ),
                           ),
                         ],
@@ -426,19 +486,24 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.cyanAccent,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 onPressed: voucherState.isGenerating ? null : _submitGenerate,
                 icon: voucherState.isGenerating
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        child: CircularProgressIndicator(
+                            color: Colors.white, strokeWidth: 2),
                       )
                     : const Icon(Icons.flash_on),
                 label: Text(
-                  voucherState.isGenerating ? 'جاري التوليد والرفع...' : 'توليد الدفعة الآن',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  voucherState.isGenerating
+                      ? 'جاري التوليد والرفع...'
+                      : 'توليد الدفعة الآن',
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -448,7 +513,8 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
     );
   }
 
-  Widget _buildBatchesHistory(AsyncValue<List<VoucherBatchesTableData>> batchesAsync) {
+  Widget _buildBatchesHistory(
+      AsyncValue<List<VoucherBatchesTableData>> batchesAsync) {
     return batchesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(child: Text('خطأ في تحميل الدفعات: $e')),
@@ -458,12 +524,18 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.history_toggle_off, size: 64, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+                Icon(Icons.history_toggle_off,
+                    size: 64,
+                    color: AppColors.textSecondary.withValues(alpha: 0.5)),
                 const SizedBox(height: 12),
                 const Text('لا توجد دفعات كروت سابقة',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary)),
                 const SizedBox(height: 8),
-                const Text('قم بتوليد دفعة جديدة وستظهر هنا تلقائياً للجرد وإعادة الطباعة',
+                const Text(
+                    'قم بتوليد دفعة جديدة وستظهر هنا تلقائياً للجرد وإعادة الطباعة',
                     style: TextStyle(color: AppColors.textSecondary)),
               ],
             ),
@@ -489,9 +561,12 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                     Row(
                       children: [
                         CircleAvatar(
-                          backgroundColor: AppColors.navyPrimary.withValues(alpha: 0.1),
+                          backgroundColor:
+                              AppColors.navyPrimary.withValues(alpha: 0.1),
                           child: Text('#${batch.id}',
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.navyPrimary)),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.navyPrimary)),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -500,9 +575,13 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                             children: [
                               Text(
                                 '${batch.quantity} كرت - بروفايل: ${batch.profileName}',
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
                               ),
-                              Text(dateStr, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                              Text(dateStr,
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.textSecondary)),
                             ],
                           ),
                         ),
@@ -523,22 +602,28 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                         Text(
                           'سعر الكرت: ${batch.unitPrice.toStringAsFixed(0)} | الطول: ${batch.codeLength}'
                           '${batch.prefix.isNotEmpty ? " | بادئة: ${batch.prefix}" : ""}',
-                          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                          style: const TextStyle(
+                              fontSize: 12, color: AppColors.textSecondary),
                         ),
                         Row(
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.print_outlined, color: AppColors.cyanAccent),
+                              icon: const Icon(Icons.print_outlined,
+                                  color: AppColors.cyanAccent),
                               tooltip: 'معاينة وطباعة هذه الدفعة',
                               onPressed: () {
-                                ref.read(vouchersControllerProvider.notifier).loadFromBatch(batch);
+                                ref
+                                    .read(vouchersControllerProvider.notifier)
+                                    .loadFromBatch(batch);
                                 context.push('/print-preview');
                               },
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                              icon: const Icon(Icons.delete_outline,
+                                  color: AppColors.danger),
                               tooltip: 'حذف من السجل',
-                              onPressed: () => _confirmDeleteBatch(context, batch.id),
+                              onPressed: () =>
+                                  _confirmDeleteBatch(context, batch.id),
                             ),
                           ],
                         ),
@@ -593,7 +678,8 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
             const SizedBox(height: 4),
             Text('• نمط الدخول: $modeText'),
             const SizedBox(height: 4),
-            Text('• الوجهة: ${_uploadToRouter ? (_isUserManager ? 'User Manager' : 'Hotspot') : 'محلياً فقط'}'),
+            Text(
+                '• الوجهة: ${_uploadToRouter ? (_isUserManager ? 'User Manager' : 'Hotspot') : 'محلياً فقط'}'),
             const Divider(height: 20),
             const Text(
               'هل ترغب في بدء التوليد والرفع إلى الراوتر الآن؟',
@@ -602,9 +688,13 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('إلغاء')),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.cyanAccent, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.cyanAccent,
+                foregroundColor: Colors.white),
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('تأكيد وبدء التوليد'),
           ),
@@ -615,7 +705,9 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
     if (confirm != true || !mounted) return;
 
     // 2. Execute generation with progress and cancel support
-    final future = ref.read(vouchersControllerProvider.notifier).generateAndSave(
+    final future = ref
+        .read(vouchersControllerProvider.notifier)
+        .generateAndSave(
           quantity: quantity,
           profile: _selectedProfile,
           price: price,
@@ -648,21 +740,29 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  LinearProgressIndicator(value: state.uploadProgress > 0 ? state.uploadProgress : null),
+                  LinearProgressIndicator(
+                      value: state.uploadProgress > 0
+                          ? state.uploadProgress
+                          : null),
                   const SizedBox(height: 16),
-                  Text('تم رفع ${state.uploadedCount} من أصل ${state.totalCount} كرت...'),
+                  Text(
+                      'تم رفع ${state.uploadedCount} من أصل ${state.totalCount} كرت...'),
                   if (state.isCancelled)
                     const Padding(
                       padding: EdgeInsets.only(top: 8),
-                      child: Text('جاري إيقاف العملية...', style: TextStyle(color: AppColors.warning)),
+                      child: Text('جاري إيقاف العملية...',
+                          style: TextStyle(color: AppColors.warning)),
                     ),
                 ],
               ),
               actions: [
                 if (!state.isCancelled)
                   TextButton(
-                    onPressed: () => ref.read(vouchersControllerProvider.notifier).cancelGeneration(),
-                    child: const Text('إلغاء العملية', style: TextStyle(color: AppColors.danger)),
+                    onPressed: () => ref
+                        .read(vouchersControllerProvider.notifier)
+                        .cancelGeneration(),
+                    child: const Text('إلغاء العملية',
+                        style: TextStyle(color: AppColors.danger)),
                   ),
               ],
             );
@@ -675,7 +775,8 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('🎉 تم توليد الدفعة بنجاح! يمكنك الآن معاينتها وطباعتها.'),
+          content:
+              Text('🎉 تم توليد الدفعة بنجاح! يمكنك الآن معاينتها وطباعتها.'),
           backgroundColor: AppColors.success,
         ),
       );
@@ -687,13 +788,17 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('تأكيد حذف الدفعة'),
-        content: Text('هل أنت متأكد من حذف الدفعة رقم #$batchId من السجل المحلي؟'),
+        content:
+            Text('هل أنت متأكد من حذف الدفعة رقم #$batchId من السجل المحلي؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () async {
-              await ref.read(vouchersControllerProvider.notifier).deleteBatch(batchId);
+              await ref
+                  .read(vouchersControllerProvider.notifier)
+                  .deleteBatch(batchId);
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text('حذف الدفعة'),

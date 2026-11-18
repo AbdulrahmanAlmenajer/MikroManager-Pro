@@ -107,7 +107,8 @@ class SubscribersRepository {
   SubscribersRepository(this._auditLogger);
 
   /// Fetch Hotspot users and match with active sessions
-  Future<List<SubscriberModel>> getHotspotSubscribers(RouterOsAdapter adapter) async {
+  Future<List<SubscriberModel>> getHotspotSubscribers(
+      RouterOsAdapter adapter) async {
     final usersRes = await adapter.getHotspotUsers();
     final activeRes = await adapter.getHotspotActive();
 
@@ -124,7 +125,8 @@ class SubscribersRepository {
       final active = activeMap[name];
       final bIn = int.tryParse(u['bytes-in']?.toString() ?? '0') ?? 0;
       final bOut = int.tryParse(u['bytes-out']?.toString() ?? '0') ?? 0;
-      final limitBytes = int.tryParse(u['limit-bytes-total']?.toString() ?? '0') ?? 0;
+      final limitBytes =
+          int.tryParse(u['limit-bytes-total']?.toString() ?? '0') ?? 0;
 
       return SubscriberModel(
         id: u['.id']?.toString() ?? '',
@@ -132,10 +134,12 @@ class SubscribersRepository {
         password: u['password']?.toString(),
         profile: u['profile']?.toString() ?? 'default',
         type: SubscriberType.hotspot,
-        isDisabled: u['disabled']?.toString() == 'true' || u['disabled']?.toString() == 'yes',
+        isDisabled: u['disabled']?.toString() == 'true' ||
+            u['disabled']?.toString() == 'yes',
         isActive: active != null,
         ipAddress: active?['address']?.toString() ?? u['address']?.toString(),
-        macAddress: active?['mac-address']?.toString() ?? u['mac-address']?.toString(),
+        macAddress:
+            active?['mac-address']?.toString() ?? u['mac-address']?.toString(),
         uptime: active?['uptime']?.toString() ?? u['uptime']?.toString(),
         bytesIn: bIn,
         bytesOut: bOut,
@@ -147,7 +151,8 @@ class SubscribersRepository {
   }
 
   /// Fetch User Manager users and active sessions
-  Future<List<SubscriberModel>> getUserManSubscribers(RouterOsAdapter adapter) async {
+  Future<List<SubscriberModel>> getUserManSubscribers(
+      RouterOsAdapter adapter) async {
     final usersRes = await adapter.getUserManagerUsers();
     final sessionsRes = await adapter.getUserManagerSessions();
 
@@ -167,11 +172,15 @@ class SubscribersRepository {
         id: u['.id']?.toString() ?? '',
         username: name,
         password: u['password']?.toString(),
-        profile: u['actual-profile']?.toString() ?? u['profile']?.toString() ?? 'default',
+        profile: u['actual-profile']?.toString() ??
+            u['profile']?.toString() ??
+            'default',
         type: SubscriberType.userMan,
-        isDisabled: u['disabled']?.toString() == 'true' || u['disabled']?.toString() == 'yes',
+        isDisabled: u['disabled']?.toString() == 'true' ||
+            u['disabled']?.toString() == 'yes',
         isActive: session != null,
-        ipAddress: session?['nas-ip-address']?.toString() ?? session?['host-ip']?.toString(),
+        ipAddress: session?['nas-ip-address']?.toString() ??
+            session?['host-ip']?.toString(),
         macAddress: session?['calling-station-id']?.toString(),
         uptime: session?['uptime']?.toString(),
         comment: u['comment']?.toString(),
@@ -180,7 +189,8 @@ class SubscribersRepository {
   }
 
   /// Fetch PPPoE secrets and active sessions
-  Future<List<SubscriberModel>> getPppoeSubscribers(RouterOsAdapter adapter) async {
+  Future<List<SubscriberModel>> getPppoeSubscribers(
+      RouterOsAdapter adapter) async {
     final secrets = await adapter.executeSentence(['/ppp/secret/print']);
     final active = await adapter.executeSentence(['/ppp/active/print']);
 
@@ -204,9 +214,11 @@ class SubscribersRepository {
         password: s['password']?.toString(),
         profile: s['profile']?.toString() ?? 'default',
         type: SubscriberType.pppoe,
-        isDisabled: s['disabled']?.toString() == 'true' || s['disabled']?.toString() == 'yes',
+        isDisabled: s['disabled']?.toString() == 'true' ||
+            s['disabled']?.toString() == 'yes',
         isActive: currentActive != null,
-        ipAddress: currentActive?['address']?.toString() ?? s['remote-address']?.toString(),
+        ipAddress: currentActive?['address']?.toString() ??
+            s['remote-address']?.toString(),
         macAddress: currentActive?['caller-id']?.toString(),
         uptime: currentActive?['uptime']?.toString(),
         comment: s['comment']?.toString(),
@@ -216,11 +228,13 @@ class SubscribersRepository {
 
   /// Kick PPPoE active session
   Future<bool> kickPppoeActive(RouterOsAdapter adapter, String username) async {
-    final active = await adapter.executeSentence(['/ppp/active/print', '?name=$username']);
+    final active =
+        await adapter.executeSentence(['/ppp/active/print', '?name=$username']);
     if (active.isSuccess && active.data.isNotEmpty) {
       final id = active.data.first['.id'];
       if (id != null) {
-        final res = await adapter.executeSentence(['/ppp/active/remove', '=.id=$id']);
+        final res =
+            await adapter.executeSentence(['/ppp/active/remove', '=.id=$id']);
         if (res.isSuccess) {
           await _auditLogger.log(
             action: 'kick',
@@ -236,8 +250,10 @@ class SubscribersRepository {
   }
 
   /// Kick Hotspot active user
-  Future<bool> kickHotspotActive(RouterOsAdapter adapter, String username) async {
-    final active = await adapter.executeSentence(['/ip/hotspot/active/print', '?user=$username']);
+  Future<bool> kickHotspotActive(
+      RouterOsAdapter adapter, String username) async {
+    final active = await adapter
+        .executeSentence(['/ip/hotspot/active/print', '?user=$username']);
     if (active.isSuccess && active.data.isNotEmpty) {
       final id = active.data.first['.id'];
       if (id != null) {
@@ -257,15 +273,19 @@ class SubscribersRepository {
   }
 
   /// Toggle subscriber disabled state
-  Future<bool> toggleSubscriberStatus(RouterOsAdapter adapter, SubscriberModel sub, bool enable) async {
+  Future<bool> toggleSubscriberStatus(
+      RouterOsAdapter adapter, SubscriberModel sub, bool enable) async {
     String cmd = '/ip/hotspot/user/set';
     if (sub.type == SubscriberType.userMan) {
-      cmd = adapter.isV7 ? '/user-manager/user/set' : '/tool/user-manager/user/set';
+      cmd = adapter.isV7
+          ? '/user-manager/user/set'
+          : '/tool/user-manager/user/set';
     } else if (sub.type == SubscriberType.pppoe) {
       cmd = '/ppp/secret/set';
     }
 
-    final res = await adapter.executeSentence([cmd, '=.id=${sub.id}', '=disabled=${enable ? 'no' : 'yes'}']);
+    final res = await adapter.executeSentence(
+        [cmd, '=.id=${sub.id}', '=disabled=${enable ? 'no' : 'yes'}']);
     if (res.isSuccess) {
       await _auditLogger.log(
         action: enable ? 'enable_user' : 'disable_user',
@@ -280,7 +300,8 @@ class SubscribersRepository {
 
   /// Reset MAC binding for a hotspot card
   Future<bool> resetMacBinding(RouterOsAdapter adapter, String username) async {
-    final userRes = await adapter.executeSentence(['/ip/hotspot/user/print', '?name=$username']);
+    final userRes = await adapter
+        .executeSentence(['/ip/hotspot/user/print', '?name=$username']);
     if (userRes.isSuccess && userRes.data.isNotEmpty) {
       final id = userRes.data.first['.id'];
       if (id != null) {
@@ -304,15 +325,19 @@ class SubscribersRepository {
   }
 
   /// Detailed diagnosis of card login failures
-  Future<CardDiagnosisResult> diagnoseCard(RouterOsAdapter adapter, String cardName) async {
+  Future<CardDiagnosisResult> diagnoseCard(
+      RouterOsAdapter adapter, String cardName) async {
     final trimmed = cardName.trim();
     final List<String> reasons = [];
 
     // 1. Search in Hotspot users
-    final res = await adapter.executeSentence(['/ip/hotspot/user/print', '?name=$trimmed']);
+    final res = await adapter
+        .executeSentence(['/ip/hotspot/user/print', '?name=$trimmed']);
     if (!res.isSuccess || res.data.isEmpty) {
       // Check User Manager
-      final umPath = adapter.isV7 ? '/user-manager/user/print' : '/tool/user-manager/user/print';
+      final umPath = adapter.isV7
+          ? '/user-manager/user/print'
+          : '/tool/user-manager/user/print';
       final umRes = await adapter.executeSentence([umPath, '?name=$trimmed']);
       if (!umRes.isSuccess || umRes.data.isEmpty) {
         return CardDiagnosisResult(
@@ -329,7 +354,8 @@ class SubscribersRepository {
     final isDisabled = data['disabled'] == 'true';
     final limitUptime = data['limit-uptime']?.toString();
     final uptime = data['uptime']?.toString();
-    final limitBytes = int.tryParse(data['limit-bytes-total']?.toString() ?? '0') ?? 0;
+    final limitBytes =
+        int.tryParse(data['limit-bytes-total']?.toString() ?? '0') ?? 0;
     final bIn = int.tryParse(data['bytes-in']?.toString() ?? '0') ?? 0;
     final bOut = int.tryParse(data['bytes-out']?.toString() ?? '0') ?? 0;
     final totalUsed = bIn + bOut;
@@ -337,36 +363,43 @@ class SubscribersRepository {
     final profile = data['profile']?.toString() ?? 'default';
 
     // 2. Check active session
-    final activeRes = await adapter.executeSentence(['/ip/hotspot/active/print', '?user=$trimmed']);
+    final activeRes = await adapter
+        .executeSentence(['/ip/hotspot/active/print', '?user=$trimmed']);
     final isActive = activeRes.isSuccess && activeRes.data.isNotEmpty;
     final activeIp = isActive ? activeRes.data.first['address'] : null;
     final activeMac = isActive ? activeRes.data.first['mac-address'] : null;
 
     // Check Ranked Reasons:
     if (isDisabled) {
-      reasons.add('الكرت معطل حالياً (Disabled). اضغط زر التفعيل لإعادة تشغيله.');
+      reasons
+          .add('الكرت معطل حالياً (Disabled). اضغط زر التفعيل لإعادة تشغيله.');
     }
 
     if (limitBytes > 0 && totalUsed >= limitBytes) {
-      reasons.add('استُهلك رصيد البيانات بالكامل (${_formatBytes(totalUsed)} من أصل ${_formatBytes(limitBytes)}).');
+      reasons.add(
+          'استُهلك رصيد البيانات بالكامل (${_formatBytes(totalUsed)} من أصل ${_formatBytes(limitBytes)}).');
     }
 
     if (limitUptime != null && uptime != null && limitUptime.isNotEmpty) {
       if (uptime == limitUptime) {
-        reasons.add('انتهت المدة الزمنية المحددة للكرت بالكامل (Uptime limit reached: $limitUptime).');
+        reasons.add(
+            'انتهت المدة الزمنية المحددة للكرت بالكامل (Uptime limit reached: $limitUptime).');
       }
     }
 
     if (boundMac.isNotEmpty && boundMac != '00:00:00:00:00:00') {
-      reasons.add('الكرت مقيّد بعنوان MAC محدد ($boundMac). إذا حاول جهاز آخر الدخول سيتم رفضه (اضغط فك الربط).');
+      reasons.add(
+          'الكرت مقيّد بعنوان MAC محدد ($boundMac). إذا حاول جهاز آخر الدخول سيتم رفضه (اضغط فك الربط).');
     }
 
     if (isActive) {
-      reasons.add('الكرت متصل حالياً بالفعل من جهاز آخر ($activeIp / $activeMac). إذا كانت الجلسات المشتركة 1 فلن يستطيع جهاز ثانٍ الدخول.');
+      reasons.add(
+          'الكرت متصل حالياً بالفعل من جهاز آخر ($activeIp / $activeMac). إذا كانت الجلسات المشتركة 1 فلن يستطيع جهاز ثانٍ الدخول.');
     }
 
     if (reasons.isEmpty) {
-      reasons.add('الكرت سليم ومفعل داخل الراوتر. تأكد من إدخال كلمة المرور بدقة أو اتصال الجهاز بالشبكة الصحيحة.');
+      reasons.add(
+          'الكرت سليم ومفعل داخل الراوتر. تأكد من إدخال كلمة المرور بدقة أو اتصال الجهاز بالشبكة الصحيحة.');
     }
 
     return CardDiagnosisResult(

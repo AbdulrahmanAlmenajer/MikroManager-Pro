@@ -9,7 +9,8 @@ class WireguardHelperScreen extends ConsumerStatefulWidget {
   const WireguardHelperScreen({super.key});
 
   @override
-  ConsumerState<WireguardHelperScreen> createState() => _WireguardHelperScreenState();
+  ConsumerState<WireguardHelperScreen> createState() =>
+      _WireguardHelperScreenState();
 }
 
 class _WireguardHelperScreenState extends ConsumerState<WireguardHelperScreen> {
@@ -67,7 +68,8 @@ class _WireguardHelperScreenState extends ConsumerState<WireguardHelperScreen> {
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.info_outline, color: AppColors.warning, size: 28),
+                    Icon(Icons.info_outline,
+                        color: AppColors.warning, size: 28),
                     SizedBox(width: 12),
                     Expanded(
                       child: Text(
@@ -92,7 +94,8 @@ class _WireguardHelperScreenState extends ConsumerState<WireguardHelperScreen> {
                         Icon(Icons.vpn_lock, color: AppColors.cyanAccent),
                         SizedBox(width: 8),
                         Text('بيانات شبكة WireGuard',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
                       ],
                     ),
                     const Divider(height: 20),
@@ -184,7 +187,8 @@ class _WireguardHelperScreenState extends ConsumerState<WireguardHelperScreen> {
                           Icon(Icons.terminal, color: AppColors.cyanAccent),
                           SizedBox(width: 8),
                           Text('أوامر RouterOS v7 (Terminal)',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -197,16 +201,21 @@ class _WireguardHelperScreenState extends ConsumerState<WireguardHelperScreen> {
                         child: SelectableText(
                           _generatedRouterScript,
                           style: const TextStyle(
-                              fontFamily: 'monospace', fontSize: 11, color: Colors.greenAccent),
+                              fontFamily: 'monospace',
+                              fontSize: 11,
+                              color: Colors.greenAccent),
                         ),
                       ),
                       const SizedBox(height: 10),
                       ElevatedButton.icon(
                         onPressed: () async {
-                          await Clipboard.setData(ClipboardData(text: _generatedRouterScript));
+                          await Clipboard.setData(
+                              ClipboardData(text: _generatedRouterScript));
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('تم نسخ سكربت الراوتر للحافظة!')),
+                              const SnackBar(
+                                  content:
+                                      Text('تم نسخ سكربت الراوتر للحافظة!')),
                             );
                           }
                         },
@@ -231,8 +240,10 @@ class _WireguardHelperScreenState extends ConsumerState<WireguardHelperScreen> {
                         children: [
                           Icon(Icons.qr_code_2, color: AppColors.success),
                           SizedBox(width: 8),
-                          Text('إعداد العميل (ملف أو مسح QR في تطبيق WireGuard)',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                          Text(
+                              'إعداد العميل (ملف أو مسح QR في تطبيق WireGuard)',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15)),
                         ],
                       ),
                       const SizedBox(height: 14),
@@ -260,7 +271,9 @@ class _WireguardHelperScreenState extends ConsumerState<WireguardHelperScreen> {
                         child: SelectableText(
                           _generatedClientConf,
                           style: const TextStyle(
-                              fontFamily: 'monospace', fontSize: 11, color: Colors.cyanAccent),
+                              fontFamily: 'monospace',
+                              fontSize: 11,
+                              color: Colors.cyanAccent),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -270,10 +283,13 @@ class _WireguardHelperScreenState extends ConsumerState<WireguardHelperScreen> {
                           foregroundColor: Colors.white,
                         ),
                         onPressed: () async {
-                          await Clipboard.setData(ClipboardData(text: _generatedClientConf));
+                          await Clipboard.setData(
+                              ClipboardData(text: _generatedClientConf));
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('تم نسخ إعدادات العميل للحافظة!')),
+                              const SnackBar(
+                                  content:
+                                      Text('تم نسخ إعدادات العميل للحافظة!')),
                             );
                           }
                         },
@@ -295,7 +311,9 @@ class _WireguardHelperScreenState extends ConsumerState<WireguardHelperScreen> {
     final port = _portCtrl.text.trim();
     final subnet = _subnetCtrl.text.trim();
     final clientIp = _clientIpCtrl.text.trim();
-    final endpoint = _endpointCtrl.text.trim().isEmpty ? 'YOUR_PUBLIC_IP' : _endpointCtrl.text.trim();
+    final endpoint = _endpointCtrl.text.trim().isEmpty
+        ? 'YOUR_PUBLIC_IP'
+        : _endpointCtrl.text.trim();
     final clientName = _clientNameCtrl.text.trim();
 
     final routerScript = '''

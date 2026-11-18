@@ -12,7 +12,8 @@ class TrafficDataPoint {
   final double rxMbps;
   final double txMbps;
 
-  TrafficDataPoint({required this.time, required this.rxMbps, required this.txMbps});
+  TrafficDataPoint(
+      {required this.time, required this.rxMbps, required this.txMbps});
 }
 
 class DashboardState {
@@ -121,8 +122,10 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
 
       // Extract system resources
       final cpu = res['cpu-load'] != null ? '${res['cpu-load']}%' : '0%';
-      final freeMemBytes = int.tryParse(res['free-memory']?.toString() ?? '0') ?? 0;
-      final totalMemBytes = int.tryParse(res['total-memory']?.toString() ?? '0') ?? 0;
+      final freeMemBytes =
+          int.tryParse(res['free-memory']?.toString() ?? '0') ?? 0;
+      final totalMemBytes =
+          int.tryParse(res['total-memory']?.toString() ?? '0') ?? 0;
       final freeMemMb = (freeMemBytes / (1024 * 1024)).toStringAsFixed(1);
       final totalMemMb = (totalMemBytes / (1024 * 1024)).toStringAsFixed(1);
       final uptime = res['uptime']?.toString() ?? '-';
@@ -135,7 +138,10 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
 
       if (interfaces.isEmpty) {
         final ifaceList = await _repo.getInterfaces(adapter);
-        interfaces = ifaceList.map((i) => i['name']?.toString() ?? '').where((n) => n.isNotEmpty).toList();
+        interfaces = ifaceList
+            .map((i) => i['name']?.toString() ?? '')
+            .where((n) => n.isNotEmpty)
+            .toList();
         if (interfaces.isNotEmpty) {
           currentInterface = interfaces.first;
         }
@@ -185,7 +191,8 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
   }
 
   void selectInterface(String interfaceName) {
-    state = state.copyWith(selectedInterface: interfaceName, trafficHistory: []);
+    state =
+        state.copyWith(selectedInterface: interfaceName, trafficHistory: []);
     refreshMetrics(silent: true);
   }
 
@@ -197,7 +204,8 @@ class DashboardNotifier extends StateNotifier<DashboardState> {
   }
 }
 
-final dashboardControllerProvider = StateNotifierProvider.autoDispose<DashboardNotifier, DashboardState>((ref) {
+final dashboardControllerProvider =
+    StateNotifierProvider.autoDispose<DashboardNotifier, DashboardState>((ref) {
   final repo = ref.watch(dashboardRepositoryProvider);
   return DashboardNotifier(ref, repo);
 });

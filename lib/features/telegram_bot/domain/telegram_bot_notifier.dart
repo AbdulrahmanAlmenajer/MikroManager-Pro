@@ -60,7 +60,8 @@ class TelegramBotState {
       chatId: chatId ?? this.chatId,
       alertRouterDown: alertRouterDown ?? this.alertRouterDown,
       alertHighCpu: alertHighCpu ?? this.alertHighCpu,
-      alertVoucherThreshold: alertVoucherThreshold ?? this.alertVoucherThreshold,
+      alertVoucherThreshold:
+          alertVoucherThreshold ?? this.alertVoucherThreshold,
       alertRogueDhcp: alertRogueDhcp ?? this.alertRogueDhcp,
       isSending: isSending ?? this.isSending,
       isScanningDhcp: isScanningDhcp ?? this.isScanningDhcp,
@@ -76,7 +77,8 @@ class TelegramBotNotifier extends StateNotifier<TelegramBotState> {
   final TelegramBotService _service;
   final AlertsRepository _alertsRepo;
 
-  TelegramBotNotifier(this._service, this._alertsRepo) : super(const TelegramBotState()) {
+  TelegramBotNotifier(this._service, this._alertsRepo)
+      : super(const TelegramBotState()) {
     _loadSettings();
   }
 
@@ -100,7 +102,8 @@ class TelegramBotNotifier extends StateNotifier<TelegramBotState> {
     required bool alertVoucherThreshold,
     required bool alertRogueDhcp,
   }) async {
-    await SecureStorageService.saveTelegramConfig(token: botToken, chatId: chatId);
+    await SecureStorageService.saveTelegramConfig(
+        token: botToken, chatId: chatId);
     state = state.copyWith(
       botToken: botToken,
       chatId: chatId,
@@ -165,7 +168,8 @@ class TelegramBotNotifier extends StateNotifier<TelegramBotState> {
     }
   }
 
-  Future<void> addTrustedServer(int connectionId, String ip, String iface) async {
+  Future<void> addTrustedServer(
+      int connectionId, String ip, String iface) async {
     await _alertsRepo.addTrustedDhcpServer(
       connectionId: connectionId,
       serverIp: ip,

@@ -11,20 +11,20 @@ enum PlatformType {
 }
 
 enum BluetoothThermalSupport {
-  full,       // Classic Bluetooth & BLE (Android)
-  bleOnly,    // BLE only, PDF/Network recommended (iOS)
-  unsupported,// Network printer / PDF recommended (Windows)
+  full, // Classic Bluetooth & BLE (Android)
+  bleOnly, // BLE only, PDF/Network recommended (iOS)
+  unsupported, // Network printer / PDF recommended (Windows)
 }
 
 enum WebviewSupport {
-  embedded,   // webview_flutter (Android, iOS)
-  external,   // url_launcher / external browser (Windows)
+  embedded, // webview_flutter (Android, iOS)
+  external, // url_launcher / external browser (Windows)
 }
 
 enum BackgroundAlertsSupport {
   workmanager, // Android background worker
-  limited,     // iOS (battery/system restricted)
-  inAppOnly,   // Windows (while app is running)
+  limited, // iOS (battery/system restricted)
+  inAppOnly, // Windows (while app is running)
 }
 
 class PlatformCapabilities {
@@ -72,7 +72,8 @@ class PlatformCapabilities {
     }
   }
 
-  static bool get supportsSftpBackup => true; // dartssh2 works across all platforms
+  static bool get supportsSftpBackup =>
+      true; // dartssh2 works across all platforms
 
   /// Inspects RouterOS session capabilities
   static RouterCapabilities inspectRouter(RouterSession? session) {

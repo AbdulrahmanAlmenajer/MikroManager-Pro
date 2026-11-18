@@ -23,16 +23,16 @@ class AuditLogger {
   }) async {
     try {
       await _db.into(_db.auditLogsTable).insert(
-        AuditLogsTableCompanion.insert(
-          action: action,
-          entityType: entityType,
-          entityId: Value(entityId),
-          description: description,
-          performedBy: Value(performedBy),
-          metadata: Value(metadata),
-          performedAt: Value(DateTime.now()),
-        ),
-      );
+            AuditLogsTableCompanion.insert(
+              action: action,
+              entityType: entityType,
+              entityId: Value(entityId),
+              description: description,
+              performedBy: Value(performedBy),
+              metadata: Value(metadata),
+              performedAt: Value(DateTime.now()),
+            ),
+          );
     } catch (_) {}
   }
 }

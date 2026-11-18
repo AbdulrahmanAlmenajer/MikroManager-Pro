@@ -105,9 +105,15 @@ class RouterOsSocketClient {
       close();
       final err = e.osError?.errorCode ?? 0;
       final msg = e.message.toLowerCase();
-      if (err == 111 || err == 10061 || msg.contains('refused') || msg.contains('closed')) {
+      if (err == 111 ||
+          err == 10061 ||
+          msg.contains('refused') ||
+          msg.contains('closed')) {
         throw RouterOsPortClosedException(e.toString());
-      } else if (err == 113 || err == 10065 || msg.contains('no route') || msg.contains('unreachable')) {
+      } else if (err == 113 ||
+          err == 10065 ||
+          msg.contains('no route') ||
+          msg.contains('unreachable')) {
         throw RouterOsUnreachableException(e.toString());
       }
       throw RouterOsPortClosedException(e.toString());
@@ -176,14 +182,16 @@ class RouterOsSocketClient {
       if (legacyLogin.isSuccess) return true;
     }
 
-    throw const RouterOsAuthException('فشل التحقق من اسم المستخدم أو كلمة المرور');
+    throw const RouterOsAuthException(
+        'فشل التحقق من اسم المستخدم أو كلمة المرور');
   }
 
   /// Legacy MD5 login challenge hash
   static String computeLegacyMd5(String password, String challengeHex) {
     final List<int> challengeBytes = [];
     for (int i = 0; i < challengeHex.length; i += 2) {
-      challengeBytes.add(int.parse(challengeHex.substring(i, i + 2), radix: 16));
+      challengeBytes
+          .add(int.parse(challengeHex.substring(i, i + 2), radix: 16));
     }
 
     final List<int> toHash = [0];
@@ -216,7 +224,8 @@ class RouterOsSocketClient {
       return await completer.future.timeout(timeout);
     } on TimeoutException {
       _pendingRequests.remove(tag);
-      throw RouterOsTimeoutException('انتهت مهلة انتظار رد الراوتر للأمر: ${words.first}');
+      throw RouterOsTimeoutException(
+          'انتهت مهلة انتظار رد الراوتر للأمر: ${words.first}');
     }
   }
 
@@ -265,7 +274,8 @@ class RouterOsSocketClient {
           final stream = _activeStreams[tag]!;
           if (sentence.command == '!re') {
             stream.add(sentence.attributes);
-          } else if (sentence.command == '!done' || sentence.command == '!trap') {
+          } else if (sentence.command == '!done' ||
+              sentence.command == '!trap') {
             stream.close();
             _activeStreams.remove(tag);
           }
@@ -283,7 +293,8 @@ class RouterOsSocketClient {
               data.add(sentence.attributes);
             }
             _pendingRequests.remove(tag);
-            completer.complete(RouterOsResponse(isSuccess: true, data: data, tag: tag));
+            completer.complete(
+                RouterOsResponse(isSuccess: true, data: data, tag: tag));
           } else if (sentence.command == '!trap') {
             _tempReplies.remove(tag);
             _pendingRequests.remove(tag);
@@ -341,7 +352,8 @@ class RouterOsSocketClient {
           }
         }
 
-        return RouterOsSentence(command: command, attributes: attributes, tag: tag);
+        return RouterOsSentence(
+            command: command, attributes: attributes, tag: tag);
       } else {
         words.add(wordResult.word);
       }
@@ -383,7 +395,12 @@ class RouterOsSocketClient {
       return [(val >> 16) & 0xFF, (val >> 8) & 0xFF, val & 0xFF];
     } else if (len < 0x10000000) {
       final val = len | 0xE0000000;
-      return [(val >> 24) & 0xFF, (val >> 16) & 0xFF, (val >> 8) & 0xFF, val & 0xFF];
+      return [
+        (val >> 24) & 0xFF,
+        (val >> 16) & 0xFF,
+        (val >> 8) & 0xFF,
+        val & 0xFF
+      ];
     } else {
       return [
         0xF0,
@@ -410,20 +427,24 @@ class RouterOsSocketClient {
       if (bytes.length < offset + 3) return null;
       final b2 = bytes[offset + 1];
       final b3 = bytes[offset + 2];
-      return LengthDecodeResult(length: ((b1 & 0x1F) << 16) | (b2 << 8) | b3, headerSize: 3);
+      return LengthDecodeResult(
+          length: ((b1 & 0x1F) << 16) | (b2 << 8) | b3, headerSize: 3);
     } else if ((b1 & 0xF0) == 0xE0) {
       if (bytes.length < offset + 4) return null;
       final b2 = bytes[offset + 1];
       final b3 = bytes[offset + 2];
       final b4 = bytes[offset + 3];
-      return LengthDecodeResult(length: ((b1 & 0x0F) << 24) | (b2 << 16) | (b3 << 8) | b4, headerSize: 4);
+      return LengthDecodeResult(
+          length: ((b1 & 0x0F) << 24) | (b2 << 16) | (b3 << 8) | b4,
+          headerSize: 4);
     } else if (b1 == 0xF0) {
       if (bytes.length < offset + 5) return null;
       final b2 = bytes[offset + 1];
       final b3 = bytes[offset + 2];
       final b4 = bytes[offset + 3];
       final b5 = bytes[offset + 4];
-      return LengthDecodeResult(length: (b2 << 24) | (b3 << 16) | (b4 << 8) | b5, headerSize: 5);
+      return LengthDecodeResult(
+          length: (b2 << 24) | (b3 << 16) | (b4 << 8) | b5, headerSize: 5);
     }
     return null;
   }

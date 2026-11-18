@@ -41,21 +41,25 @@ class InterfaceModel {
 }
 
 class DashboardRepository {
-  Future<Map<String, dynamic>> getSystemResource(RouterOsAdapter adapter) async {
+  Future<Map<String, dynamic>> getSystemResource(
+      RouterOsAdapter adapter) async {
     return await adapter.getSystemResource();
   }
 
-  Future<List<Map<String, dynamic>>> getInterfaces(RouterOsAdapter adapter) async {
+  Future<List<Map<String, dynamic>>> getInterfaces(
+      RouterOsAdapter adapter) async {
     return await adapter.getInterfaces();
   }
 
-  Future<List<InterfaceModel>> getDetailedInterfaces(RouterOsAdapter adapter) async {
+  Future<List<InterfaceModel>> getDetailedInterfaces(
+      RouterOsAdapter adapter) async {
     final res = await adapter.executeSentence(['/interface/print']);
     if (!res.isSuccess) return [];
     return res.data.map((m) => InterfaceModel.fromMap(m)).toList();
   }
 
-  Future<bool> toggleInterface(RouterOsAdapter adapter, String id, bool enable) async {
+  Future<bool> toggleInterface(
+      RouterOsAdapter adapter, String id, bool enable) async {
     final res = await adapter.executeSentence([
       '/interface/set',
       '=.id=$id',
@@ -64,7 +68,8 @@ class DashboardRepository {
     return res.isSuccess;
   }
 
-  Future<Map<String, int>> getTraffic(RouterOsAdapter adapter, String interfaceName) async {
+  Future<Map<String, int>> getTraffic(
+      RouterOsAdapter adapter, String interfaceName) async {
     return await adapter.getInterfaceTraffic(interfaceName);
   }
 
@@ -84,15 +89,15 @@ class DashboardRepository {
     final today = DateTime(now.year, now.month, now.day);
 
     await db.into(db.interfaceDailyTable).insert(
-      InterfaceDailyTableCompanion.insert(
-        connectionId: connectionId,
-        interface: interfaceName,
-        date: today,
-        rxBytes: Value(rxBytes),
-        txBytes: Value(txBytes),
-      ),
-      mode: InsertMode.insertOrReplace,
-    );
+          InterfaceDailyTableCompanion.insert(
+            connectionId: connectionId,
+            interface: interfaceName,
+            date: today,
+            rxBytes: Value(rxBytes),
+            txBytes: Value(txBytes),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
   }
 
   Future<List<InterfaceDailyTableData>> getDailySnapshots(
@@ -101,7 +106,9 @@ class DashboardRepository {
     required String interfaceName,
   }) async {
     return await (db.select(db.interfaceDailyTable)
-          ..where((t) => t.connectionId.equals(connectionId) & t.interface.equals(interfaceName))
+          ..where((t) =>
+              t.connectionId.equals(connectionId) &
+              t.interface.equals(interfaceName))
           ..orderBy([(t) => OrderingTerm.desc(t.date)]))
         .get();
   }

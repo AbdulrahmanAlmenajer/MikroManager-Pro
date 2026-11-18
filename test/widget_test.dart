@@ -20,7 +20,8 @@ void main() {
     await db.close();
   });
 
-  testWidgets('App initializes at /login when unauthenticated', (WidgetTester tester) async {
+  testWidgets('App initializes at /login when unauthenticated',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -41,7 +42,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
   });
 
-  testWidgets('Route guard prevents unauthenticated access to /dashboard and redirects to /login', (WidgetTester tester) async {
+  testWidgets(
+      'Route guard prevents unauthenticated access to /dashboard and redirects to /login',
+      (WidgetTester tester) async {
     final container = ProviderContainer(
       overrides: [
         databaseProvider.overrideWithValue(db),

@@ -56,7 +56,8 @@ class InterfacesTrafficNotifier extends StateNotifier<InterfacesTrafficState> {
   Timer? _refreshTimer;
   double _timeCounter = 0;
 
-  InterfacesTrafficNotifier(this._ref, this._repo) : super(const InterfacesTrafficState()) {
+  InterfacesTrafficNotifier(this._ref, this._repo)
+      : super(const InterfacesTrafficState()) {
     loadInterfaces();
   }
 
@@ -66,7 +67,8 @@ class InterfacesTrafficNotifier extends StateNotifier<InterfacesTrafficState> {
     try {
       final session = _ref.read(sessionControllerProvider).session;
       if (session == null) {
-        state = state.copyWith(isLoading: false, errorMessage: 'لا توجد جلسة راوتر نشطة');
+        state = state.copyWith(
+            isLoading: false, errorMessage: 'لا توجد جلسة راوتر نشطة');
         return;
       }
 
@@ -153,7 +155,8 @@ class InterfacesTrafficNotifier extends StateNotifier<InterfacesTrafficState> {
     state = state.copyWith(isRecordingDaily: true);
     try {
       final db = _ref.read(databaseProvider);
-      final currentModel = state.interfaces.where((i) => i.name == iface).firstOrNull;
+      final currentModel =
+          state.interfaces.where((i) => i.name == iface).firstOrNull;
 
       await _repo.recordDailySnapshot(
         db,
@@ -177,8 +180,8 @@ class InterfacesTrafficNotifier extends StateNotifier<InterfacesTrafficState> {
   }
 }
 
-final interfacesTrafficProvider =
-    StateNotifierProvider.autoDispose<InterfacesTrafficNotifier, InterfacesTrafficState>((ref) {
+final interfacesTrafficProvider = StateNotifierProvider.autoDispose<
+    InterfacesTrafficNotifier, InterfacesTrafficState>((ref) {
   final repo = ref.watch(dashboardRepositoryProvider);
   return InterfacesTrafficNotifier(ref, repo);
 });

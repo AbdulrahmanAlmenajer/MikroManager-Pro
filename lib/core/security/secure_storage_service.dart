@@ -14,7 +14,8 @@ class SecureStorageService {
   static const String _apPassPrefix = 'ap_pass_';
 
   // AP credentials management
-  static Future<void> saveApCredentials(int apId, {String? username, String? password}) async {
+  static Future<void> saveApCredentials(int apId,
+      {String? username, String? password}) async {
     if (username != null) {
       await _storage.write(key: '$_apUserPrefix$apId', value: username);
     }
@@ -36,7 +37,8 @@ class SecureStorageService {
 
   // Router password management
   static Future<void> saveRouterPassword(int routerId, String password) async {
-    await _storage.write(key: '$_routerPasswordPrefix$routerId', value: password);
+    await _storage.write(
+        key: '$_routerPasswordPrefix$routerId', value: password);
   }
 
   static Future<String?> getRouterPassword(int routerId) async {
@@ -57,7 +59,8 @@ class SecureStorageService {
   }
 
   // Telegram Bot
-  static Future<void> saveTelegramConfig({required String token, required String chatId}) async {
+  static Future<void> saveTelegramConfig(
+      {required String token, required String chatId}) async {
     await saveTelegramBotToken(token);
     await saveTelegramChatId(chatId);
   }

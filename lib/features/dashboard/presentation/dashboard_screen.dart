@@ -22,7 +22,8 @@ class DashboardScreen extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'تحديث المؤشرات',
-            onPressed: () => ref.read(dashboardControllerProvider.notifier).refreshMetrics(),
+            onPressed: () =>
+                ref.read(dashboardControllerProvider.notifier).refreshMetrics(),
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
@@ -37,7 +38,8 @@ class DashboardScreen extends ConsumerWidget {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => ref.read(dashboardControllerProvider.notifier).refreshMetrics(),
+        onRefresh: () =>
+            ref.read(dashboardControllerProvider.notifier).refreshMetrics(),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16),
@@ -55,8 +57,12 @@ class DashboardScreen extends ConsumerWidget {
                             ? AppColors.success.withValues(alpha: 0.15)
                             : AppColors.danger.withValues(alpha: 0.15),
                         child: Icon(
-                          dashState.isConnected ? Icons.cloud_done : Icons.cloud_off,
-                          color: dashState.isConnected ? AppColors.success : AppColors.danger,
+                          dashState.isConnected
+                              ? Icons.cloud_done
+                              : Icons.cloud_off,
+                          color: dashState.isConnected
+                              ? AppColors.success
+                              : AppColors.danger,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -66,13 +72,15 @@ class DashboardScreen extends ConsumerWidget {
                           children: [
                             Text(
                               activeRouter?.name ?? 'لم يتم تحديد راوتر',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             Text(
                               dashState.isConnected
                                   ? '${dashState.boardName} | RouterOS ${dashState.version}'
                                   : 'غير متصل بالراوتر - انقر للاتصال',
-                              style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                              style: const TextStyle(
+                                  fontSize: 12, color: AppColors.textSecondary),
                             ),
                           ],
                         ),
@@ -81,12 +89,14 @@ class DashboardScreen extends ConsumerWidget {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.danger,
                           side: const BorderSide(color: AppColors.danger),
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
                           visualDensity: VisualDensity.compact,
                         ),
                         onPressed: () => _confirmLogout(context, ref),
                         icon: const Icon(Icons.power_settings_new, size: 16),
-                        label: const Text('خروج', style: TextStyle(fontSize: 12)),
+                        label:
+                            const Text('خروج', style: TextStyle(fontSize: 12)),
                       ),
                     ],
                   ),
@@ -135,11 +145,15 @@ class DashboardScreen extends ConsumerWidget {
                     backgroundColor: AppColors.navyPrimary,
                     child: Icon(Icons.people, color: Colors.white),
                   ),
-                  title: const Text('المتصلون حالياً بالشبكة', style: TextStyle(fontWeight: FontWeight.bold)),
+                  title: const Text('المتصلون حالياً بالشبكة',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: const Text('إجمالي جلسات الهوتس بوت النشطة'),
                   trailing: Text(
                     '${dashState.activeUsersCount} مشترك',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.cyanAccent),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: AppColors.cyanAccent),
                   ),
                   onTap: () => context.go('/hotspot'),
                 ),
@@ -158,10 +172,13 @@ class DashboardScreen extends ConsumerWidget {
                         children: [
                           const Row(
                             children: [
-                              Icon(Icons.show_chart, color: AppColors.cyanAccent),
+                              Icon(Icons.show_chart,
+                                  color: AppColors.cyanAccent),
                               SizedBox(width: 8),
                               Text('الترافيك اللحظي للشبكة',
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16)),
                             ],
                           ),
                           if (dashState.availableInterfaces.isNotEmpty)
@@ -169,11 +186,17 @@ class DashboardScreen extends ConsumerWidget {
                               value: dashState.selectedInterface,
                               underline: const SizedBox(),
                               items: dashState.availableInterfaces.map((iface) {
-                                return DropdownMenuItem(value: iface, child: Text(iface, style: const TextStyle(fontSize: 12)));
+                                return DropdownMenuItem(
+                                    value: iface,
+                                    child: Text(iface,
+                                        style: const TextStyle(fontSize: 12)));
                               }).toList(),
                               onChanged: (val) {
                                 if (val != null) {
-                                  ref.read(dashboardControllerProvider.notifier).selectInterface(val);
+                                  ref
+                                      .read(
+                                          dashboardControllerProvider.notifier)
+                                      .selectInterface(val);
                                 }
                               },
                             ),
@@ -186,18 +209,30 @@ class DashboardScreen extends ConsumerWidget {
                         children: [
                           Row(
                             children: [
-                              Container(width: 12, height: 12, color: AppColors.cyanAccent),
+                              Container(
+                                  width: 12,
+                                  height: 12,
+                                  color: AppColors.cyanAccent),
                               const SizedBox(width: 6),
-                              Text('تنزيل (Rx): ${dashState.currentRxMbps.toStringAsFixed(2)} Mbps',
-                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                              Text(
+                                  'تنزيل (Rx): ${dashState.currentRxMbps.toStringAsFixed(2)} Mbps',
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold)),
                             ],
                           ),
                           Row(
                             children: [
-                              Container(width: 12, height: 12, color: AppColors.warning),
+                              Container(
+                                  width: 12,
+                                  height: 12,
+                                  color: AppColors.warning),
                               const SizedBox(width: 6),
-                              Text('رفع (Tx): ${dashState.currentTxMbps.toStringAsFixed(2)} Mbps',
-                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                              Text(
+                                  'رفع (Tx): ${dashState.currentTxMbps.toStringAsFixed(2)} Mbps',
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold)),
                             ],
                           ),
                         ],
@@ -214,15 +249,21 @@ class DashboardScreen extends ConsumerWidget {
                                 ),
                                 child: const Center(
                                   child: Text('جاري قراءة ترافيك الواجهة...',
-                                      style: TextStyle(color: AppColors.textSecondary)),
+                                      style: TextStyle(
+                                          color: AppColors.textSecondary)),
                                 ),
                               )
                             : LineChart(
                                 LineChartData(
-                                  gridData: const FlGridData(show: true, drawVerticalLine: false),
+                                  gridData: const FlGridData(
+                                      show: true, drawVerticalLine: false),
                                   titlesData: const FlTitlesData(
-                                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                                    topTitles: AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false)),
+                                    rightTitles: AxisTitles(
+                                        sideTitles:
+                                            SideTitles(showTitles: false)),
                                   ),
                                   borderData: FlBorderData(
                                     show: true,
@@ -241,7 +282,8 @@ class DashboardScreen extends ConsumerWidget {
                                       dotData: const FlDotData(show: false),
                                       belowBarData: BarAreaData(
                                         show: true,
-                                        color: AppColors.cyanAccent.withValues(alpha: 0.15),
+                                        color: AppColors.cyanAccent
+                                            .withValues(alpha: 0.15),
                                       ),
                                     ),
                                     // Tx (Upload) Line
@@ -256,7 +298,8 @@ class DashboardScreen extends ConsumerWidget {
                                       dotData: const FlDotData(show: false),
                                       belowBarData: BarAreaData(
                                         show: true,
-                                        color: AppColors.warning.withValues(alpha: 0.1),
+                                        color: AppColors.warning
+                                            .withValues(alpha: 0.1),
                                       ),
                                     ),
                                   ],
@@ -271,7 +314,10 @@ class DashboardScreen extends ConsumerWidget {
 
               // Quick Shortcuts Grid
               const Text('إجراءات سريعة',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.textPrimary)),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: AppColors.textPrimary)),
               const SizedBox(height: 10),
               Row(
                 children: [
@@ -323,7 +369,9 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildResourceCard(String title, String value, IconData icon, Color color, {String? subtext}) {
+  Widget _buildResourceCard(
+      String title, String value, IconData icon, Color color,
+      {String? subtext}) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
@@ -334,15 +382,19 @@ class DashboardScreen extends ConsumerWidget {
             Text(value,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color)),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 16, color: color)),
             const SizedBox(height: 2),
-            Text(title, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+            Text(title,
+                style: const TextStyle(
+                    color: AppColors.textSecondary, fontSize: 11)),
             if (subtext != null) ...[
               const SizedBox(height: 2),
               Text(subtext,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 9, color: AppColors.textSecondary)),
+                  style: const TextStyle(
+                      fontSize: 9, color: AppColors.textSecondary)),
             ],
           ],
         ),
@@ -371,7 +423,9 @@ class DashboardScreen extends ConsumerWidget {
           children: [
             Icon(icon, color: color, size: 28),
             const SizedBox(height: 6),
-            Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: color)),
+            Text(label,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, fontSize: 13, color: color)),
           ],
         ),
       ),
@@ -383,7 +437,8 @@ class DashboardScreen extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('تأكيد تسجيل الخروج'),
-        content: const Text('هل أنت متأكد من قطع الاتصال بالراوتر وتسجيل الخروج؟ ستتم إعادتك لشاشة تسجيل الدخول.'),
+        content: const Text(
+            'هل أنت متأكد من قطع الاتصال بالراوتر وتسجيل الخروج؟ ستتم إعادتك لشاشة تسجيل الدخول.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -395,7 +450,8 @@ class DashboardScreen extends ConsumerWidget {
               Navigator.pop(ctx);
               await ref.read(routersControllerProvider.notifier).logout();
             },
-            child: const Text('قطع الاتصال', style: TextStyle(color: Colors.white)),
+            child: const Text('قطع الاتصال',
+                style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

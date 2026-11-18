@@ -22,7 +22,8 @@ final auditLogsProvider = FutureProvider<List<AuditLogsTableData>>((ref) async {
   return await repo.getAuditLogs();
 });
 
-final honestReportProvider = FutureProvider.autoDispose<HonestReportData>((ref) async {
+final honestReportProvider =
+    FutureProvider.autoDispose<HonestReportData>((ref) async {
   final session = ref.watch(sessionControllerProvider).session;
   final repo = ref.watch(reportsRepositoryProvider);
   final subscribersRepo = ref.watch(subscribersRepositoryProvider);

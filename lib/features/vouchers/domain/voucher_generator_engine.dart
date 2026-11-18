@@ -40,7 +40,9 @@ class VoucherGeneratorEngine {
     // Map legacy parameter if provided
     CredentialMode effectiveMode = credentialMode;
     if (sameUserAndPass != null) {
-      effectiveMode = sameUserAndPass ? CredentialMode.identical : CredentialMode.usernameAndPassword;
+      effectiveMode = sameUserAndPass
+          ? CredentialMode.identical
+          : CredentialMode.usernameAndPassword;
     }
 
     String getCharPool(VoucherCodeType type) {
@@ -81,7 +83,8 @@ class VoucherGeneratorEngine {
           case CredentialMode.usernameAndPassword:
             final StringBuffer passBuffer = StringBuffer();
             for (int i = 0; i < passwordLength; i++) {
-              passBuffer.write(passCharPool[random.nextInt(passCharPool.length)]);
+              passBuffer
+                  .write(passCharPool[random.nextInt(passCharPool.length)]);
             }
             password = passBuffer.toString();
             break;

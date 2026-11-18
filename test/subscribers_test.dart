@@ -6,6 +6,7 @@ import 'package:mikro_manager_pro/core/utils/audit_logger.dart';
 import 'package:mikro_manager_pro/features/subscribers/data/subscribers_repository.dart';
 
 class MockRouterOsAdapter extends Mock implements RouterOsAdapter {}
+
 class MockAuditLogger extends Mock implements AuditLogger {}
 
 void main() {
@@ -20,7 +21,9 @@ void main() {
       repo = SubscribersRepository(mockAudit);
     });
 
-    test('getHotspotSubscribers correctly merges hotspot users and active sessions', () async {
+    test(
+        'getHotspotSubscribers correctly merges hotspot users and active sessions',
+        () async {
       when(() => mockAdapter.getHotspotUsers()).thenAnswer(
         (_) async => [
           {
@@ -110,11 +113,13 @@ void main() {
     });
 
     test('diagnoseCard reports not found when card does not exist', () async {
-      when(() => mockAdapter.executeSentence(['/ip/hotspot/user/print', '?name=non_existing_999'])).thenAnswer(
+      when(() => mockAdapter.executeSentence(
+          ['/ip/hotspot/user/print', '?name=non_existing_999'])).thenAnswer(
         (_) async => RouterOsResponse(isSuccess: true, data: []),
       );
       when(() => mockAdapter.isV7).thenReturn(true);
-      when(() => mockAdapter.executeSentence(['/user-manager/user/print', '?name=non_existing_999'])).thenAnswer(
+      when(() => mockAdapter.executeSentence(
+          ['/user-manager/user/print', '?name=non_existing_999'])).thenAnswer(
         (_) async => RouterOsResponse(isSuccess: true, data: []),
       );
 
@@ -124,7 +129,9 @@ void main() {
     });
 
     test('diagnoseCard detects disabled status and MAC binding', () async {
-      when(() => mockAdapter.executeSentence(['/ip/hotspot/user/print', '?name=locked_card'])).thenAnswer(
+      when(() => mockAdapter
+              .executeSentence(['/ip/hotspot/user/print', '?name=locked_card']))
+          .thenAnswer(
         (_) async => RouterOsResponse(
           isSuccess: true,
           data: [
@@ -139,14 +146,17 @@ void main() {
         ),
       );
 
-      when(() => mockAdapter.executeSentence(['/ip/hotspot/active/print', '?user=locked_card'])).thenAnswer(
+      when(() => mockAdapter.executeSentence(
+          ['/ip/hotspot/active/print', '?user=locked_card'])).thenAnswer(
         (_) async => RouterOsResponse(isSuccess: true, data: []),
       );
 
       final diag = await repo.diagnoseCard(mockAdapter, 'locked_card');
       expect(diag.exists, isTrue);
       expect(diag.rankedFailureReasons.any((r) => r.contains('معطل')), isTrue);
-      expect(diag.rankedFailureReasons.any((r) => r.contains('مقيّد بعنوان MAC')), isTrue);
+      expect(
+          diag.rankedFailureReasons.any((r) => r.contains('مقيّد بعنوان MAC')),
+          isTrue);
     });
   });
 }

@@ -27,7 +27,8 @@ class AlertsRepository {
   // Trusted DHCP Servers Management & Rogue Detection
   // =========================================================================
 
-  Future<List<TrustedDhcpServersTableData>> getTrustedDhcpServers(int connectionId) async {
+  Future<List<TrustedDhcpServersTableData>> getTrustedDhcpServers(
+      int connectionId) async {
     return await (_db.select(_db.trustedDhcpServersTable)
           ..where((t) => t.connectionId.equals(connectionId)))
         .get();
@@ -39,16 +40,18 @@ class AlertsRepository {
     required String interface,
   }) async {
     return await _db.into(_db.trustedDhcpServersTable).insert(
-      TrustedDhcpServersTableCompanion.insert(
-        connectionId: connectionId,
-        serverIp: serverIp,
-        interface: interface,
-      ),
-    );
+          TrustedDhcpServersTableCompanion.insert(
+            connectionId: connectionId,
+            serverIp: serverIp,
+            interface: interface,
+          ),
+        );
   }
 
   Future<int> removeTrustedDhcpServer(int id) async {
-    return await (_db.delete(_db.trustedDhcpServersTable)..where((t) => t.id.equals(id))).go();
+    return await (_db.delete(_db.trustedDhcpServersTable)
+          ..where((t) => t.id.equals(id)))
+        .go();
   }
 
   /// Scans RouterOS for rogue DHCP servers via `/ip/dhcp-server/alert/print` and active leases
@@ -63,14 +66,16 @@ class AlertsRepository {
 
     try {
       // 1. Query RouterOS DHCP Alert list
-      final alertRes = await adapter.executeSentence(['/ip/dhcp-server/alert/print']);
+      final alertRes =
+          await adapter.executeSentence(['/ip/dhcp-server/alert/print']);
       for (final row in alertRes.data) {
         final serverIp = row['unknown-server'] ?? row['server-address'] ?? '';
         final iface = row['interface'] ?? '';
         final valid = row['valid-server'] ?? '';
 
         if (serverIp.isNotEmpty) {
-          final isTrusted = trustedIps.contains(serverIp) || valid.contains(serverIp);
+          final isTrusted =
+              trustedIps.contains(serverIp) || valid.contains(serverIp);
           results.add(
             RogueDhcpAlert(
               serverIp: serverIp,
@@ -90,7 +95,8 @@ class AlertsRepository {
           connectionId: connectionId,
           ruleId: 0,
           status: 'confirmed',
-          details: 'خادم DHCP دخيل غير مصرح به على IP: ${item.serverIp} الواجهة: ${item.interface}',
+          details:
+              'خادم DHCP دخيل غير مصرح به على IP: ${item.serverIp} الواجهة: ${item.interface}',
         );
       }
     }
@@ -117,7 +123,9 @@ class AlertsRepository {
   }) async {
     final existing = await getQuietHours(connectionId);
     if (existing != null) {
-      await (_db.update(_db.quietHoursTable)..where((t) => t.id.equals(existing.id))).write(
+      await (_db.update(_db.quietHoursTable)
+            ..where((t) => t.id.equals(existing.id)))
+          .write(
         QuietHoursTableCompanion(
           startMinute: Value(startMinute),
           endMinute: Value(endMinute),
@@ -127,14 +135,14 @@ class AlertsRepository {
       );
     } else {
       await _db.into(_db.quietHoursTable).insert(
-        QuietHoursTableCompanion.insert(
-          connectionId: connectionId,
-          startMinute: startMinute,
-          endMinute: endMinute,
-          days: Value(days),
-          muteUntil: Value(muteUntil),
-        ),
-      );
+            QuietHoursTableCompanion.insert(
+              connectionId: connectionId,
+              startMinute: startMinute,
+              endMinute: endMinute,
+              days: Value(days),
+              muteUntil: Value(muteUntil),
+            ),
+          );
     }
   }
 
@@ -176,20 +184,21 @@ class AlertsRepository {
     DateTime? at,
   }) async {
     return await _db.into(_db.alertEventsTable).insert(
-      AlertEventsTableCompanion.insert(
-        connectionId: connectionId,
-        ruleId: ruleId,
-        status: status,
-        details: Value(details),
-        at: Value(at ?? DateTime.now()),
-      ),
-    );
+          AlertEventsTableCompanion.insert(
+            connectionId: connectionId,
+            ruleId: ruleId,
+            status: status,
+            details: Value(details),
+            at: Value(at ?? DateTime.now()),
+          ),
+        );
   }
 
   Future<List<AlertEventsTableData>> getAlertEvents(int connectionId) async {
     return await (_db.select(_db.alertEventsTable)
           ..where((t) => t.connectionId.equals(connectionId))
-          ..orderBy([(t) => OrderingTerm(expression: t.at, mode: OrderingMode.desc)])
+          ..orderBy(
+              [(t) => OrderingTerm(expression: t.at, mode: OrderingMode.desc)])
           ..limit(50))
         .get();
   }

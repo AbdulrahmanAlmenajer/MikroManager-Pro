@@ -19,13 +19,16 @@ class RouterOsRestClient {
   }) {
     final scheme = useSsl ? 'https' : 'http';
     final baseUrl = '$scheme://$host:$port';
-    final authHeader = 'Basic ${base64Encode(utf8.encode('$username:$password'))}';
+    final authHeader =
+        'Basic ${base64Encode(utf8.encode('$username:$password'))}';
 
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl,
-        connectTimeout: const Duration(milliseconds: ApiConstants.connectTimeoutMs),
-        receiveTimeout: const Duration(milliseconds: ApiConstants.readTimeoutMs),
+        connectTimeout:
+            const Duration(milliseconds: ApiConstants.connectTimeoutMs),
+        receiveTimeout:
+            const Duration(milliseconds: ApiConstants.readTimeoutMs),
         sendTimeout: const Duration(milliseconds: ApiConstants.sendTimeoutMs),
         headers: {
           'Authorization': authHeader,
@@ -38,13 +41,15 @@ class RouterOsRestClient {
   }
 
   /// Generic GET request
-  Future<List<Map<String, dynamic>>> get(String path, {Map<String, dynamic>? queryParameters}) async {
+  Future<List<Map<String, dynamic>>> get(String path,
+      {Map<String, dynamic>? queryParameters}) async {
     try {
       final response = await _dio.get(path, queryParameters: queryParameters);
       if (response.statusCode == 200) {
         if (response.data is List) {
           return List<Map<String, dynamic>>.from(
-            (response.data as List).map((e) => Map<String, dynamic>.from(e as Map)),
+            (response.data as List)
+                .map((e) => Map<String, dynamic>.from(e as Map)),
           );
         } else if (response.data is Map) {
           return [Map<String, dynamic>.from(response.data as Map)];

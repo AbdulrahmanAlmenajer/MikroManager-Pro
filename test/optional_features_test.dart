@@ -3,7 +3,9 @@ import 'package:mikro_manager_pro/core/utils/feature_flags.dart';
 
 void main() {
   group('Optional Features & Feature Flags Tests (Phase U10)', () {
-    test('FeatureFlags starts with expected defaults and can be toggled dynamically', () {
+    test(
+        'FeatureFlags starts with expected defaults and can be toggled dynamically',
+        () {
       final notifier = FeatureFlagsNotifier();
 
       expect(notifier.state.enableWireguardHelper, isTrue);

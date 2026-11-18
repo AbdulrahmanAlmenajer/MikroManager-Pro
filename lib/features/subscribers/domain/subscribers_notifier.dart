@@ -84,7 +84,8 @@ class SubscribersNotifier extends StateNotifier<SubscribersState> {
     try {
       final session = _ref.read(sessionControllerProvider).session;
       if (session == null) {
-        state = state.copyWith(isLoading: false, errorMessage: 'لا توجد جلسة راوتر نشطة');
+        state = state.copyWith(
+            isLoading: false, errorMessage: 'لا توجد جلسة راوتر نشطة');
         return;
       }
 
@@ -150,7 +151,8 @@ class SubscribersNotifier extends StateNotifier<SubscribersState> {
     final session = _ref.read(sessionControllerProvider).session;
     if (session == null) return false;
 
-    final success = await _repo.toggleSubscriberStatus(session.adapter, sub, enable);
+    final success =
+        await _repo.toggleSubscriberStatus(session.adapter, sub, enable);
     if (success) {
       await loadSubscribers();
     }
@@ -170,7 +172,8 @@ class SubscribersNotifier extends StateNotifier<SubscribersState> {
 }
 
 final subscribersProvider =
-    StateNotifierProvider.autoDispose<SubscribersNotifier, SubscribersState>((ref) {
+    StateNotifierProvider.autoDispose<SubscribersNotifier, SubscribersState>(
+        (ref) {
   final repo = ref.watch(subscribersRepositoryProvider);
   return SubscribersNotifier(ref, repo);
 });

@@ -48,19 +48,21 @@ class ApRepository {
     String? password,
   }) async {
     final id = await _db.into(_db.apDevicesTable).insert(
-      ApDevicesTableCompanion.insert(
-        connectionId: connectionId,
-        name: name,
-        ip: ip,
-        vendor: Value(vendor),
-        accessState: const Value('unknown'),
-      ),
-    );
+          ApDevicesTableCompanion.insert(
+            connectionId: connectionId,
+            name: name,
+            ip: ip,
+            vendor: Value(vendor),
+            accessState: const Value('unknown'),
+          ),
+        );
 
     // Save credentials in flutter_secure_storage
-    if ((username != null && username.isNotEmpty) || (password != null && password.isNotEmpty)) {
+    if ((username != null && username.isNotEmpty) ||
+        (password != null && password.isNotEmpty)) {
       try {
-        await SecureStorageService.saveApCredentials(id, username: username, password: password);
+        await SecureStorageService.saveApCredentials(id,
+            username: username, password: password);
       } catch (_) {}
     }
 
@@ -75,7 +77,9 @@ class ApRepository {
     String? username,
     String? password,
   }) async {
-    final success = await (_db.update(_db.apDevicesTable)..where((t) => t.id.equals(id))).write(
+    final success = await (_db.update(_db.apDevicesTable)
+          ..where((t) => t.id.equals(id)))
+        .write(
       ApDevicesTableCompanion(
         name: Value(name),
         ip: Value(ip),
@@ -85,7 +89,8 @@ class ApRepository {
 
     if (username != null || password != null) {
       try {
-        await SecureStorageService.saveApCredentials(id, username: username, password: password);
+        await SecureStorageService.saveApCredentials(id,
+            username: username, password: password);
       } catch (_) {}
     }
 
@@ -96,7 +101,8 @@ class ApRepository {
     try {
       await SecureStorageService.deleteApCredentials(id);
     } catch (_) {}
-    return await (_db.delete(_db.apDevicesTable)..where((t) => t.id.equals(id))).go();
+    return await (_db.delete(_db.apDevicesTable)..where((t) => t.id.equals(id)))
+        .go();
   }
 
   Future<Map<String, String?>> getApCredentials(int id) async {
@@ -111,7 +117,8 @@ class ApRepository {
   // Discovery via RouterOS MNDP / CDP / LLDP (/ip/neighbor/print)
   // =========================================================================
 
-  Future<List<DiscoveredNeighbor>> discoverNeighbors(RouterOsAdapter adapter) async {
+  Future<List<DiscoveredNeighbor>> discoverNeighbors(
+      RouterOsAdapter adapter) async {
     final response = await adapter.executeSentence(['/ip/neighbor/print']);
     final List<DiscoveredNeighbor> results = [];
 
@@ -119,7 +126,10 @@ class ApRepository {
       final ip = row['address'] ?? row['address4'] ?? row['ipv4-address'] ?? '';
       if (ip.isEmpty || ip == '0.0.0.0') continue;
 
-      final identity = row['identity'] ?? row['board'] ?? row['system-description'] ?? 'AP-$ip';
+      final identity = row['identity'] ??
+          row['board'] ??
+          row['system-description'] ??
+          'AP-$ip';
       final mac = row['mac-address'] ?? '';
       final iface = row['interface'] ?? '';
       final platform = row['platform'] ?? row['board'] ?? '';
@@ -153,13 +163,17 @@ class ApRepository {
         text.contains('unifi')) {
       return 'Ubiquiti';
     }
-    if (text.contains('tp-link') || text.contains('pharos') || text.contains('cpe')) {
+    if (text.contains('tp-link') ||
+        text.contains('pharos') ||
+        text.contains('cpe')) {
       return 'TP-Link';
     }
     if (text.contains('cambium') || text.contains('epmp')) {
       return 'Cambium';
     }
-    if (text.contains('mikrotik') || text.contains('routerboard') || text.contains('rb')) {
+    if (text.contains('mikrotik') ||
+        text.contains('routerboard') ||
+        text.contains('rb')) {
       return 'MikroTik';
     }
     return 'MikroTik';
@@ -172,21 +186,24 @@ class ApRepository {
   Future<String> probeAccessState(String ip) async {
     // Attempt HTTP port 80
     try {
-      final s80 = await Socket.connect(ip, 80, timeout: const Duration(milliseconds: 1500));
+      final s80 = await Socket.connect(ip, 80,
+          timeout: const Duration(milliseconds: 1500));
       s80.destroy();
       return 'ok';
     } catch (_) {}
 
     // Attempt HTTPS port 443
     try {
-      final s443 = await Socket.connect(ip, 443, timeout: const Duration(milliseconds: 1500));
+      final s443 = await Socket.connect(ip, 443,
+          timeout: const Duration(milliseconds: 1500));
       s443.destroy();
       return 'ok';
     } catch (_) {}
 
     // Attempt RouterOS API port 8728
     try {
-      final s8728 = await Socket.connect(ip, 8728, timeout: const Duration(milliseconds: 1500));
+      final s8728 = await Socket.connect(ip, 8728,
+          timeout: const Duration(milliseconds: 1500));
       s8728.destroy();
       return 'ok';
     } catch (_) {}
@@ -196,7 +213,8 @@ class ApRepository {
 
   Future<void> refreshApState(int apId, String ip) async {
     final state = await probeAccessState(ip);
-    await (_db.update(_db.apDevicesTable)..where((t) => t.id.equals(apId))).write(
+    await (_db.update(_db.apDevicesTable)..where((t) => t.id.equals(apId)))
+        .write(
       ApDevicesTableCompanion(
         accessState: Value(state),
         lastCheckAt: Value(DateTime.now()),

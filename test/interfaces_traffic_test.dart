@@ -68,7 +68,8 @@ void main() {
       expect(interfaces[1].disabled, isTrue);
     });
 
-    test('recordDailySnapshot stores record in Drift interface_daily table', () async {
+    test('recordDailySnapshot stores record in Drift interface_daily table',
+        () async {
       await repo.recordDailySnapshot(
         db,
         connectionId: 1,
@@ -77,7 +78,8 @@ void main() {
         txBytes: 25000000,
       );
 
-      final snapshots = await repo.getDailySnapshots(db, connectionId: 1, interfaceName: 'ether1-wan');
+      final snapshots = await repo.getDailySnapshots(db,
+          connectionId: 1, interfaceName: 'ether1-wan');
       expect(snapshots.length, equals(1));
       expect(snapshots.first.interface, equals('ether1-wan'));
       expect(snapshots.first.rxBytes, equals(50000000));

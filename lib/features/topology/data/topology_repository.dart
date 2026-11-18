@@ -67,7 +67,8 @@ class TopologyRepository {
       // 1. Direct match by explicit AP name in subscriber comment or binding
       ApDevicesTableData? directMatch;
       for (final ap in aps) {
-        if (comment.contains(ap.name.toLowerCase()) || comment.contains(ap.ip)) {
+        if (comment.contains(ap.name.toLowerCase()) ||
+            comment.contains(ap.ip)) {
           directMatch = ap;
           break;
         }
@@ -77,7 +78,8 @@ class TopologyRepository {
         matchedApId = directMatch.id;
         matchedApName = directMatch.name;
         confidence = 'confirmed';
-        evidence = 'تم التأكيد بناءً على تسمية الربط المباشرة مع الأكسس (${directMatch.name})';
+        evidence =
+            'تم التأكيد بناءً على تسمية الربط المباشرة مع الأكسس (${directMatch.name})';
       } else if (userIp != null && userIp.isNotEmpty) {
         // 2. Subnet correlation
         final ipParts = userIp.split('.');
@@ -128,11 +130,14 @@ class TopologyRepository {
     required String evidence,
   }) async {
     final existing = await (_db.select(_db.userApMatchesTable)
-          ..where((t) => t.connectionId.equals(connectionId) & t.userMac.equals(userMac)))
+          ..where((t) =>
+              t.connectionId.equals(connectionId) & t.userMac.equals(userMac)))
         .getSingleOrNull();
 
     if (existing != null) {
-      await (_db.update(_db.userApMatchesTable)..where((t) => t.id.equals(existing.id))).write(
+      await (_db.update(_db.userApMatchesTable)
+            ..where((t) => t.id.equals(existing.id)))
+          .write(
         UserApMatchesTableCompanion(
           apId: Value(apId),
           confidence: Value(confidence),
@@ -142,14 +147,14 @@ class TopologyRepository {
       );
     } else {
       await _db.into(_db.userApMatchesTable).insert(
-        UserApMatchesTableCompanion.insert(
-          connectionId: connectionId,
-          userMac: userMac,
-          apId: Value(apId),
-          confidence: confidence,
-          evidence: evidence,
-        ),
-      );
+            UserApMatchesTableCompanion.insert(
+              connectionId: connectionId,
+              userMac: userMac,
+              apId: Value(apId),
+              confidence: confidence,
+              evidence: evidence,
+            ),
+          );
     }
   }
 
@@ -163,18 +168,20 @@ class TopologyRepository {
   }) async {
     final jsonStr = jsonEncode(graphData);
     return await _db.into(_db.topologySnapshotsTable).insert(
-      TopologySnapshotsTableCompanion.insert(
-        connectionId: connectionId,
-        graphJson: jsonStr,
-        savedAt: Value(DateTime.now()),
-      ),
-    );
+          TopologySnapshotsTableCompanion.insert(
+            connectionId: connectionId,
+            graphJson: jsonStr,
+            savedAt: Value(DateTime.now()),
+          ),
+        );
   }
 
   Future<Map<String, dynamic>?> getLatestSnapshot(int connectionId) async {
     final record = await (_db.select(_db.topologySnapshotsTable)
           ..where((t) => t.connectionId.equals(connectionId))
-          ..orderBy([(t) => OrderingTerm(expression: t.savedAt, mode: OrderingMode.desc)])
+          ..orderBy([
+            (t) => OrderingTerm(expression: t.savedAt, mode: OrderingMode.desc)
+          ])
           ..limit(1))
         .getSingleOrNull();
 

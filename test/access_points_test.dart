@@ -80,8 +80,10 @@ void main() {
       expect(list.isEmpty, isTrue);
     });
 
-    test('discoverNeighbors queries /ip/neighbor/print and infers vendors', () async {
-      when(() => mockAdapter.executeSentence(['/ip/neighbor/print'])).thenAnswer(
+    test('discoverNeighbors queries /ip/neighbor/print and infers vendors',
+        () async {
+      when(() => mockAdapter.executeSentence(['/ip/neighbor/print']))
+          .thenAnswer(
         (_) async => RouterOsResponse(
           isSuccess: true,
           data: [

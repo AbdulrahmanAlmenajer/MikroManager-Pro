@@ -29,7 +29,8 @@ class SessionState {
     this.lockedUntil,
   });
 
-  bool get isAuthenticated => status == SessionStatus.authenticated && session != null;
+  bool get isAuthenticated =>
+      status == SessionStatus.authenticated && session != null;
   bool get isConnecting => status == SessionStatus.connecting;
   bool get isLocked {
     if (lockedUntil == null) return false;
@@ -82,12 +83,14 @@ class SessionController extends StateNotifier<SessionState> {
     if (state.isLocked) {
       state = state.copyWith(
         status: SessionStatus.error,
-        errorMessage: 'تم تجاوز عدد المحاولات المسموح بها. الرجاء الانتظار ${state.remainingLockSeconds} ثانية.',
+        errorMessage:
+            'تم تجاوز عدد المحاولات المسموح بها. الرجاء الانتظار ${state.remainingLockSeconds} ثانية.',
       );
       return false;
     }
 
-    state = state.copyWith(status: SessionStatus.connecting, errorMessage: null);
+    state =
+        state.copyWith(status: SessionStatus.connecting, errorMessage: null);
 
     try {
       // 2. Connect via RouterOsAdapter
@@ -102,7 +105,8 @@ class SessionController extends StateNotifier<SessionState> {
 
       final isConnected = await adapter.connect();
       if (!isConnected) {
-        _handleFailedAttempt('تعذر تسجيل الدخول: تحقق من صحة اسم المستخدم وكلمة المرور وتفعيل المنفذ $port على الراوتر.');
+        _handleFailedAttempt(
+            'تعذر تسجيل الدخول: تحقق من صحة اسم المستخدم وكلمة المرور وتفعيل المنفذ $port على الراوتر.');
         return false;
       }
 
@@ -124,12 +128,14 @@ class SessionController extends StateNotifier<SessionState> {
       String userGroupName = 'full';
 
       try {
-        final users = await adapter.executeSentence(['/user/print', '?name=$username']);
+        final users =
+            await adapter.executeSentence(['/user/print', '?name=$username']);
         if (users.isSuccess && users.data.isNotEmpty) {
           userGroupName = users.data.first['group'] ?? 'full';
         }
 
-        final groups = await adapter.executeSentence(['/user/group/print', '?name=$userGroupName']);
+        final groups = await adapter
+            .executeSentence(['/user/group/print', '?name=$userGroupName']);
         if (groups.isSuccess && groups.data.isNotEmpty) {
           final policy = groups.data.first['policy'] ?? '';
           if (policy.contains('policy') || userGroupName == 'full') {
@@ -168,7 +174,9 @@ class SessionController extends StateNotifier<SessionState> {
         connectionId = existingConnectionId;
       } else if (rememberMe) {
         final id = await _routersRepo.addRouter(
-          name: (label != null && label.trim().isNotEmpty) ? label.trim() : 'راوتر ($host)',
+          name: (label != null && label.trim().isNotEmpty)
+              ? label.trim()
+              : 'راوتر ($host)',
           ipAddress: host,
           apiPort: port,
           username: username,
@@ -206,9 +214,13 @@ class SessionController extends StateNotifier<SessionState> {
 
       // Also sync active router in routersControllerProvider
       final allRouters = await _routersRepo.getAllRouters();
-      final active = allRouters.where((r) => r.id == connectionId).firstOrNull ?? allRouters.firstOrNull;
+      final active =
+          allRouters.where((r) => r.id == connectionId).firstOrNull ??
+              allRouters.firstOrNull;
       if (active != null) {
-        _ref.read(routersControllerProvider.notifier).selectActiveRouter(active);
+        _ref
+            .read(routersControllerProvider.notifier)
+            .selectActiveRouter(active);
       }
 
       return true;
@@ -228,7 +240,8 @@ class SessionController extends StateNotifier<SessionState> {
 
     if (newAttempts >= 5) {
       lock = DateTime.now().add(const Duration(seconds: 30));
-      finalMsg = '$message\n(تم تجاوز الحد الأقصى للمحاولات؛ تم إيقاف زر الدخول لمدة 30 ثانية).';
+      finalMsg =
+          '$message\n(تم تجاوز الحد الأقصى للمحاولات؛ تم إيقاف زر الدخول لمدة 30 ثانية).';
     }
 
     state = state.copyWith(
@@ -255,7 +268,8 @@ class SessionController extends StateNotifier<SessionState> {
   }
 }
 
-final sessionControllerProvider = StateNotifierProvider<SessionController, SessionState>((ref) {
+final sessionControllerProvider =
+    StateNotifierProvider<SessionController, SessionState>((ref) {
   final repo = ref.watch(routersRepositoryProvider);
   return SessionController(ref, repo);
 });

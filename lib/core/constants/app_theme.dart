@@ -51,7 +51,8 @@ class AppTheme {
         ),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: Colors.white,

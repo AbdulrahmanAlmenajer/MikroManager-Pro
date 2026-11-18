@@ -51,7 +51,8 @@ class RoutersNotifier extends StateNotifier<RouterState> {
 
   Future<void> _initActiveRouter() async {
     final routers = await _repo.getAllRouters();
-    final active = routers.where((r) => r.isActive).firstOrNull ?? routers.firstOrNull;
+    final active =
+        routers.where((r) => r.isActive).firstOrNull ?? routers.firstOrNull;
     if (active != null) {
       state = state.copyWith(activeRouter: active);
     }
@@ -84,7 +85,8 @@ class RoutersNotifier extends StateNotifier<RouterState> {
         state = state.copyWith(
           isConnecting: false,
           isConnected: false,
-          errorMessage: 'فشل الاتصال: يرجى التحقق من صحة عنوان IP ($ipAddress)، المنفذ ($apiPort)، اسم المستخدم وكلمة المرور، والتأكد من تفعيل خدمة API في راوتر MikroTik.',
+          errorMessage:
+              'فشل الاتصال: يرجى التحقق من صحة عنوان IP ($ipAddress)، المنفذ ($apiPort)، اسم المستخدم وكلمة المرور، والتأكد من تفعيل خدمة API في راوتر MikroTik.',
         );
         return false;
       }
@@ -153,7 +155,8 @@ class RoutersNotifier extends StateNotifier<RouterState> {
   }
 
   Future<bool> quickConnect(RoutersTableData router) async {
-    final password = await SecureStorageService.getRouterPassword(router.id) ?? '';
+    final password =
+        await SecureStorageService.getRouterPassword(router.id) ?? '';
     return await login(
       ipAddress: router.ipAddress,
       apiPort: router.apiPort,
@@ -266,7 +269,8 @@ class RoutersNotifier extends StateNotifier<RouterState> {
   }
 }
 
-final routersControllerProvider = StateNotifierProvider<RoutersNotifier, RouterState>((ref) {
+final routersControllerProvider =
+    StateNotifierProvider<RoutersNotifier, RouterState>((ref) {
   final repo = ref.watch(routersRepositoryProvider);
   return RoutersNotifier(repo);
 });

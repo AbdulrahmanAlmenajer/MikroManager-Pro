@@ -141,7 +141,10 @@ class ReportsRepository {
 
   Future<List<AuditLogsTableData>> getAuditLogs() async {
     return await (_db.select(_db.auditLogsTable)
-          ..orderBy([(t) => OrderingTerm(expression: t.performedAt, mode: OrderingMode.desc)])
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.performedAt, mode: OrderingMode.desc)
+          ])
           ..limit(50))
         .get();
   }
@@ -162,7 +165,8 @@ class ReportsRepository {
     return map;
   }
 
-  Future<List<ProfilePricesTableData>> getAllProfilePriceRecords(int connectionId) async {
+  Future<List<ProfilePricesTableData>> getAllProfilePriceRecords(
+      int connectionId) async {
     return await (_db.select(_db.profilePricesTable)
           ..where((t) => t.connectionId.equals(connectionId)))
         .get();
@@ -175,11 +179,15 @@ class ReportsRepository {
     String currency = 'YER',
   }) async {
     final existing = await (_db.select(_db.profilePricesTable)
-          ..where((t) => t.connectionId.equals(connectionId) & t.profileName.equals(profileName)))
+          ..where((t) =>
+              t.connectionId.equals(connectionId) &
+              t.profileName.equals(profileName)))
         .getSingleOrNull();
 
     if (existing != null) {
-      await (_db.update(_db.profilePricesTable)..where((t) => t.id.equals(existing.id))).write(
+      await (_db.update(_db.profilePricesTable)
+            ..where((t) => t.id.equals(existing.id)))
+          .write(
         ProfilePricesTableCompanion(
           price: Value(price),
           currency: Value(currency),
@@ -188,14 +196,14 @@ class ReportsRepository {
       );
     } else {
       await _db.into(_db.profilePricesTable).insert(
-        ProfilePricesTableCompanion.insert(
-          connectionId: connectionId,
-          profileName: profileName,
-          price: price,
-          currency: Value(currency),
-          updatedAt: Value(DateTime.now()),
-        ),
-      );
+            ProfilePricesTableCompanion.insert(
+              connectionId: connectionId,
+              profileName: profileName,
+              price: price,
+              currency: Value(currency),
+              updatedAt: Value(DateTime.now()),
+            ),
+          );
     }
   }
 
@@ -216,11 +224,13 @@ class ReportsRepository {
     final existingRows = await (_db.select(_db.usageObservationsTable)
           ..where((t) => t.connectionId.equals(connectionId)))
         .get();
-    final Set<String> observedCardNames = existingRows.map((r) => r.cardName).toSet();
+    final Set<String> observedCardNames =
+        existingRows.map((r) => r.cardName).toSet();
 
     for (final s in subscribers) {
       // Check if card has usage: uptime > 0 or traffic > 0
-      final hasUptime = s.uptime != null && s.uptime!.isNotEmpty && s.uptime != '0s';
+      final hasUptime =
+          s.uptime != null && s.uptime!.isNotEmpty && s.uptime != '0s';
       final hasTraffic = (s.bytesIn + s.bytesOut) > 0;
 
       if (hasUptime || hasTraffic) {
@@ -230,14 +240,14 @@ class ReportsRepository {
           final isApproximate = isInitialSync || s.isExpired;
 
           await _db.into(_db.usageObservationsTable).insert(
-            UsageObservationsTableCompanion.insert(
-              connectionId: connectionId,
-              cardName: s.username,
-              profile: s.profile,
-              firstSeenAt: Value(DateTime.now()),
-              dateIsApproximate: Value(isApproximate),
-            ),
-          );
+                UsageObservationsTableCompanion.insert(
+                  connectionId: connectionId,
+                  cardName: s.username,
+                  profile: s.profile,
+                  firstSeenAt: Value(DateTime.now()),
+                  dateIsApproximate: Value(isApproximate),
+                ),
+              );
           observedCardNames.add(s.username);
           newlyObserved++;
         }
@@ -256,14 +266,17 @@ class ReportsRepository {
       ..where((t) => t.connectionId.equals(connectionId));
 
     if (startDate != null) {
-      query = query..where((t) => t.firstSeenAt.isBiggerOrEqualValue(startDate));
+      query = query
+        ..where((t) => t.firstSeenAt.isBiggerOrEqualValue(startDate));
     }
     if (endDate != null) {
       query = query..where((t) => t.firstSeenAt.isSmallerOrEqualValue(endDate));
     }
 
     query = query
-      ..orderBy([(t) => OrderingTerm(expression: t.firstSeenAt, mode: OrderingMode.desc)]);
+      ..orderBy([
+        (t) => OrderingTerm(expression: t.firstSeenAt, mode: OrderingMode.desc)
+      ]);
 
     return await query.get();
   }
@@ -279,24 +292,28 @@ class ReportsRepository {
     DateTime? receivedAt,
   }) async {
     return await _db.into(_db.paymentsTable).insert(
-      PaymentsTableCompanion.insert(
-        connectionId: connectionId,
-        amount: amount,
-        note: Value(note),
-        receivedAt: Value(receivedAt ?? DateTime.now()),
-      ),
-    );
+          PaymentsTableCompanion.insert(
+            connectionId: connectionId,
+            amount: amount,
+            note: Value(note),
+            receivedAt: Value(receivedAt ?? DateTime.now()),
+          ),
+        );
   }
 
   Future<List<PaymentsTableData>> getPayments(int connectionId) async {
     return await (_db.select(_db.paymentsTable)
           ..where((t) => t.connectionId.equals(connectionId))
-          ..orderBy([(t) => OrderingTerm(expression: t.receivedAt, mode: OrderingMode.desc)]))
+          ..orderBy([
+            (t) =>
+                OrderingTerm(expression: t.receivedAt, mode: OrderingMode.desc)
+          ]))
         .get();
   }
 
   Future<int> deletePayment(int id) async {
-    return await (_db.delete(_db.paymentsTable)..where((t) => t.id.equals(id))).go();
+    return await (_db.delete(_db.paymentsTable)..where((t) => t.id.equals(id)))
+        .go();
   }
 
   // =========================================================================
@@ -311,20 +328,21 @@ class ReportsRepository {
     DateTime? at,
   }) async {
     return await _db.into(_db.cardEventsTable).insert(
-      CardEventsTableCompanion.insert(
-        connectionId: connectionId,
-        type: type,
-        count: count,
-        profile: profile,
-        at: Value(at ?? DateTime.now()),
-      ),
-    );
+          CardEventsTableCompanion.insert(
+            connectionId: connectionId,
+            type: type,
+            count: count,
+            profile: profile,
+            at: Value(at ?? DateTime.now()),
+          ),
+        );
   }
 
   Future<List<CardEventsTableData>> getCardEvents(int connectionId) async {
     return await (_db.select(_db.cardEventsTable)
           ..where((t) => t.connectionId.equals(connectionId))
-          ..orderBy([(t) => OrderingTerm(expression: t.at, mode: OrderingMode.desc)]))
+          ..orderBy(
+              [(t) => OrderingTerm(expression: t.at, mode: OrderingMode.desc)]))
         .get();
   }
 
@@ -332,11 +350,13 @@ class ReportsRepository {
   // Phase U5: Retention Policy (Clean old detailed observations)
   // =========================================================================
 
-  Future<int> cleanOldObservations(int connectionId, {int keepDays = 30}) async {
+  Future<int> cleanOldObservations(int connectionId,
+      {int keepDays = 30}) async {
     final cutoff = DateTime.now().subtract(Duration(days: keepDays));
     return await (_db.delete(_db.usageObservationsTable)
-          ..where(
-              (t) => t.connectionId.equals(connectionId) & t.firstSeenAt.isSmallerThanValue(cutoff)))
+          ..where((t) =>
+              t.connectionId.equals(connectionId) &
+              t.firstSeenAt.isSmallerThanValue(cutoff)))
         .go();
   }
 
@@ -350,9 +370,12 @@ class ReportsRepository {
     String? resellerPrefix,
   }) async {
     // 1. Filter subscribers if reseller scope applies
-    final filteredSubscribers = (resellerPrefix != null && resellerPrefix.isNotEmpty)
-        ? subscribers.where((s) => s.username.startsWith(resellerPrefix)).toList()
-        : subscribers;
+    final filteredSubscribers =
+        (resellerPrefix != null && resellerPrefix.isNotEmpty)
+            ? subscribers
+                .where((s) => s.username.startsWith(resellerPrefix))
+                .toList()
+            : subscribers;
 
     // 2. Fetch profile prices
     final profilePrices = await getProfilePrices(connectionId);
@@ -372,7 +395,8 @@ class ReportsRepository {
       }
       final unitPrice = price ?? 0.0;
 
-      final hasUptime = s.uptime != null && s.uptime!.isNotEmpty && s.uptime != '0s';
+      final hasUptime =
+          s.uptime != null && s.uptime!.isNotEmpty && s.uptime != '0s';
       final hasTraffic = (s.bytesIn + s.bytesOut) > 0;
 
       if (s.isExpired) {
@@ -405,9 +429,12 @@ class ReportsRepository {
     final observations = await getUsageObservations(connectionId);
 
     // Filter observations for reseller if required
-    final filteredObservations = (resellerPrefix != null && resellerPrefix.isNotEmpty)
-        ? observations.where((o) => o.cardName.startsWith(resellerPrefix)).toList()
-        : observations;
+    final filteredObservations =
+        (resellerPrefix != null && resellerPrefix.isNotEmpty)
+            ? observations
+                .where((o) => o.cardName.startsWith(resellerPrefix))
+                .toList()
+            : observations;
 
     HonestSalesPeriod calculatePeriod(List<UsageObservationsTableData> list) {
       double total = 0.0;
@@ -424,10 +451,15 @@ class ReportsRepository {
       );
     }
 
-    final todayObs = filteredObservations.where((o) => o.firstSeenAt.isAfter(todayStart)).toList();
-    final weekObs = filteredObservations.where((o) => o.firstSeenAt.isAfter(sevenDaysAgo)).toList();
-    final monthObs =
-        filteredObservations.where((o) => o.firstSeenAt.isAfter(thirtyDaysAgo)).toList();
+    final todayObs = filteredObservations
+        .where((o) => o.firstSeenAt.isAfter(todayStart))
+        .toList();
+    final weekObs = filteredObservations
+        .where((o) => o.firstSeenAt.isAfter(sevenDaysAgo))
+        .toList();
+    final monthObs = filteredObservations
+        .where((o) => o.firstSeenAt.isAfter(thirtyDaysAgo))
+        .toList();
 
     final estimatedSales = HonestEstimatedSales(
       today: calculatePeriod(todayObs),
@@ -439,7 +471,8 @@ class ReportsRepository {
 
     // 4. Payments
     final payments = await getPayments(connectionId);
-    final totalPayments = payments.fold<double>(0.0, (acc, p) => acc + p.amount);
+    final totalPayments =
+        payments.fold<double>(0.0, (acc, p) => acc + p.amount);
     final estimatedMonthSales = estimatedSales.last30Days.totalEstimatedAmount;
     final balance = totalPayments - estimatedMonthSales;
 

@@ -6,7 +6,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/database/database_provider.dart';
 
-final voucherTemplatesStreamProvider = StreamProvider<List<VoucherTemplatesTableData>>((ref) {
+final voucherTemplatesStreamProvider =
+    StreamProvider<List<VoucherTemplatesTableData>>((ref) {
   final db = ref.watch(databaseProvider);
   return db.select(db.voucherTemplatesTable).watch();
 });
@@ -38,7 +39,8 @@ class TemplateGalleryScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.palette_outlined, size: 64, color: AppColors.textSecondary),
+                  const Icon(Icons.palette_outlined,
+                      size: 64, color: AppColors.textSecondary),
                   const SizedBox(height: 16),
                   const Text('لا توجد قوالب محفوظة حالياً'),
                   const SizedBox(height: 16),
@@ -73,7 +75,8 @@ class TemplateGalleryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTemplateCard(BuildContext context, AppDatabase db, VoucherTemplatesTableData template) {
+  Widget _buildTemplateCard(BuildContext context, AppDatabase db,
+      VoucherTemplatesTableData template) {
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
@@ -97,24 +100,31 @@ class TemplateGalleryScreen extends ConsumerWidget {
                     children: [
                       Text(
                         template.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14),
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         'الحجم: ${template.paperSize} | ${template.cardsPerRow} كروت بالصف',
-                        style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                        style: const TextStyle(
+                            fontSize: 11, color: AppColors.textSecondary),
                       ),
                     ],
                   ),
                 ),
                 if (template.isDefault)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: AppColors.cyanAccent,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Text('افتراضي', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                    child: const Text('افتراضي',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold)),
                   ),
               ],
             ),
@@ -138,14 +148,26 @@ class TemplateGalleryScreen extends ConsumerWidget {
                         children: [
                           Text(
                             template.headerText ?? 'شبكة الواي فاي',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.navyPrimary),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: AppColors.navyPrimary),
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
-                          const Text('المستخدم: 77123456', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
-                          const Text('كلمة السر: 9876', style: TextStyle(fontSize: 10, color: AppColors.textSecondary)),
+                          const Text('المستخدم: 77123456',
+                              style: TextStyle(
+                                  fontSize: 11, fontWeight: FontWeight.bold)),
+                          const Text('كلمة السر: 9876',
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.textSecondary)),
                           const SizedBox(height: 4),
-                          const Text('السعر: 200 ريال', style: TextStyle(fontSize: 10, color: AppColors.cyanAccent, fontWeight: FontWeight.bold)),
+                          const Text('السعر: 200 ريال',
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  color: AppColors.cyanAccent,
+                                  fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -153,7 +175,9 @@ class TemplateGalleryScreen extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6)),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(6)),
                         child: QrImageView(
                           data: 'http://login?user=77123456&pass=9876',
                           size: 60,
@@ -175,14 +199,20 @@ class TemplateGalleryScreen extends ConsumerWidget {
                     onPressed: () async {
                       // Set default
                       await (db.update(db.voucherTemplatesTable)).write(
-                        const VoucherTemplatesTableCompanion(isDefault: drift.Value(false)),
+                        const VoucherTemplatesTableCompanion(
+                            isDefault: drift.Value(false)),
                       );
-                      await (db.update(db.voucherTemplatesTable)..where((t) => t.id.equals(template.id))).write(
-                        const VoucherTemplatesTableCompanion(isDefault: drift.Value(true)),
+                      await (db.update(db.voucherTemplatesTable)
+                            ..where((t) => t.id.equals(template.id)))
+                          .write(
+                        const VoucherTemplatesTableCompanion(
+                            isDefault: drift.Value(true)),
                       );
                     },
-                    style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
-                    child: const Text('تعيين كافتراضي', style: TextStyle(fontSize: 11)),
+                    style: TextButton.styleFrom(
+                        visualDensity: VisualDensity.compact),
+                    child: const Text('تعيين كافتراضي',
+                        style: TextStyle(fontSize: 11)),
                   ),
                 IconButton(
                   icon: const Icon(Icons.edit_outlined, size: 18),
@@ -191,10 +221,13 @@ class TemplateGalleryScreen extends ConsumerWidget {
                 ),
                 if (!template.isDefault)
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.danger),
+                    icon: const Icon(Icons.delete_outline,
+                        size: 18, color: AppColors.danger),
                     tooltip: 'حذف',
                     onPressed: () async {
-                      await (db.delete(db.voucherTemplatesTable)..where((t) => t.id.equals(template.id))).go();
+                      await (db.delete(db.voucherTemplatesTable)
+                            ..where((t) => t.id.equals(template.id)))
+                          .go();
                     },
                   ),
               ],
@@ -205,10 +238,12 @@ class TemplateGalleryScreen extends ConsumerWidget {
     );
   }
 
-  void _openTemplateEditor(BuildContext context, AppDatabase db, VoucherTemplatesTableData? template) {
+  void _openTemplateEditor(BuildContext context, AppDatabase db,
+      VoucherTemplatesTableData? template) {
     showDialog(
       context: context,
-      builder: (ctx) => _TemplateEditorDialog(db: db, initialTemplate: template),
+      builder: (ctx) =>
+          _TemplateEditorDialog(db: db, initialTemplate: template),
     );
   }
 }
@@ -263,7 +298,9 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.initialTemplate == null ? 'تصميم قالب كروت جديد' : 'تعديل قالب الكروت'),
+      title: Text(widget.initialTemplate == null
+          ? 'تصميم قالب كروت جديد'
+          : 'تعديل قالب الكروت'),
       content: SingleChildScrollView(
         child: SizedBox(
           width: 450,
@@ -278,12 +315,14 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
               const SizedBox(height: 12),
               TextField(
                 controller: _headerCtrl,
-                decoration: const InputDecoration(labelText: 'عنوان رأس الكرت (اسم الشبكة)'),
+                decoration: const InputDecoration(
+                    labelText: 'عنوان رأس الكرت (اسم الشبكة)'),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: _footerCtrl,
-                decoration: const InputDecoration(labelText: 'نص تذييل الكرت (رقم الدعم/ملاحظات)'),
+                decoration: const InputDecoration(
+                    labelText: 'نص تذييل الكرت (رقم الدعم/ملاحظات)'),
               ),
               const SizedBox(height: 14),
 
@@ -292,9 +331,12 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
                 value: _paperSize,
                 decoration: const InputDecoration(labelText: 'حجم الورق'),
                 items: const [
-                  DropdownMenuItem(value: 'A4', child: Text('ورق عادي A4 (شبكة كروت)')),
-                  DropdownMenuItem(value: '58mm', child: Text('طابعة حرارية 58mm (إيصال)')),
-                  DropdownMenuItem(value: '80mm', child: Text('طابعة حرارية 80mm (إيصال)')),
+                  DropdownMenuItem(
+                      value: 'A4', child: Text('ورق عادي A4 (شبكة كروت)')),
+                  DropdownMenuItem(
+                      value: '58mm', child: Text('طابعة حرارية 58mm (إيصال)')),
+                  DropdownMenuItem(
+                      value: '80mm', child: Text('طابعة حرارية 80mm (إيصال)')),
                 ],
                 onChanged: (val) {
                   if (val != null) {
@@ -315,7 +357,8 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
 
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('إظهار رمز الاستجابة السريعة (QR Code)', style: TextStyle(fontSize: 13)),
+                title: const Text('إظهار رمز الاستجابة السريعة (QR Code)',
+                    style: TextStyle(fontSize: 13)),
                 value: _showQr,
                 onChanged: (val) => setState(() => _showQr = val),
               ),
@@ -335,16 +378,16 @@ class _TemplateEditorDialogState extends State<_TemplateEditorDialog> {
 
             if (widget.initialTemplate == null) {
               await widget.db.into(widget.db.voucherTemplatesTable).insert(
-                VoucherTemplatesTableCompanion.insert(
-                  name: name,
-                  paperSize: drift.Value(_paperSize),
-                  cardsPerRow: drift.Value(_cardsPerRow),
-                  cardsPerPage: drift.Value(_cardsPerPage),
-                  showQrCode: drift.Value(_showQr),
-                  headerText: drift.Value(_headerCtrl.text.trim()),
-                  footerText: drift.Value(_footerCtrl.text.trim()),
-                ),
-              );
+                    VoucherTemplatesTableCompanion.insert(
+                      name: name,
+                      paperSize: drift.Value(_paperSize),
+                      cardsPerRow: drift.Value(_cardsPerRow),
+                      cardsPerPage: drift.Value(_cardsPerPage),
+                      showQrCode: drift.Value(_showQr),
+                      headerText: drift.Value(_headerCtrl.text.trim()),
+                      footerText: drift.Value(_footerCtrl.text.trim()),
+                    ),
+                  );
             } else {
               await (widget.db.update(widget.db.voucherTemplatesTable)
                     ..where((t) => t.id.equals(widget.initialTemplate!.id)))

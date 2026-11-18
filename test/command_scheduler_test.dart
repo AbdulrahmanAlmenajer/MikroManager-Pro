@@ -36,7 +36,9 @@ void main() {
       // Complete the sentence once
       completer.complete(RouterOsResponse(
         isSuccess: true,
-        data: [{'uptime': '1d2h', 'cpu-load': '12'}],
+        data: [
+          {'uptime': '1d2h', 'cpu-load': '12'}
+        ],
       ));
 
       final res1 = await future1;
@@ -48,10 +50,12 @@ void main() {
       expect(res2.data.first['uptime'], '1d2h');
 
       // Verify adapter was invoked only ONCE despite two callers!
-      verify(() => mockAdapter.executeSentence(['/system/resource/print'])).called(1);
+      verify(() => mockAdapter.executeSentence(['/system/resource/print']))
+          .called(1);
     });
 
-    test('Shared polling stream produces values and handles listeners cleanly', () async {
+    test('Shared polling stream produces values and handles listeners cleanly',
+        () async {
       int fetchCount = 0;
       final stream = scheduler.registerPollingStream<int>(
         key: 'test_counter',

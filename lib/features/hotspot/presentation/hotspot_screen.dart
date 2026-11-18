@@ -10,7 +10,8 @@ class HotspotScreen extends ConsumerStatefulWidget {
   ConsumerState<HotspotScreen> createState() => _HotspotScreenState();
 }
 
-class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTickerProviderStateMixin {
+class _HotspotScreenState extends ConsumerState<HotspotScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchCtrl = TextEditingController();
   String _searchQuery = '';
@@ -64,7 +65,8 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'تحديث البيانات',
-            onPressed: () => ref.read(hotspotControllerProvider.notifier).refreshAll(),
+            onPressed: () =>
+                ref.read(hotspotControllerProvider.notifier).refreshAll(),
           ),
         ],
       ),
@@ -73,12 +75,16 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
               onPressed: () => _showAddUserDialog(context, state.profiles),
               backgroundColor: AppColors.cyanAccent,
               icon: const Icon(Icons.person_add, color: Colors.white),
-              label: const Text('إضافة مستخدم', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              label: const Text('إضافة مستخدم',
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
             )
           : null,
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : state.errorMessage != null && state.activeUsers.isEmpty && state.users.isEmpty
+          : state.errorMessage != null &&
+                  state.activeUsers.isEmpty &&
+                  state.users.isEmpty
               ? _buildErrorView(state.errorMessage!)
               : Column(
                   children: [
@@ -133,15 +139,22 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.wifi_off_outlined, size: 64, color: AppColors.danger.withValues(alpha: 0.7)),
+            Icon(Icons.wifi_off_outlined,
+                size: 64, color: AppColors.danger.withValues(alpha: 0.7)),
             const SizedBox(height: 16),
             const Text('تعذر الاتصال بخدمة الهوتس بوت',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.textPrimary)),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: AppColors.textPrimary)),
             const SizedBox(height: 8),
-            Text(error, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.textSecondary)),
+            Text(error,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.textSecondary)),
             const SizedBox(height: 24),
             ElevatedButton.icon(
-              onPressed: () => ref.read(hotspotControllerProvider.notifier).refreshAll(),
+              onPressed: () =>
+                  ref.read(hotspotControllerProvider.notifier).refreshAll(),
               icon: const Icon(Icons.refresh),
               label: const Text('إعادة المحاولة'),
             ),
@@ -156,7 +169,9 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
       final user = u['user']?.toString().toLowerCase() ?? '';
       final address = u['address']?.toString().toLowerCase() ?? '';
       final mac = u['mac-address']?.toString().toLowerCase() ?? '';
-      return user.contains(_searchQuery) || address.contains(_searchQuery) || mac.contains(_searchQuery);
+      return user.contains(_searchQuery) ||
+          address.contains(_searchQuery) ||
+          mac.contains(_searchQuery);
     }).toList();
 
     if (filtered.isEmpty) {
@@ -164,17 +179,23 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.people_outline, size: 64, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+            Icon(Icons.people_outline,
+                size: 64,
+                color: AppColors.textSecondary.withValues(alpha: 0.5)),
             const SizedBox(height: 12),
             const Text('لا يوجد متصلون نشطون حالياً',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary)),
           ],
         ),
       );
     }
 
     return RefreshIndicator(
-      onRefresh: () => ref.read(hotspotControllerProvider.notifier).refreshAll(),
+      onRefresh: () =>
+          ref.read(hotspotControllerProvider.notifier).refreshAll(),
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: filtered.length,
@@ -199,7 +220,8 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
                       const CircleAvatar(
                         backgroundColor: AppColors.success,
                         radius: 18,
-                        child: Icon(Icons.person, color: Colors.white, size: 20),
+                        child:
+                            Icon(Icons.person, color: Colors.white, size: 20),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -207,9 +229,12 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(username,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16)),
                             Text('IP: $ip | MAC: $mac',
-                                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.textSecondary)),
                           ],
                         ),
                       ),
@@ -218,12 +243,16 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.danger,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
                         ),
                         onPressed: () => _confirmKick(context, id, username),
                         icon: const Icon(Icons.power_settings_new, size: 16),
-                        label: const Text('فصل (Kick)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        label: const Text('فصل (Kick)',
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -257,17 +286,23 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.badge_outlined, size: 64, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+            Icon(Icons.badge_outlined,
+                size: 64,
+                color: AppColors.textSecondary.withValues(alpha: 0.5)),
             const SizedBox(height: 12),
             const Text('لا يوجد مستخدمون مطابقون للبحث',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary)),
           ],
         ),
       );
     }
 
     return RefreshIndicator(
-      onRefresh: () => ref.read(hotspotControllerProvider.notifier).refreshAll(),
+      onRefresh: () =>
+          ref.read(hotspotControllerProvider.notifier).refreshAll(),
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: filtered.length,
@@ -285,13 +320,17 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: AppColors.navyPrimary.withValues(alpha: 0.1),
-                child: const Icon(Icons.account_circle, color: AppColors.navyPrimary),
+                child: const Icon(Icons.account_circle,
+                    color: AppColors.navyPrimary),
               ),
-              title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+              title: Text(name,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 15)),
               subtitle: Text(
                 'بروفايل: $profile | الاستهلاك: $bytesOut'
                 '${limitUptime != null ? "\nالحد الزمني: $limitUptime (المستهلك: $uptime)" : ""}',
-                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                style: const TextStyle(
+                    fontSize: 12, color: AppColors.textSecondary),
               ),
               trailing: IconButton(
                 icon: const Icon(Icons.delete_outline, color: AppColors.danger),
@@ -311,7 +350,8 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
     }
 
     return RefreshIndicator(
-      onRefresh: () => ref.read(hotspotControllerProvider.notifier).refreshAll(),
+      onRefresh: () =>
+          ref.read(hotspotControllerProvider.notifier).refreshAll(),
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: state.profiles.length,
@@ -320,7 +360,8 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
           final name = profile['name']?.toString() ?? 'بدون اسم';
           final sharedUsers = profile['shared-users']?.toString() ?? '1';
           final rateLimit = profile['rate-limit']?.toString() ?? 'غير محدد';
-          final sessionTimeout = profile['session-timeout']?.toString() ?? 'غير محدد';
+          final sessionTimeout =
+              profile['session-timeout']?.toString() ?? 'غير محدد';
 
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
@@ -333,10 +374,13 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
                     children: [
                       const Icon(Icons.tune, color: AppColors.cyanAccent),
                       const SizedBox(width: 8),
-                      Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(name,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
                       const Spacer(),
                       Chip(
-                        label: Text('$sharedUsers أجهزة', style: const TextStyle(fontSize: 11)),
+                        label: Text('$sharedUsers أجهزة',
+                            style: const TextStyle(fontSize: 11)),
                         backgroundColor: AppColors.background,
                       ),
                     ],
@@ -346,9 +390,11 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('السرعة (Rate Limit): $rateLimit',
-                          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+                          style: const TextStyle(
+                              fontSize: 13, color: AppColors.textSecondary)),
                       Text('فترة الجلسة: $sessionTimeout',
-                          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+                          style: const TextStyle(
+                              fontSize: 13, color: AppColors.textSecondary)),
                     ],
                   ),
                 ],
@@ -365,7 +411,9 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
       final mac = b['mac-address']?.toString().toLowerCase() ?? '';
       final address = b['to-address']?.toString().toLowerCase() ?? '';
       final comment = b['comment']?.toString().toLowerCase() ?? '';
-      return mac.contains(_searchQuery) || address.contains(_searchQuery) || comment.contains(_searchQuery);
+      return mac.contains(_searchQuery) ||
+          address.contains(_searchQuery) ||
+          comment.contains(_searchQuery);
     }).toList();
 
     if (filtered.isEmpty) {
@@ -373,7 +421,9 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.link_off, size: 64, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+            Icon(Icons.link_off,
+                size: 64,
+                color: AppColors.textSecondary.withValues(alpha: 0.5)),
             const SizedBox(height: 12),
             const Text('لا توجد سجلات ربط عناوين IP حالياً',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -383,7 +433,8 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
     }
 
     return RefreshIndicator(
-      onRefresh: () => ref.read(hotspotControllerProvider.notifier).refreshAll(),
+      onRefresh: () =>
+          ref.read(hotspotControllerProvider.notifier).refreshAll(),
       child: ListView.builder(
         padding: const EdgeInsets.all(12),
         itemCount: filtered.length,
@@ -406,23 +457,30 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
                 backgroundColor: typeColor.withValues(alpha: 0.15),
                 child: Icon(Icons.link, color: typeColor),
               ),
-              title: Text(mac, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              title: Text(mac,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14)),
               subtitle: Text(
                 'العنوان: $toAddress | النوع: $type${comment.isNotEmpty ? " ($comment)" : ""}',
-                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                style: const TextStyle(
+                    fontSize: 12, color: AppColors.textSecondary),
               ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Chip(
-                    label: Text(type, style: const TextStyle(fontSize: 11, color: Colors.white)),
+                    label: Text(type,
+                        style:
+                            const TextStyle(fontSize: 11, color: Colors.white)),
                     backgroundColor: typeColor,
                   ),
                   if (id.isNotEmpty)
                     IconButton(
-                      icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.danger),
+                      icon: const Icon(Icons.delete_outline,
+                          size: 18, color: AppColors.danger),
                       tooltip: 'حذف ربط IP',
-                      onPressed: () => _confirmDeleteIpBinding(context, id, mac),
+                      onPressed: () =>
+                          _confirmDeleteIpBinding(context, id, mac),
                     ),
                 ],
               ),
@@ -438,7 +496,9 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
       children: [
         Icon(icon, size: 14, color: AppColors.textSecondary),
         const SizedBox(width: 4),
-        Text('$title: $val', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+        Text('$title: $val',
+            style:
+                const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
       ],
     );
   }
@@ -447,7 +507,8 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
     final b = int.tryParse(bytes?.toString() ?? '0') ?? 0;
     if (b < 1024) return '$b B';
     if (b < 1024 * 1024) return '${(b / 1024).toStringAsFixed(1)} KB';
-    if (b < 1024 * 1024 * 1024) return '${(b / (1024 * 1024)).toStringAsFixed(1)} MB';
+    if (b < 1024 * 1024 * 1024)
+      return '${(b / (1024 * 1024)).toStringAsFixed(1)} MB';
     return '${(b / (1024 * 1024 * 1024)).toStringAsFixed(2)} GB';
   }
 
@@ -456,13 +517,17 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('تأكيد قطع الاتصال (Kick)'),
-        content: Text('هل أنت متأكد من رغبتك في فصل المشترك "$username" فوراً؟'),
+        content:
+            Text('هل أنت متأكد من رغبتك في فصل المشترك "$username" فوراً؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () async {
-              await ref.read(hotspotControllerProvider.notifier).kickUser(id, username);
+              await ref
+                  .read(hotspotControllerProvider.notifier)
+                  .kickUser(id, username);
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text('فصل الاتصال الآن'),
@@ -477,13 +542,17 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('تأكيد حذف المستخدم'),
-        content: Text('هل أنت متأكد من حذف المستخدم "$username" من سيرفر الهوتس بوت؟'),
+        content: Text(
+            'هل أنت متأكد من حذف المستخدم "$username" من سيرفر الهوتس بوت؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () async {
-              await ref.read(hotspotControllerProvider.notifier).removeUser(id, username);
+              await ref
+                  .read(hotspotControllerProvider.notifier)
+                  .removeUser(id, username);
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text('حذف نهائياً'),
@@ -500,7 +569,8 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
         title: const Text('تأكيد حذف ربط IP'),
         content: Text('هل أنت متأكد من حذف ربط IP للعنوان "$mac"؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () async {
@@ -515,13 +585,16 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
     );
   }
 
-  void _showAddUserDialog(BuildContext context, List<Map<String, dynamic>> profiles) {
+  void _showAddUserDialog(
+      BuildContext context, List<Map<String, dynamic>> profiles) {
     final nameCtrl = TextEditingController();
     final passCtrl = TextEditingController();
     final uptimeCtrl = TextEditingController();
     final bytesCtrl = TextEditingController();
     final commentCtrl = TextEditingController();
-    String selectedProfile = profiles.isNotEmpty ? profiles.first['name']?.toString() ?? 'default' : 'default';
+    String selectedProfile = profiles.isNotEmpty
+        ? profiles.first['name']?.toString() ?? 'default'
+        : 'default';
 
     showDialog(
       context: context,
@@ -534,22 +607,31 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
               children: [
                 TextField(
                   controller: nameCtrl,
-                  decoration: const InputDecoration(labelText: 'اسم المستخدم (User) *', prefixIcon: Icon(Icons.person)),
+                  decoration: const InputDecoration(
+                      labelText: 'اسم المستخدم (User) *',
+                      prefixIcon: Icon(Icons.person)),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: passCtrl,
-                  decoration: const InputDecoration(labelText: 'كلمة المرور (Password) *', prefixIcon: Icon(Icons.lock)),
+                  decoration: const InputDecoration(
+                      labelText: 'كلمة المرور (Password) *',
+                      prefixIcon: Icon(Icons.lock)),
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(labelText: 'البروفايل', prefixIcon: Icon(Icons.tune)),
+                  decoration: const InputDecoration(
+                      labelText: 'البروفايل', prefixIcon: Icon(Icons.tune)),
                   value: selectedProfile,
                   items: profiles.isEmpty
-                      ? [const DropdownMenuItem(value: 'default', child: Text('default'))]
+                      ? [
+                          const DropdownMenuItem(
+                              value: 'default', child: Text('default'))
+                        ]
                       : profiles.map((p) {
                           final name = p['name']?.toString() ?? 'default';
-                          return DropdownMenuItem(value: name, child: Text(name));
+                          return DropdownMenuItem(
+                              value: name, child: Text(name));
                         }).toList(),
                   onChanged: (val) {
                     if (val != null) {
@@ -577,18 +659,24 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
                 const SizedBox(height: 12),
                 TextField(
                   controller: commentCtrl,
-                  decoration: const InputDecoration(labelText: 'ملاحظة (Comment)', prefixIcon: Icon(Icons.notes)),
+                  decoration: const InputDecoration(
+                      labelText: 'ملاحظة (Comment)',
+                      prefixIcon: Icon(Icons.notes)),
                 ),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إلغاء')),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('إلغاء')),
             ElevatedButton(
               onPressed: () async {
-                if (nameCtrl.text.trim().isEmpty || passCtrl.text.trim().isEmpty) {
+                if (nameCtrl.text.trim().isEmpty ||
+                    passCtrl.text.trim().isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('اسم المستخدم وكلمة المرور مطلوبان')),
+                    const SnackBar(
+                        content: Text('اسم المستخدم وكلمة المرور مطلوبان')),
                   );
                   return;
                 }
@@ -597,9 +685,15 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen> with SingleTicker
                       name: nameCtrl.text.trim(),
                       password: passCtrl.text.trim(),
                       profile: selectedProfile,
-                      limitUptime: uptimeCtrl.text.trim().isNotEmpty ? uptimeCtrl.text.trim() : null,
-                      limitBytesTotal: bytesCtrl.text.trim().isNotEmpty ? bytesCtrl.text.trim() : null,
-                      comment: commentCtrl.text.trim().isNotEmpty ? commentCtrl.text.trim() : null,
+                      limitUptime: uptimeCtrl.text.trim().isNotEmpty
+                          ? uptimeCtrl.text.trim()
+                          : null,
+                      limitBytesTotal: bytesCtrl.text.trim().isNotEmpty
+                          ? bytesCtrl.text.trim()
+                          : null,
+                      comment: commentCtrl.text.trim().isNotEmpty
+                          ? commentCtrl.text.trim()
+                          : null,
                     );
 
                 if (ctx.mounted) Navigator.pop(ctx);

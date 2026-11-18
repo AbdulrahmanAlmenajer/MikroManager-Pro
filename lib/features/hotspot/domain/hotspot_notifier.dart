@@ -63,7 +63,8 @@ class HotspotNotifier extends StateNotifier<HotspotState> {
     try {
       final adapter = await _ref.read(activeAdapterProvider.future);
       if (adapter == null) {
-        state = state.copyWith(isLoading: false, errorMessage: 'لا يوجد راوتر محدد حالياً');
+        state = state.copyWith(
+            isLoading: false, errorMessage: 'لا يوجد راوتر محدد حالياً');
         return;
       }
 
@@ -120,7 +121,8 @@ class HotspotNotifier extends StateNotifier<HotspotState> {
       final adapter = await _ref.read(activeAdapterProvider.future);
       if (adapter == null) return false;
 
-      final success = await _repo.removeUser(adapter: adapter, id: id, username: username);
+      final success =
+          await _repo.removeUser(adapter: adapter, id: id, username: username);
       if (success) {
         await refreshAll();
       }
@@ -135,7 +137,8 @@ class HotspotNotifier extends StateNotifier<HotspotState> {
       final adapter = await _ref.read(activeAdapterProvider.future);
       if (adapter == null) return false;
 
-      final success = await _repo.kickUser(adapter: adapter, id: id, username: username);
+      final success =
+          await _repo.kickUser(adapter: adapter, id: id, username: username);
       if (success) {
         await refreshAll();
       }
@@ -146,7 +149,8 @@ class HotspotNotifier extends StateNotifier<HotspotState> {
   }
 }
 
-final hotspotControllerProvider = StateNotifierProvider<HotspotNotifier, HotspotState>((ref) {
+final hotspotControllerProvider =
+    StateNotifierProvider<HotspotNotifier, HotspotState>((ref) {
   final repo = ref.watch(hotspotRepositoryProvider);
   return HotspotNotifier(ref, repo);
 });

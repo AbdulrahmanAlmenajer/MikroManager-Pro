@@ -30,8 +30,10 @@ class MoreScreen extends ConsumerWidget {
                     children: [
                       CircleAvatar(
                         radius: 26,
-                        backgroundColor: AppColors.cyanAccent.withValues(alpha: 0.15),
-                        child: const Icon(Icons.person, color: AppColors.cyanAccent, size: 28),
+                        backgroundColor:
+                            AppColors.cyanAccent.withValues(alpha: 0.15),
+                        child: const Icon(Icons.person,
+                            color: AppColors.cyanAccent, size: 28),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -40,18 +42,22 @@ class MoreScreen extends ConsumerWidget {
                           children: [
                             Text(
                               session.username,
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               '${session.boardName} (${session.host})',
-                              style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                              style: const TextStyle(
+                                  fontSize: 12, color: AppColors.textSecondary),
                             ),
                             const SizedBox(height: 6),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: AppColors.navyPrimary.withValues(alpha: 0.08),
+                                color: AppColors.navyPrimary
+                                    .withValues(alpha: 0.08),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
@@ -186,7 +192,8 @@ class MoreScreen extends ConsumerWidget {
                   elevation: 0,
                   side: const BorderSide(color: AppColors.danger, width: 1.5),
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 onPressed: () => _confirmLogout(context, ref),
                 icon: const Icon(Icons.power_settings_new),
@@ -230,12 +237,14 @@ class MoreScreen extends ConsumerWidget {
               const Spacer(),
               Text(
                 title,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
               ),
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                style: const TextStyle(
+                    fontSize: 10, color: AppColors.textSecondary),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -251,7 +260,8 @@ class MoreScreen extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('تأكيد تسجيل الخروج'),
-        content: const Text('هل أنت متأكد من قطع الاتصال بالراوتر وتسجيل الخروج؟ ستتم إعادتك لشاشة تسجيل الدخول.'),
+        content: const Text(
+            'هل أنت متأكد من قطع الاتصال بالراوتر وتسجيل الخروج؟ ستتم إعادتك لشاشة تسجيل الدخول.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -263,7 +273,8 @@ class MoreScreen extends ConsumerWidget {
               Navigator.pop(ctx);
               await ref.read(sessionControllerProvider.notifier).logout();
             },
-            child: const Text('قطع الاتصال', style: TextStyle(color: Colors.white)),
+            child: const Text('قطع الاتصال',
+                style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

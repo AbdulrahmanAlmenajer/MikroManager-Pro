@@ -7,7 +7,8 @@ class ApDevicesTable extends Table {
   TextColumn get ip => text()();
   TextColumn get vendor => text().withDefault(const Constant('MikroTik'))();
   DateTimeColumn get lastCheckAt => dateTime().nullable()();
-  TextColumn get accessState => text().withDefault(const Constant('unknown'))(); // ok, unreachable, bad_credentials, unknown
+  TextColumn get accessState => text().withDefault(
+      const Constant('unknown'))(); // ok, unreachable, bad_credentials, unknown
 
   @override
   String get tableName => 'ap_devices';

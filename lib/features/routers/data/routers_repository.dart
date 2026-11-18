@@ -17,7 +17,9 @@ class RoutersRepository {
   }
 
   Future<RoutersTableData?> getRouterById(int id) async {
-    return await (_db.select(_db.routersTable)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+    return await (_db.select(_db.routersTable)
+          ..where((tbl) => tbl.id.equals(id)))
+        .getSingleOrNull();
   }
 
   Future<int> addRouter({
@@ -31,17 +33,17 @@ class RoutersRepository {
     String? notes,
   }) async {
     final id = await _db.into(_db.routersTable).insert(
-      RoutersTableCompanion.insert(
-        name: name,
-        ipAddress: ipAddress,
-        apiPort: Value(apiPort),
-        username: Value(username),
-        useSsl: Value(useSsl),
-        useRestApi: Value(useRestApi),
-        notes: Value(notes),
-        createdAt: Value(DateTime.now()),
-      ),
-    );
+          RoutersTableCompanion.insert(
+            name: name,
+            ipAddress: ipAddress,
+            apiPort: Value(apiPort),
+            username: Value(username),
+            useSsl: Value(useSsl),
+            useRestApi: Value(useRestApi),
+            notes: Value(notes),
+            createdAt: Value(DateTime.now()),
+          ),
+        );
 
     // Save password securely
     await SecureStorageService.saveRouterPassword(id, password);
@@ -59,7 +61,9 @@ class RoutersRepository {
     bool useRestApi = false,
     String? notes,
   }) async {
-    final updated = await (_db.update(_db.routersTable)..where((tbl) => tbl.id.equals(id))).write(
+    final updated = await (_db.update(_db.routersTable)
+          ..where((tbl) => tbl.id.equals(id)))
+        .write(
       RoutersTableCompanion(
         name: Value(name),
         ipAddress: Value(ipAddress),
@@ -79,7 +83,9 @@ class RoutersRepository {
   }
 
   Future<bool> deleteRouter(int id) async {
-    final deleted = await (_db.delete(_db.routersTable)..where((tbl) => tbl.id.equals(id))).go();
+    final deleted = await (_db.delete(_db.routersTable)
+          ..where((tbl) => tbl.id.equals(id)))
+        .go();
     await SecureStorageService.deleteRouterPassword(id);
     return deleted > 0;
   }
@@ -90,7 +96,8 @@ class RoutersRepository {
       const RoutersTableCompanion(isActive: Value(false)),
     );
     // Set active
-    await (_db.update(_db.routersTable)..where((tbl) => tbl.id.equals(id))).write(
+    await (_db.update(_db.routersTable)..where((tbl) => tbl.id.equals(id)))
+        .write(
       RoutersTableCompanion(
         isActive: const Value(true),
         lastConnectedAt: Value(DateTime.now()),

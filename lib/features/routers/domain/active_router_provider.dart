@@ -6,7 +6,8 @@ import 'routers_notifier.dart';
 
 final activeAdapterProvider = FutureProvider<RouterOsAdapter?>((ref) async {
   final sessionState = ref.watch(sessionControllerProvider);
-  if (sessionState.session != null && sessionState.session!.adapter.isConnected) {
+  if (sessionState.session != null &&
+      sessionState.session!.adapter.isConnected) {
     return sessionState.session!.adapter;
   }
 
@@ -14,7 +15,8 @@ final activeAdapterProvider = FutureProvider<RouterOsAdapter?>((ref) async {
   final router = routerState.activeRouter;
   if (router == null || !routerState.isConnected) return null;
 
-  final password = await SecureStorageService.getRouterPassword(router.id) ?? '';
+  final password =
+      await SecureStorageService.getRouterPassword(router.id) ?? '';
 
   final adapter = RouterOsAdapter.create(
     host: router.ipAddress,

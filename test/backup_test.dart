@@ -27,7 +27,8 @@ void main() {
       await db.close();
     });
 
-    test('restoreAppDataBackup succeeds with valid checksum and restores data', () async {
+    test('restoreAppDataBackup succeeds with valid checksum and restores data',
+        () async {
       final sampleData = {
         'version': 3.1,
         'connectionId': 1,
@@ -74,7 +75,9 @@ void main() {
       expect(templates.any((t) => t.name == 'Modern Blue'), isTrue);
     });
 
-    test('restoreAppDataBackup rejects tampered backup with mismatched checksum', () async {
+    test(
+        'restoreAppDataBackup rejects tampered backup with mismatched checksum',
+        () async {
       final sampleData = {
         'version': 3.1,
         'tables': {'profile_prices': []},
@@ -89,7 +92,9 @@ void main() {
       expect(restored, isFalse);
     });
 
-    test('createRouterBackup executes /system/backup/save and logs to backup_log', () async {
+    test(
+        'createRouterBackup executes /system/backup/save and logs to backup_log',
+        () async {
       when(() => mockAdapter.executeSentence(any())).thenAnswer(
         (_) async => RouterOsResponse(
           isSuccess: true,
@@ -113,7 +118,9 @@ void main() {
       expect(logs.first.path, endsWith('.backup'));
     });
 
-    test('createRouterBackup with script export executes /export and logs router_rsc', () async {
+    test(
+        'createRouterBackup with script export executes /export and logs router_rsc',
+        () async {
       when(() => mockAdapter.executeSentence(any())).thenAnswer(
         (_) async => RouterOsResponse(
           isSuccess: true,

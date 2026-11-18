@@ -6,7 +6,8 @@ class HotspotRepository {
 
   HotspotRepository(this._auditLogger);
 
-  Future<List<Map<String, dynamic>>> getActiveUsers(RouterOsAdapter adapter) async {
+  Future<List<Map<String, dynamic>>> getActiveUsers(
+      RouterOsAdapter adapter) async {
     return await adapter.getHotspotActive();
   }
 
@@ -14,11 +15,13 @@ class HotspotRepository {
     return await adapter.getHotspotUsers();
   }
 
-  Future<List<Map<String, dynamic>>> getProfiles(RouterOsAdapter adapter) async {
+  Future<List<Map<String, dynamic>>> getProfiles(
+      RouterOsAdapter adapter) async {
     return await adapter.getHotspotProfiles();
   }
 
-  Future<List<Map<String, dynamic>>> getIpBindings(RouterOsAdapter adapter) async {
+  Future<List<Map<String, dynamic>>> getIpBindings(
+      RouterOsAdapter adapter) async {
     return await adapter.getHotspotIpBindings();
   }
 

@@ -60,8 +60,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     backgroundColor: AppColors.cyanAccent,
                     child: Icon(Icons.bluetooth, color: Colors.white),
                   ),
-                  title: const Text('طابعة البلوتوث الحرارية (Thermal Printer)'),
-                  subtitle: const Text('ربط الطابعات المحمولة 58mm / 80mm عبر Bluetooth'),
+                  title:
+                      const Text('طابعة البلوتوث الحرارية (Thermal Printer)'),
+                  subtitle: const Text(
+                      'ربط الطابعات المحمولة 58mm / 80mm عبر Bluetooth'),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () => _showBluetoothPrintersDialog(context),
                 ),
@@ -72,7 +74,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     child: Icon(Icons.print_outlined, color: Colors.white),
                   ),
                   title: const Text('طابعات النظام والشبكة (A4)'),
-                  subtitle: const Text('توجيه مباشر لطابعات Wi-Fi أو USB المتصلة بالنظام'),
+                  subtitle: const Text(
+                      'توجيه مباشر لطابعات Wi-Fi أو USB المتصلة بالنظام'),
                   trailing: const Icon(Icons.check, color: AppColors.success),
                   onTap: () {},
                 ),
@@ -82,19 +85,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(height: 16),
 
           // Section 2: Voucher Template Defaults
-          _buildSectionHeader('تخصيص قوالب الكروت', Icons.confirmation_number_outlined),
+          _buildSectionHeader(
+              'تخصيص قوالب الكروت', Icons.confirmation_number_outlined),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
                   DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(labelText: 'المقاس الافتراضي للطباعة'),
+                    decoration: const InputDecoration(
+                        labelText: 'المقاس الافتراضي للطباعة'),
                     value: _paperSize,
                     items: const [
-                      DropdownMenuItem(value: 'A4', child: Text('ورق A4 (شبكة كروت)')),
-                      DropdownMenuItem(value: '58mm', child: Text('طابعة حرارية 58mm (ميدانية)')),
-                      DropdownMenuItem(value: '80mm', child: Text('طابعة حرارية 80mm (نقطة بيع)')),
+                      DropdownMenuItem(
+                          value: 'A4', child: Text('ورق A4 (شبكة كروت)')),
+                      DropdownMenuItem(
+                          value: '58mm',
+                          child: Text('طابعة حرارية 58mm (ميدانية)')),
+                      DropdownMenuItem(
+                          value: '80mm',
+                          child: Text('طابعة حرارية 80mm (نقطة بيع)')),
                     ],
                     onChanged: (val) {
                       if (val != null) setState(() => _paperSize = val);
@@ -102,11 +112,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<int>(
-                    decoration: const InputDecoration(labelText: 'عدد الكروت الافتراضي بالصفحة (A4)'),
+                    decoration: const InputDecoration(
+                        labelText: 'عدد الكروت الافتراضي بالصفحة (A4)'),
                     value: _cardsPerPage,
                     items: const [
                       DropdownMenuItem(value: 8, child: Text('8 كروت')),
-                      DropdownMenuItem(value: 12, child: Text('12 كرت (موصى به)')),
+                      DropdownMenuItem(
+                          value: 12, child: Text('12 كرت (موصى به)')),
                       DropdownMenuItem(value: 15, child: Text('15 كرت')),
                       DropdownMenuItem(value: 18, child: Text('18 كرت')),
                     ],
@@ -118,7 +130,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text('تضمين رمز QR لتسجيل الدخول السريع'),
-                    subtitle: const Text('مسح الكاميرا لتسجيل الدخول التلقائي بدون كتابة'),
+                    subtitle: const Text(
+                        'مسح الكاميرا لتسجيل الدخول التلقائي بدون كتابة'),
                     value: _showQrCode,
                     onChanged: (val) => setState(() => _showQrCode = val),
                   ),
@@ -138,7 +151,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 children: [
                   const Text(
                     'يتيح ربط البوت إرسال تقارير المبيعات اليومية وتنبيهات انقطاع الراوتر أو امتلاء المعالج مباشرة إلى هاتفك.',
-                    style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    style:
+                        TextStyle(fontSize: 12, color: AppColors.textSecondary),
                   ),
                   const SizedBox(height: 12),
                   TextField(
@@ -163,12 +177,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     children: [
                       Expanded(
                         child: OutlinedButton.icon(
-                          onPressed: _isTestingTelegram ? null : _testTelegramAlert,
+                          onPressed:
+                              _isTestingTelegram ? null : _testTelegramAlert,
                           icon: _isTestingTelegram
                               ? const SizedBox(
                                   width: 16,
                                   height: 16,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.notifications_active_outlined),
                           label: const Text('إرسال تنبيه تجريبي'),
@@ -177,8 +193,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.cyanAccent),
-                          onPressed: _isSavingTelegram ? null : _saveTelegramSettings,
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.cyanAccent),
+                          onPressed:
+                              _isSavingTelegram ? null : _saveTelegramSettings,
                           icon: const Icon(Icons.save),
                           label: const Text('حفظ الإعدادات'),
                         ),
@@ -205,14 +223,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text('MikroManager Pro',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.textPrimary)),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: AppColors.textPrimary)),
                   const Text('الإصدار 1.0.0 (Build 1) | معمارية Clean + Drift',
-                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                      style: TextStyle(
+                          fontSize: 12, color: AppColors.textSecondary)),
                   const SizedBox(height: 12),
                   const Text(
                     'تطبيق متكامل لإدارة وطباعة كروت الميكروتك (Hotspot & User Manager) عبر بروتوكول بورت API و REST مع دعم RTL والطباعة الحرارية الميدانية.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    style:
+                        TextStyle(fontSize: 12, color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -230,7 +253,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         children: [
           Icon(icon, size: 18, color: AppColors.cyanAccent),
           const SizedBox(width: 6),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary)),
+          Text(title,
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: AppColors.textPrimary)),
         ],
       ),
     );
@@ -244,16 +271,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         content: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.bluetooth_searching, size: 48, color: AppColors.cyanAccent),
+            Icon(Icons.bluetooth_searching,
+                size: 48, color: AppColors.cyanAccent),
             SizedBox(height: 12),
-            Text('تأكد من اقتران طابعة البلوتوث الميدانية (58mm/80mm) بجهازك أولاً من إعدادات البلوتوث في النظام.'),
+            Text(
+                'تأكد من اقتران طابعة البلوتوث الميدانية (58mm/80mm) بجهازك أولاً من إعدادات البلوتوث في النظام.'),
             SizedBox(height: 8),
-            Text('يدعم التطبيق طابعات MPT-II, POS-58, Xprinter وجميع طابعات ESC/POS المتوافقة.',
+            Text(
+                'يدعم التطبيق طابعات MPT-II, POS-58, Xprinter وجميع طابعات ESC/POS المتوافقة.',
                 style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('إغلاق')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('إغلاق')),
         ],
       ),
     );
@@ -293,7 +324,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final url = 'https://api.telegram.org/bot$token/sendMessage';
       final res = await dio.post(url, data: {
         'chat_id': chatId,
-        'text': '🔔 تجربة الاتصال من MikroManager Pro:\nتم ربط بوت تيليجرام بنجاح! ستصلك هنا تقارير المبيعات وتنبيهات الشبكة.',
+        'text':
+            '🔔 تجربة الاتصال من MikroManager Pro:\nتم ربط بوت تيليجرام بنجاح! ستصلك هنا تقارير المبيعات وتنبيهات الشبكة.',
       });
 
       if (res.statusCode == 200) {

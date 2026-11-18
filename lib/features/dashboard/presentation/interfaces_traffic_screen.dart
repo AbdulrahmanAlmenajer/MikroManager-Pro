@@ -44,11 +44,13 @@ class InterfacesTrafficScreen extends ConsumerWidget {
                         // Interfaces List Header
                         Row(
                           children: [
-                            const Icon(Icons.hub_outlined, color: AppColors.cyanAccent, size: 20),
+                            const Icon(Icons.hub_outlined,
+                                color: AppColors.cyanAccent, size: 20),
                             const SizedBox(width: 8),
                             Text(
                               'جميع الواجهات المتاحة (${state.interfaces.length})',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                           ],
                         ),
@@ -59,11 +61,14 @@ class InterfacesTrafficScreen extends ConsumerWidget {
                           const Center(
                             child: Padding(
                               padding: EdgeInsets.all(32),
-                              child: Text('لا توجد واجهات شبكة متاحة في الراوتر'),
+                              child:
+                                  Text('لا توجد واجهات شبكة متاحة في الراوتر'),
                             ),
                           )
                         else
-                          ...state.interfaces.map((iface) => _buildInterfaceCard(context, iface, state, notifier)),
+                          ...state.interfaces.map((iface) =>
+                              _buildInterfaceCard(
+                                  context, iface, state, notifier)),
                       ],
                     ),
                   ),
@@ -71,7 +76,8 @@ class InterfacesTrafficScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorView(BuildContext context, InterfacesTrafficNotifier notifier, String message) {
+  Widget _buildErrorView(BuildContext context,
+      InterfacesTrafficNotifier notifier, String message) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -83,7 +89,8 @@ class InterfacesTrafficScreen extends ConsumerWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+              style:
+                  const TextStyle(fontSize: 14, color: AppColors.textPrimary),
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
@@ -120,7 +127,8 @@ class InterfacesTrafficScreen extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     'الترافيك الحي: $selected',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                 ),
                 TextButton.icon(
@@ -131,7 +139,8 @@ class InterfacesTrafficScreen extends ConsumerWidget {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('تم حفظ لقطة الترافيك اليومية بنجاح!'),
+                                content:
+                                    Text('تم حفظ لقطة الترافيك اليومية بنجاح!'),
                                 backgroundColor: AppColors.success,
                                 duration: Duration(seconds: 2),
                               ),
@@ -139,10 +148,15 @@ class InterfacesTrafficScreen extends ConsumerWidget {
                           }
                         },
                   icon: state.isRecordingDaily
-                      ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                      ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2))
                       : const Icon(Icons.bookmark_add_outlined, size: 16),
-                  label: const Text('حفظ لقطة يومية', style: TextStyle(fontSize: 12)),
-                  style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+                  label: const Text('حفظ لقطة يومية',
+                      style: TextStyle(fontSize: 12)),
+                  style: TextButton.styleFrom(
+                      visualDensity: VisualDensity.compact),
                 ),
               ],
             ),
@@ -162,8 +176,10 @@ class InterfacesTrafficScreen extends ConsumerWidget {
                         selected: isSelected,
                         selectedColor: AppColors.cyanAccent,
                         labelStyle: TextStyle(
-                          color: isSelected ? Colors.white : AppColors.textPrimary,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          color:
+                              isSelected ? Colors.white : AppColors.textPrimary,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
                           fontSize: 12,
                         ),
                         onSelected: (_) => notifier.selectInterface(iface.name),
@@ -183,22 +199,30 @@ class InterfacesTrafficScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: AppColors.cyanAccent.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.cyanAccent.withValues(alpha: 0.3)),
+                      border: Border.all(
+                          color: AppColors.cyanAccent.withValues(alpha: 0.3)),
                     ),
                     child: Column(
                       children: [
                         const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.download, size: 16, color: AppColors.cyanAccent),
+                            Icon(Icons.download,
+                                size: 16, color: AppColors.cyanAccent),
                             SizedBox(width: 4),
-                            Text('التحميل (RX)', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                            Text('التحميل (RX)',
+                                style: TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.textSecondary)),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Text(
                           '${state.currentRxMbps.toStringAsFixed(2)} Mbps',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.cyanAccent),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: AppColors.cyanAccent),
                         ),
                       ],
                     ),
@@ -211,22 +235,30 @@ class InterfacesTrafficScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: AppColors.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+                      border: Border.all(
+                          color: AppColors.success.withValues(alpha: 0.3)),
                     ),
                     child: Column(
                       children: [
                         const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.upload, size: 16, color: AppColors.success),
+                            Icon(Icons.upload,
+                                size: 16, color: AppColors.success),
                             SizedBox(width: 4),
-                            Text('الرفع (TX)', style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                            Text('الرفع (TX)',
+                                style: TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.textSecondary)),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Text(
                           '${state.currentTxMbps.toStringAsFixed(2)} Mbps',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.success),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: AppColors.success),
                         ),
                       ],
                     ),
@@ -243,12 +275,18 @@ class InterfacesTrafficScreen extends ConsumerWidget {
                   ? const Center(child: Text('جاري قراءة تدفق البيانات...'))
                   : LineChart(
                       LineChartData(
-                        gridData: const FlGridData(show: true, drawVerticalLine: false),
+                        gridData: const FlGridData(
+                            show: true, drawVerticalLine: false),
                         titlesData: const FlTitlesData(
-                          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40)),
-                          bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                  showTitles: true, reservedSize: 40)),
+                          bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          topTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
                         ),
                         borderData: FlBorderData(show: false),
                         lineBarsData: [
@@ -310,20 +348,28 @@ class InterfacesTrafficScreen extends ConsumerWidget {
         ),
         title: Row(
           children: [
-            Text(iface.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(iface.name,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: iface.running ? AppColors.success.withValues(alpha: 0.15) : Colors.grey.withValues(alpha: 0.2),
+                color: iface.running
+                    ? AppColors.success.withValues(alpha: 0.15)
+                    : Colors.grey.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
-                iface.running ? 'نشط (Running)' : (iface.disabled ? 'معطل' : 'مفصول'),
+                iface.running
+                    ? 'نشط (Running)'
+                    : (iface.disabled ? 'معطل' : 'مفصول'),
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
-                  color: iface.running ? AppColors.success : AppColors.textSecondary,
+                  color: iface.running
+                      ? AppColors.success
+                      : AppColors.textSecondary,
                 ),
               ),
             ),
@@ -335,18 +381,23 @@ class InterfacesTrafficScreen extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               'النوع: ${iface.type} | MTU: ${iface.mtu} | MAC: ${iface.macAddress}',
-              style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+              style:
+                  const TextStyle(fontSize: 11, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 2),
             Text(
               'الإجمالي: RX ${_formatBytes(iface.rxBytes)} / TX ${_formatBytes(iface.txBytes)}',
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.navyPrimary),
+              style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.navyPrimary),
             ),
           ],
         ),
         trailing: isSelected
             ? const Icon(Icons.check_circle, color: AppColors.cyanAccent)
-            : const Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.textSecondary),
+            : const Icon(Icons.arrow_forward_ios,
+                size: 14, color: AppColors.textSecondary),
       ),
     );
   }

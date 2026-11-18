@@ -6,7 +6,8 @@ class AlertRulesTable extends Table {
   TextColumn get type => text()(); // cpu, memory, disk, port, ap, ping
   TextColumn get target => text()();
   RealColumn get threshold => real()();
-  TextColumn get destination => text().withDefault(const Constant('phone'))(); // phone, telegram, both
+  TextColumn get destination =>
+      text().withDefault(const Constant('phone'))(); // phone, telegram, both
   BoolColumn get enabled => boolean().withDefault(const Constant(true))();
 
   @override

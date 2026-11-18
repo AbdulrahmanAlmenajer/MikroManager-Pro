@@ -82,7 +82,8 @@ class AppDatabase extends _$AppDatabase {
             final dbFolder = await getApplicationDocumentsDirectory();
             final dbFile = File(p.join(dbFolder.path, 'mikro_manager.db'));
             if (await dbFile.exists()) {
-              final backupPath = p.join(dbFolder.path, 'mikro_manager.db.v$from.bak');
+              final backupPath =
+                  p.join(dbFolder.path, 'mikro_manager.db.v$from.bak');
               await dbFile.copy(backupPath);
             }
           } catch (_) {}

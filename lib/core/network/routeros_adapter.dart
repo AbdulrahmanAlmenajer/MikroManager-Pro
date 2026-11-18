@@ -30,7 +30,11 @@ abstract class RouterOsAdapter {
   Future<bool> removeHotspotUser(String id);
   Future<bool> kickHotspotActive(String id);
   Future<List<Map<String, dynamic>>> getHotspotIpBindings();
-  Future<bool> addHotspotIpBinding({required String macAddress, required String type, String? toAddress, String? comment});
+  Future<bool> addHotspotIpBinding(
+      {required String macAddress,
+      required String type,
+      String? toAddress,
+      String? comment});
   Future<bool> removeHotspotIpBinding(String id);
 
   // User Manager Operations
@@ -171,7 +175,8 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
 
   @override
   Future<List<Map<String, dynamic>>> getHotspotProfiles() async {
-    final res = await _client.executeSentence(['/ip/hotspot/user/profile/print']);
+    final res =
+        await _client.executeSentence(['/ip/hotspot/user/profile/print']);
     return res.isSuccess ? res.data : [];
   }
 
@@ -240,7 +245,8 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
       '=mac-address=$macAddress',
       '=type=$type',
     ];
-    if (toAddress != null && toAddress.isNotEmpty) cmd.add('=to-address=$toAddress');
+    if (toAddress != null && toAddress.isNotEmpty)
+      cmd.add('=to-address=$toAddress');
     if (comment != null && comment.isNotEmpty) cmd.add('=comment=$comment');
     final res = await _client.executeSentence(cmd);
     return res.isSuccess;
@@ -401,10 +407,14 @@ class RouterOsRestAdapter implements RouterOsAdapter {
         'interface': interfaceName,
         'once': true,
       });
-      if (res.statusCode == 200 && res.data is List && (res.data as List).isNotEmpty) {
+      if (res.statusCode == 200 &&
+          res.data is List &&
+          (res.data as List).isNotEmpty) {
         final first = (res.data as List).first as Map;
-        final rx = int.tryParse(first['rx-bits-per-second']?.toString() ?? '0') ?? 0;
-        final tx = int.tryParse(first['tx-bits-per-second']?.toString() ?? '0') ?? 0;
+        final rx =
+            int.tryParse(first['rx-bits-per-second']?.toString() ?? '0') ?? 0;
+        final tx =
+            int.tryParse(first['tx-bits-per-second']?.toString() ?? '0') ?? 0;
         return {'rx': rx, 'tx': tx};
       }
     } catch (_) {}
@@ -521,7 +531,8 @@ class RouterOsRestAdapter implements RouterOsAdapter {
 
   @override
   Future<bool> removeUserManagerUser(String id) async {
-    final res = await _client.delete('${ApiConstants.userManagerUsersPath}/$id');
+    final res =
+        await _client.delete('${ApiConstants.userManagerUsersPath}/$id');
     return res.statusCode == 200 || res.statusCode == 204;
   }
 

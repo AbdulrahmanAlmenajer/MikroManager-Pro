@@ -17,10 +17,14 @@ enum UserRole {
     }
   }
 
-  bool get canAccessDashboard => this == UserRole.admin || this == UserRole.engineer;
-  bool get canAccessHotspot => this == UserRole.admin || this == UserRole.engineer;
-  bool get canAccessUserman => this == UserRole.admin || this == UserRole.engineer;
-  bool get canAccessSettings => this == UserRole.admin || this == UserRole.engineer;
+  bool get canAccessDashboard =>
+      this == UserRole.admin || this == UserRole.engineer;
+  bool get canAccessHotspot =>
+      this == UserRole.admin || this == UserRole.engineer;
+  bool get canAccessUserman =>
+      this == UserRole.admin || this == UserRole.engineer;
+  bool get canAccessSettings =>
+      this == UserRole.admin || this == UserRole.engineer;
   bool get canAccessTelegram => this == UserRole.admin;
   bool get canGenerateVouchers => true;
   bool get canPrintVouchers => true;
@@ -70,4 +74,3 @@ class RouterSession {
     scheduler.dispose();
   }
 }
-

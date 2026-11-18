@@ -100,8 +100,10 @@ class EscPosHelper {
     }
 
     // QR Code for quick login
-    final qrData = 'http://login.hotspot/?username=$username&password=$password';
-    bytes.addAll(generator.qrcode(qrData, size: QRSize.size4, align: PosAlign.center));
+    final qrData =
+        'http://login.hotspot/?username=$username&password=$password';
+    bytes.addAll(
+        generator.qrcode(qrData, size: QRSize.size4, align: PosAlign.center));
 
     // Footer
     bytes.addAll(generator.text(
@@ -110,7 +112,8 @@ class EscPosHelper {
     ));
     bytes.addAll(generator.text(
       footerNote ?? 'Thank you for choosing our service',
-      styles: const PosStyles(align: PosAlign.center, fontType: PosFontType.fontB),
+      styles:
+          const PosStyles(align: PosAlign.center, fontType: PosFontType.fontB),
     ));
 
     bytes.addAll(generator.feed(2));

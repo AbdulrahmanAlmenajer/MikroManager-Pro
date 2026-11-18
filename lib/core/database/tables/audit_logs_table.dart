@@ -8,7 +8,8 @@ class AuditLogsTable extends Table {
   TextColumn get description => text()();
   TextColumn get performedBy => text().withDefault(const Constant('admin'))();
   TextColumn get metadata => text().nullable()(); // JSON
-  DateTimeColumn get performedAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get performedAt =>
+      dateTime().withDefault(currentDateAndTime)();
 
   @override
   String get tableName => 'audit_logs';

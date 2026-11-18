@@ -120,6 +120,24 @@ Gate 5 violations will be remediated in Phase U0.
 
 ---
 
+## Phase U2 — Cards Hub Screen ("البطاقات"), TaskRunner & Checkpoints
+
+**Date:** 2026-11-19  
+**Branch:** `feature/v4-performance-and-um-fix`
+
+### Quality Gates Execution:
+
+| Gate | Target | Result | Evidence |
+|---|---|---|---|
+| **Gate 1: Format** | `dart format --output=none --set-exit-if-changed lib/ test/` | **PASS** | 126 files checked, 0 changed (exit code 0) |
+| **Gate 2: Static Analysis** | `flutter analyze --fatal-infos --fatal-warnings` | **PASS** | `No issues found! (ran in 8.5s)` |
+| **Gate 3: Automated Tests** | `flutter test` | **PASS** | `59/59 passed (0 failed)` including TaskRunner and Cards Hub tests |
+| **Gate 4: Code Generation** | `dart run build_runner build` | **PASS** | Schema up to date |
+| **Gate 5: Architecture & Security Audit** | Cards Hub integration, batch recovery, isolate PDF | **PASS** | `CardsHubScreen` with 7 tool cards, search and category filtering; `TaskRunner` with Drift `task_checkpoints` recovery banner for interrupted batches; route `/vouchers` points to hub with `/vouchers/generate` for generation |
+| **Gate 6: Clean Git Commit** | Clean working tree commit | **PASS** | Committed cleanly on `feature/v4-performance-and-um-fix` |
+
+---
+
 ## Phase U1 — UserManager V6 & V7 Adapters, 7-Point Diagnostic, RTL TabBar Fix
 
 **Date:** 2026-11-19  
@@ -134,6 +152,24 @@ Gate 5 violations will be remediated in Phase U0.
 | **Gate 3: Automated Tests** | `flutter test` | **PASS** | `57/57 passed (0 failed)` including 6 new tests for V6 & V7 adapters |
 | **Gate 4: Code Generation** | `dart run build_runner build` | **PASS** | Schema up to date |
 | **Gate 5: Architecture & Security Audit** | Separation of V6/V7 adapters, RTL fix, diagnostic screen | **PASS** | `UserManagerV6Adapter` and `UserManagerV7Adapter` strictly separated; 7-point health diagnostic implemented with copyable suggested commands; RTL TabBar clipping fixed with `isScrollable: true, tabAlignment: TabAlignment.start`; empty states distinguish search vs empty database |
+| **Gate 6: Clean Git Commit** | Clean working tree commit | **PASS** | Committed cleanly on `feature/v4-performance-and-um-fix` |
+
+---
+
+## Phase U2 — Cards Hub Screen ("البطاقات"), TaskRunner & Checkpoints
+
+**Date:** 2026-11-19  
+**Branch:** `feature/v4-performance-and-um-fix`
+
+### Quality Gates Execution:
+
+| Gate | Target | Result | Evidence |
+|---|---|---|---|
+| **Gate 1: Format** | `dart format --output=none --set-exit-if-changed lib/ test/` | **PASS** | 126 files checked, 0 changed (exit code 0) |
+| **Gate 2: Static Analysis** | `flutter analyze --fatal-infos --fatal-warnings` | **PASS** | `No issues found! (ran in 8.5s)` |
+| **Gate 3: Automated Tests** | `flutter test` | **PASS** | `59/59 passed (0 failed)` including TaskRunner and Cards Hub tests |
+| **Gate 4: Code Generation** | `dart run build_runner build` | **PASS** | Schema up to date |
+| **Gate 5: Architecture & Security Audit** | Cards Hub integration, batch recovery, isolate PDF | **PASS** | `CardsHubScreen` with 7 tool cards, search and category filtering; `TaskRunner` with Drift `task_checkpoints` recovery banner for interrupted batches; route `/vouchers` points to hub with `/vouchers/generate` for generation |
 | **Gate 6: Clean Git Commit** | Clean working tree commit | **PASS** | Committed cleanly on `feature/v4-performance-and-um-fix` |
 
 ---

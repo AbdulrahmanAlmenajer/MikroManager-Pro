@@ -13,6 +13,7 @@ import '../../features/vouchers/presentation/template_gallery_screen.dart';
 import '../../features/vouchers/presentation/pdf_archive_screen.dart';
 import '../../features/hotspot/presentation/hotspot_screen.dart';
 import '../../features/vouchers/presentation/voucher_generator_screen.dart';
+import '../../features/cards_hub/presentation/cards_hub_screen.dart';
 import '../../features/vouchers/presentation/print_preview_screen.dart';
 import '../../features/reports/presentation/reports_screen.dart';
 import '../../features/settings/presentation/more_screen.dart';
@@ -70,7 +71,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/vouchers',
-            builder: (context, state) => const VoucherGeneratorScreen(),
+            builder: (context, state) => const CardsHubScreen(),
           ),
           GoRoute(
             path: '/reports',
@@ -84,6 +85,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // مسارات الشاشات الفرعية والخدمات
+      GoRoute(
+        path: '/vouchers/generate',
+        builder: (context, state) => const VoucherGeneratorScreen(),
+      ),
       GoRoute(
         path: '/card-inquiry',
         builder: (context, state) => CardInquiryScreen(

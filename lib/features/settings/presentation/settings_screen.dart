@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/theme_provider.dart';
 import '../../../core/security/secure_storage_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -50,6 +51,52 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Section 0: Appearance / Theme
+          _buildSectionHeader('المظهر والسمة', Icons.palette_outlined),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('مظهر التطبيق (يدعم شاشات OLED الداكنة)',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: SegmentedButton<ThemeMode>(
+                      segments: const [
+                        ButtonSegment(
+                          value: ThemeMode.light,
+                          icon: Icon(Icons.light_mode, size: 18),
+                          label: Text('فاتح'),
+                        ),
+                        ButtonSegment(
+                          value: ThemeMode.dark,
+                          icon: Icon(Icons.dark_mode, size: 18),
+                          label: Text('داكن OLED'),
+                        ),
+                        ButtonSegment(
+                          value: ThemeMode.system,
+                          icon: Icon(Icons.settings_suggest, size: 18),
+                          label: Text('النظام'),
+                        ),
+                      ],
+                      selected: {ref.watch(themeModeProvider)},
+                      onSelectionChanged: (newSelection) {
+                        ref
+                            .read(themeModeProvider.notifier)
+                            .setThemeMode(newSelection.first);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
           // Section 1: Printer Settings
           _buildSectionHeader('إعدادات الطابعات', Icons.print),
           Card(

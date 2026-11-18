@@ -390,8 +390,9 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
                       return DropdownMenuItem(value: name, child: Text(name));
                     }).toList(),
                     onChanged: (val) {
-                      if (val != null)
+                      if (val != null) {
                         setDialogState(() => selectedProfile = val);
+                      }
                     },
                   ),
                 const SizedBox(height: 12),

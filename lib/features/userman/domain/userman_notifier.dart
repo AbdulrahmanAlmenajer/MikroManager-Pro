@@ -95,7 +95,10 @@ class UsermanNotifier extends StateNotifier<UsermanState> {
         await refreshAll();
       }
       return success;
-    } catch (_) {
+    } on Exception catch (e) {
+      state = state.copyWith(
+          isLoading: false,
+          errorMessage: 'فشل إضافة المستخدم: ${e.toString()}');
       return false;
     }
   }
@@ -111,7 +114,9 @@ class UsermanNotifier extends StateNotifier<UsermanState> {
         await refreshAll();
       }
       return success;
-    } catch (_) {
+    } on Exception catch (e) {
+      state = state.copyWith(
+          isLoading: false, errorMessage: 'فشل حذف المستخدم: ${e.toString()}');
       return false;
     }
   }
@@ -127,7 +132,9 @@ class UsermanNotifier extends StateNotifier<UsermanState> {
         await refreshAll();
       }
       return success;
-    } catch (_) {
+    } on Exception catch (e) {
+      state = state.copyWith(
+          isLoading: false, errorMessage: 'فشل إنهاء الجلسة: ${e.toString()}');
       return false;
     }
   }

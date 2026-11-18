@@ -146,8 +146,8 @@ class SessionController extends StateNotifier<SessionState> {
             userRole = UserRole.reseller;
           }
         }
-      } catch (_) {
-        // Fallback to group name if policies cannot be queried
+      } on RouterOsException catch (_) {
+        // Role detection failed — fall back to group-name heuristic (non-fatal)
         if (userGroupName == 'full') {
           userRole = UserRole.admin;
         } else if (userGroupName == 'write') {
@@ -257,7 +257,9 @@ class SessionController extends StateNotifier<SessionState> {
     try {
       state.session?.dispose();
       state.session?.adapter.disconnect();
-    } catch (_) {}
+    } on Object catch (e) {
+      assert(false, 'Disconnect error during logout: $e');
+    }
 
     state = const SessionState(
       status: SessionStatus.unauthenticated,

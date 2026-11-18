@@ -89,7 +89,15 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
               VoucherCardData.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList();
       state = state.copyWith(currentVouchers: vouchers);
-    } catch (_) {}
+    } on FormatException catch (e) {
+      state = state.copyWith(
+        errorMessage: 'تعذّر قراءة بيانات الدفعة (JSON خاطئ): ${e.message}',
+      );
+    } on TypeError catch (e) {
+      state = state.copyWith(
+        errorMessage: 'تنسيق بيانات الدفعة غير متوقع: ${e.toString()}',
+      );
+    }
   }
 
   void cancelGeneration() {

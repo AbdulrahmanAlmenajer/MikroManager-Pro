@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../l10n/app_localizations.dart';
 import '../session/session_controller.dart';
 import 'route_guard.dart';
 import '../../features/auth/presentation/router_login_screen.dart';
@@ -130,18 +131,29 @@ class MainShellNavigation extends StatelessWidget {
 
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
-    if (location.startsWith('/dashboard')) return 0;
-    if (location.startsWith('/subscribers') || location.startsWith('/hotspot'))
+    if (location.startsWith('/dashboard')) {
+      return 0;
+    }
+    if (location.startsWith('/subscribers') ||
+        location.startsWith('/hotspot')) {
       return 1;
-    if (location.startsWith('/vouchers')) return 2;
-    if (location.startsWith('/reports')) return 3;
-    if (location.startsWith('/more')) return 4;
+    }
+    if (location.startsWith('/vouchers')) {
+      return 2;
+    }
+    if (location.startsWith('/reports')) {
+      return 3;
+    }
+    if (location.startsWith('/more')) {
+      return 4;
+    }
     return 0;
   }
 
   @override
   Widget build(BuildContext context) {
     final selectedIndex = _calculateSelectedIndex(context);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: child,
       bottomNavigationBar: NavigationBar(
@@ -165,31 +177,31 @@ class MainShellNavigation extends StatelessWidget {
               break;
           }
         },
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard),
-            label: 'الرئيسية',
+            icon: const Icon(Icons.dashboard_outlined),
+            selectedIcon: const Icon(Icons.dashboard),
+            label: l10n?.navHome ?? 'الرئيسية',
           ),
           NavigationDestination(
-            icon: Icon(Icons.people_outline),
-            selectedIcon: Icon(Icons.people),
-            label: 'المشتركون',
+            icon: const Icon(Icons.people_outline),
+            selectedIcon: const Icon(Icons.people),
+            label: l10n?.navSubscribers ?? 'المشتركون',
           ),
           NavigationDestination(
-            icon: Icon(Icons.confirmation_number_outlined),
-            selectedIcon: Icon(Icons.confirmation_number),
-            label: 'الكروت',
+            icon: const Icon(Icons.confirmation_number_outlined),
+            selectedIcon: const Icon(Icons.confirmation_number),
+            label: l10n?.navVouchers ?? 'الكروت',
           ),
           NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            selectedIcon: Icon(Icons.bar_chart),
-            label: 'التقارير',
+            icon: const Icon(Icons.bar_chart_outlined),
+            selectedIcon: const Icon(Icons.bar_chart),
+            label: l10n?.navReports ?? 'التقارير',
           ),
           NavigationDestination(
-            icon: Icon(Icons.menu),
-            selectedIcon: Icon(Icons.menu_open),
-            label: 'المزيد',
+            icon: const Icon(Icons.menu),
+            selectedIcon: const Icon(Icons.menu_open),
+            label: l10n?.navMore ?? 'المزيد',
           ),
         ],
       ),

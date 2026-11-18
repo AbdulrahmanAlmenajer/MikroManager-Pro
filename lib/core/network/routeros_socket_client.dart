@@ -202,12 +202,18 @@ class RouterOsSocketClient {
     return '00${digest.toString()}';
   }
 
-  /// Execute command and wait for response
-  Future<RouterOsResponse> executeSentence(List<String> words) async {
+  /// Execute command and wait for response.
+  /// [commandTimeout] overrides the default [timeout] for this call only.
+  /// Use [Duration(seconds: 60)] for large User Manager table fetches.
+  Future<RouterOsResponse> executeSentence(
+    List<String> words, {
+    Duration? commandTimeout,
+  }) async {
     if (!isConnected) {
       throw const RouterOsUnreachableException('الاتصال بميكروتك غير متاح');
     }
 
+    final effectiveTimeout = commandTimeout ?? timeout;
     final tag = 'tag_${++_tagCounter}';
     final completer = Completer<RouterOsResponse>();
     _pendingRequests[tag] = completer;
@@ -221,9 +227,10 @@ class RouterOsSocketClient {
     await _socket!.flush();
 
     try {
-      return await completer.future.timeout(timeout);
+      return await completer.future.timeout(effectiveTimeout);
     } on TimeoutException {
       _pendingRequests.remove(tag);
+      _tempReplies.remove(tag);
       throw RouterOsTimeoutException(
           'انتهت مهلة انتظار رد الراوتر للأمر: ${words.first}');
     }
@@ -239,13 +246,16 @@ class RouterOsSocketClient {
     final controller = StreamController<Map<String, String>>(
       onCancel: () async {
         if (isConnected) {
-          // Send cancel command with tag
+          // Send cancel command with tag – ignore write errors (socket may have closed)
           try {
             _writeWord('/cancel');
             _writeWord('=tag=$tag');
             _writeWord('');
             await _socket?.flush();
-          } catch (_) {}
+          } on Object catch (e) {
+            // Stream cancel write failure is non-fatal; just log to assert in debug
+            assert(false, 'Stream cancel write failed: $e');
+          }
         }
         _activeStreams.remove(tag);
       },
@@ -269,13 +279,33 @@ class RouterOsSocketClient {
       if (sentence == null) break;
 
       final tag = sentence.tag;
+
+      // --- RouterOS 7.18+: untagged `!empty` sentence ---
+      // Sent as an end-of-results marker for empty tables (no .tag).
+      // Resolve the single oldest pending request with an empty success.
+      if (tag == null && sentence.command == '!empty') {
+        if (_pendingRequests.isNotEmpty) {
+          final firstTag = _pendingRequests.keys.first;
+          final completer = _pendingRequests.remove(firstTag)!;
+          _tempReplies.remove(firstTag);
+          completer.complete(
+              RouterOsResponse(isSuccess: true, data: const [], tag: firstTag));
+        }
+        continue;
+      }
+
       if (tag != null) {
         if (_activeStreams.containsKey(tag)) {
           final stream = _activeStreams[tag]!;
           if (sentence.command == '!re') {
             stream.add(sentence.attributes);
           } else if (sentence.command == '!done' ||
-              sentence.command == '!trap') {
+              sentence.command == '!empty') {
+            stream.close();
+            _activeStreams.remove(tag);
+          } else if (sentence.command == '!trap') {
+            stream.addError(RouterOsProtocolException(
+                sentence.attributes['message'] ?? 'Trap error'));
             stream.close();
             _activeStreams.remove(tag);
           }
@@ -284,10 +314,11 @@ class RouterOsSocketClient {
 
         if (_pendingRequests.containsKey(tag)) {
           final completer = _pendingRequests[tag]!;
-          // Accumulate or finish
           if (sentence.command == '!re') {
             _tempReplies.putIfAbsent(tag, () => []).add(sentence.attributes);
-          } else if (sentence.command == '!done') {
+          } else if (sentence.command == '!done' ||
+              sentence.command == '!empty') {
+            // `!empty` with a tag = valid empty-result for that tag
             final data = _tempReplies.remove(tag) ?? [];
             if (sentence.attributes.isNotEmpty) {
               data.add(sentence.attributes);
@@ -456,8 +487,18 @@ class RouterOsSocketClient {
     _socket?.destroy();
     _socket = null;
     _readBuffer.clear();
+    // Complete all pending requests with a connection-closed error
+    for (final entry in _pendingRequests.entries) {
+      entry.value.complete(RouterOsResponse(
+        isSuccess: false,
+        errorMessage: 'الاتصال انقطع قبل اكتمال العملية',
+        tag: entry.key,
+      ));
+    }
     _pendingRequests.clear();
+    _tempReplies.clear();
     for (final s in _activeStreams.values) {
+      s.addError(const RouterOsProtocolException('الاتصال انقطع'));
       s.close();
     }
     _activeStreams.clear();

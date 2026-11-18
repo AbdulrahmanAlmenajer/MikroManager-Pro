@@ -114,9 +114,10 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
                         label: const Text('ورق A4 (شبكة)'),
                         selected: _selectedLayout == PrintLayoutType.a4Grid,
                         onSelected: (val) {
-                          if (val)
+                          if (val) {
                             setState(
                                 () => _selectedLayout = PrintLayoutType.a4Grid);
+                          }
                         },
                       ),
                       const SizedBox(width: 8),
@@ -124,9 +125,10 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
                         label: const Text('حراري 58mm'),
                         selected: _selectedLayout == PrintLayoutType.thermal58,
                         onSelected: (val) {
-                          if (val)
+                          if (val) {
                             setState(() =>
                                 _selectedLayout = PrintLayoutType.thermal58);
+                          }
                         },
                       ),
                       const SizedBox(width: 8),
@@ -134,9 +136,10 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
                         label: const Text('حراري 80mm'),
                         selected: _selectedLayout == PrintLayoutType.thermal80,
                         onSelected: (val) {
-                          if (val)
+                          if (val) {
                             setState(() =>
                                 _selectedLayout = PrintLayoutType.thermal80);
+                          }
                         },
                       ),
                     ],

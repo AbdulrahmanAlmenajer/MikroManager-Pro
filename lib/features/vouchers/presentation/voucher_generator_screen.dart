@@ -221,8 +221,9 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                                         value: name, child: Text(name));
                                   }).toList(),
                             onChanged: (val) {
-                              if (val != null)
+                              if (val != null) {
                                 setState(() => _selectedProfile = val);
+                              }
                             },
                           ),
                         ),
@@ -270,9 +271,12 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                             ),
                             validator: (val) {
                               final q = int.tryParse(val ?? '');
-                              if (q == null || q <= 0)
+                              if (q == null || q <= 0) {
                                 return 'أدخل عدداً صحيحاً';
-                              if (q > 500) return 'الحد الأقصى 500 كرت بالدفعة';
+                              }
+                              if (q > 500) {
+                                return 'الحد الأقصى 500 كرت بالدفعة';
+                              }
                               return null;
                             },
                           ),
@@ -311,8 +315,9 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                                   value: 10, child: Text('10 خانات')),
                             ],
                             onChanged: (val) {
-                              if (val != null)
+                              if (val != null) {
                                 setState(() => _codeLength = val);
+                              }
                             },
                           ),
                         ),
@@ -412,8 +417,9 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                           DropdownMenuItem(value: 8, child: Text('8 أرقام')),
                         ],
                         onChanged: (val) {
-                          if (val != null)
+                          if (val != null) {
                             setState(() => _passwordLength = val);
+                          }
                         },
                       ),
                     ],

@@ -33,6 +33,8 @@ class AuditLogger {
               performedAt: Value(DateTime.now()),
             ),
           );
-    } catch (_) {}
+    } on Object catch (e) {
+      assert(false, 'AuditLogger write failed: $e');
+    }
   }
 }

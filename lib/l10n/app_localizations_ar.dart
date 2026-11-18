@@ -100,6 +100,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navHotspot => 'الهوتسبوت';
 
   @override
+  String get navSubscribers => 'المشتركون';
+
+  @override
   String get navVouchers => 'الكروت';
 
   @override

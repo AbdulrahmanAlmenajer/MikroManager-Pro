@@ -66,7 +66,10 @@ class PdfArchiveRepository {
       if (await file.exists()) {
         try {
           await file.delete();
-        } catch (_) {}
+        } on FileSystemException catch (e) {
+          // File delete failure should not block DB record removal, but must not be silent
+          assert(false, 'PDF file delete failed (non-fatal): ${e.message}');
+        }
       }
       await (_db.delete(_db.pdfArchiveTable)..where((t) => t.id.equals(id)))
           .go();

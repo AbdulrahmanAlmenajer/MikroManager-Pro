@@ -350,8 +350,9 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
               controller: _ipController,
               keyboardType: TextInputType.url,
               validator: (val) {
-                if (val == null || val.trim().isEmpty)
+                if (val == null || val.trim().isEmpty) {
                   return 'يرجى إدخال عنوان IP أو اسم المضيف';
+                }
                 return null;
               },
               decoration: const InputDecoration(
@@ -389,8 +390,9 @@ class _RouterLoginScreenState extends ConsumerState<RouterLoginScreen> {
                   child: TextFormField(
                     controller: _userController,
                     validator: (val) {
-                      if (val == null || val.trim().isEmpty)
+                      if (val == null || val.trim().isEmpty) {
                         return 'يرجى إدخال اسم المستخدم';
+                      }
                       return null;
                     },
                     decoration: const InputDecoration(

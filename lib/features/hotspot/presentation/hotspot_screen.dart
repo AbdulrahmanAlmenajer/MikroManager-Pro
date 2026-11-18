@@ -505,10 +505,15 @@ class _HotspotScreenState extends ConsumerState<HotspotScreen>
 
   String _formatBytes(dynamic bytes) {
     final b = int.tryParse(bytes?.toString() ?? '0') ?? 0;
-    if (b < 1024) return '$b B';
-    if (b < 1024 * 1024) return '${(b / 1024).toStringAsFixed(1)} KB';
-    if (b < 1024 * 1024 * 1024)
+    if (b < 1024) {
+      return '$b B';
+    }
+    if (b < 1024 * 1024) {
+      return '${(b / 1024).toStringAsFixed(1)} KB';
+    }
+    if (b < 1024 * 1024 * 1024) {
       return '${(b / (1024 * 1024)).toStringAsFixed(1)} MB';
+    }
     return '${(b / (1024 * 1024 * 1024)).toStringAsFixed(2)} GB';
   }
 

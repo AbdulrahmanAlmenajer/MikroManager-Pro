@@ -100,6 +100,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navHotspot => 'Hotspot';
 
   @override
+  String get navSubscribers => 'Subscribers';
+
+  @override
   String get navVouchers => 'Vouchers';
 
   @override

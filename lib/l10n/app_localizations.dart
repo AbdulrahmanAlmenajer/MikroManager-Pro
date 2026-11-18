@@ -272,6 +272,12 @@ abstract class AppLocalizations {
   /// **'الهوتسبوت'**
   String get navHotspot;
 
+  /// No description provided for @navSubscribers.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشتركون'**
+  String get navSubscribers;
+
   /// No description provided for @navVouchers.
   ///
   /// In ar, this message translates to:

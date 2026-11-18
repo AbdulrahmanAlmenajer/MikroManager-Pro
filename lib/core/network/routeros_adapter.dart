@@ -1,6 +1,23 @@
 import 'routeros_socket_client.dart';
 import 'routeros_rest_client.dart';
+import 'routeros_exceptions.dart';
 import '../constants/api_constants.dart';
+
+// ---------------------------------------------------------------------------
+// Timeout constants
+// ---------------------------------------------------------------------------
+/// Short timeout for login, /system/resource, and small single-row commands.
+const _kLoginTimeout = Duration(seconds: 10);
+
+/// Long timeout for large User Manager tables (1 000–20 000+ cards).
+const _kUmTableTimeout = Duration(seconds: 60);
+
+// ---------------------------------------------------------------------------
+// .proplist helper
+// ---------------------------------------------------------------------------
+/// Appends `=.proplist=<fields>` to a print command list.
+List<String> withProplist(List<String> cmd, String fields) =>
+    [...cmd, '=.proplist=$fields'];
 
 abstract class RouterOsAdapter {
   Future<bool> connect();
@@ -8,7 +25,10 @@ abstract class RouterOsAdapter {
   void disconnect();
   bool get isConnected;
   bool get isV7;
-  Future<RouterOsResponse> executeSentence(List<String> words);
+  Future<RouterOsResponse> executeSentence(
+    List<String> words, {
+    Duration? commandTimeout,
+  });
 
   // System & Resource Monitoring
   Future<Map<String, dynamic>> getSystemResource();
@@ -40,11 +60,17 @@ abstract class RouterOsAdapter {
   // User Manager Operations
   Future<List<Map<String, dynamic>>> getUserManagerUsers();
   Future<List<Map<String, dynamic>>> getUserManagerProfiles();
-  Future<List<Map<String, dynamic>>> getUserManagerSessions();
+
+  /// Fetch sessions; pass [activeOnly]=true to query only active sessions.
+  Future<List<Map<String, dynamic>>> getUserManagerSessions({
+    bool activeOnly = false,
+  });
+  Future<List<String>> getUserManagerCustomers();
   Future<bool> addUserManagerUser({
     required String username,
     required String password,
     String? profile,
+    String? customer,
     String? comment,
   });
   Future<bool> removeUserManagerUser(String id);
@@ -82,7 +108,10 @@ abstract class RouterOsAdapter {
 /// Binary API Adapter Implementation (ports 8728 / 8729)
 class RouterOsBinaryAdapter implements RouterOsAdapter {
   final RouterOsSocketClient _client;
-  bool _isV7 = true;
+
+  /// True = RouterOS 7.x detected; False = RouterOS 6.x detected.
+  /// Set to `null` until `connect()` has been called and version read.
+  bool _isV7 = false;
 
   @override
   bool get isV7 => _isV7;
@@ -107,7 +136,25 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
 
   @override
   Future<bool> connect() async {
-    return await _client.connect();
+    final ok = await _client.connect();
+    if (ok) {
+      // Detect RouterOS major version from /system/resource
+      try {
+        final res = await _client.executeSentence(
+          withProplist(['/system/resource/print'], 'version'),
+          commandTimeout: _kLoginTimeout,
+        );
+        if (res.isSuccess && res.data.isNotEmpty) {
+          final version = res.data.first['version'] ?? '';
+          final major = int.tryParse(version.split('.').first) ?? 7;
+          _isV7 = major >= 7;
+        }
+      } on RouterOsException {
+        // If version probe fails, default to v6 (safer for UM paths)
+        _isV7 = false;
+      }
+    }
+    return ok;
   }
 
   @override
@@ -126,13 +173,21 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
   }
 
   @override
-  Future<RouterOsResponse> executeSentence(List<String> words) async {
-    return await _client.executeSentence(words);
+  Future<RouterOsResponse> executeSentence(
+    List<String> words, {
+    Duration? commandTimeout,
+  }) async {
+    return await _client.executeSentence(words, commandTimeout: commandTimeout);
   }
 
   @override
   Future<Map<String, dynamic>> getSystemResource() async {
-    final res = await _client.executeSentence(['/system/resource/print']);
+    final res = await _client.executeSentence(
+      withProplist([
+        '/system/resource/print'
+      ], 'version,uptime,cpu-load,free-memory,total-memory,free-hdd-space,total-hdd-space,board-name'),
+      commandTimeout: _kLoginTimeout,
+    );
     if (res.isSuccess && res.data.isNotEmpty) {
       return res.data.first;
     }
@@ -141,7 +196,10 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
 
   @override
   Future<List<Map<String, dynamic>>> getInterfaces() async {
-    final res = await _client.executeSentence(['/interface/print']);
+    final res = await _client.executeSentence(
+      withProplist(['/interface/print'],
+          '.id,name,type,running,disabled,comment,mac-address,rx-byte,tx-byte'),
+    );
     return res.isSuccess ? res.data : [];
   }
 
@@ -245,9 +303,12 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
       '=mac-address=$macAddress',
       '=type=$type',
     ];
-    if (toAddress != null && toAddress.isNotEmpty)
+    if (toAddress != null && toAddress.isNotEmpty) {
       cmd.add('=to-address=$toAddress');
-    if (comment != null && comment.isNotEmpty) cmd.add('=comment=$comment');
+    }
+    if (comment != null && comment.isNotEmpty) {
+      cmd.add('=comment=$comment');
+    }
     final res = await _client.executeSentence(cmd);
     return res.isSuccess;
   }
@@ -263,30 +324,116 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
 
   @override
   Future<List<Map<String, dynamic>>> getUserManagerUsers() async {
-    // Check v7 vs v6 path
-    var res = await _client.executeSentence(['/user-manager/user/print']);
-    if (!res.isSuccess) {
-      res = await _client.executeSentence(['/tool/user-manager/user/print']);
+    // Minimal proplist: only fields the UI actually uses
+    const v7Proplist =
+        '.id,name,password,group,shared-users,caller-id,disabled,comment';
+    const v6Proplist =
+        '.id,username,customer,actual-profile,uptime-used,download-used,upload-used,active-sessions,shared-users,disabled,comment,caller-id';
+
+    if (_isV7) {
+      final res = await _client.executeSentence(
+        withProplist(['/user-manager/user/print'], v7Proplist),
+        commandTimeout: _kUmTableTimeout,
+      );
+      if (res.isSuccess) return res.data;
+      // Fall through to v6 if v7 path trapped
     }
-    return res.isSuccess ? res.data : [];
+
+    // v6 path
+    final res = await _client.executeSentence(
+      withProplist(['/tool/user-manager/user/print'], v6Proplist),
+      commandTimeout: _kUmTableTimeout,
+    );
+    if (!res.isSuccess) {
+      throw RouterOsProtocolException(
+        'تعذّر جلب مستخدمي User Manager: ${res.errorMessage ?? "خطأ غير معروف"}',
+      );
+    }
+    // Normalise v6 `username` → `name` so the UI reads one field
+    return res.data.map((row) {
+      if (!row.containsKey('name') && row.containsKey('username')) {
+        return {...row, 'name': row['username']!};
+      }
+      return row;
+    }).toList();
   }
 
   @override
   Future<List<Map<String, dynamic>>> getUserManagerProfiles() async {
-    var res = await _client.executeSentence(['/user-manager/profile/print']);
-    if (!res.isSuccess) {
-      res = await _client.executeSentence(['/tool/user-manager/profile/print']);
+    const v7Proplist =
+        '.id,name,name-for-users,price,validity,starts-when,override-shared-users';
+    const v6Proplist = '.id,name,owner,validity,price,shared-users';
+
+    if (_isV7) {
+      final res = await _client.executeSentence(
+        withProplist(['/user-manager/profile/print'], v7Proplist),
+        commandTimeout: _kUmTableTimeout,
+      );
+      if (res.isSuccess) return res.data;
     }
-    return res.isSuccess ? res.data : [];
+
+    final res = await _client.executeSentence(
+      withProplist(['/tool/user-manager/profile/print'], v6Proplist),
+      commandTimeout: _kUmTableTimeout,
+    );
+    if (!res.isSuccess) {
+      throw RouterOsProtocolException(
+        'تعذّر جلب بروفايلات User Manager: ${res.errorMessage ?? "خطأ غير معروف"}',
+      );
+    }
+    return res.data;
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getUserManagerSessions() async {
-    var res = await _client.executeSentence(['/user-manager/session/print']);
-    if (!res.isSuccess) {
-      res = await _client.executeSentence(['/tool/user-manager/session/print']);
+  Future<List<Map<String, dynamic>>> getUserManagerSessions({
+    bool activeOnly = false,
+  }) async {
+    const v7Proplist =
+        'user,started,ended,active,uptime,download,upload,status,terminate-cause,calling-station-id,user-address';
+    const v6Proplist =
+        'user,customer,from-time,till-time,uptime,download,upload,active,terminate-cause,calling-station-id,user-ip';
+
+    final filterWords = activeOnly ? ['?active=true'] : const <String>[];
+
+    if (_isV7) {
+      final res = await _client.executeSentence(
+        withProplist(
+            ['/user-manager/session/print', ...filterWords], v7Proplist),
+        commandTimeout: _kUmTableTimeout,
+      );
+      if (res.isSuccess) return res.data;
     }
-    return res.isSuccess ? res.data : [];
+
+    final res = await _client.executeSentence(
+      withProplist(
+          ['/tool/user-manager/session/print', ...filterWords], v6Proplist),
+      commandTimeout: _kUmTableTimeout,
+    );
+    if (!res.isSuccess) {
+      throw RouterOsProtocolException(
+        'تعذّر جلب جلسات User Manager: ${res.errorMessage ?? "خطأ غير معروف"}',
+      );
+    }
+    return res.data;
+  }
+
+  @override
+  Future<List<String>> getUserManagerCustomers() async {
+    // v6 only: /tool/user-manager/customer/print
+    if (_isV7) return const ['admin']; // v7 has no separate customer concept
+    final res = await _client.executeSentence(
+      withProplist(['/tool/user-manager/customer/print'], 'login'),
+      commandTimeout: _kLoginTimeout,
+    );
+    if (!res.isSuccess) {
+      throw RouterOsProtocolException(
+        'تعذّر جلب قائمة العملاء: ${res.errorMessage ?? "خطأ غير معروف"}',
+      );
+    }
+    return res.data
+        .map((r) => r['login'] ?? '')
+        .where((s) => s.isNotEmpty)
+        .toList();
   }
 
   @override
@@ -294,52 +441,94 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
     required String username,
     required String password,
     String? profile,
+    String? customer,
     String? comment,
   }) async {
-    final List<String> command = [
-      '/user-manager/user/add',
-      '=name=$username',
-      '=password=$password',
-    ];
-    if (comment != null && comment.isNotEmpty) {
-      command.add('=comment=$comment');
-    }
-    var res = await _client.executeSentence(command);
-    if (!res.isSuccess) {
-      // Legacy tool user-manager
-      final List<String> legacyCommand = [
+    if (_isV7) {
+      // v7: /user-manager/user/add then /user-manager/user-profile/add
+      final cmd = [
+        '/user-manager/user/add',
+        '=name=$username',
+        '=password=$password',
+        if (comment != null && comment.isNotEmpty) '=comment=$comment',
+      ];
+      final res = await _client.executeSentence(cmd);
+      if (!res.isSuccess) {
+        throw RouterOsProtocolException(
+          'فشل إنشاء المستخدم (v7): ${res.errorMessage ?? ""}',
+        );
+      }
+      if (profile != null && profile.isNotEmpty) {
+        final profRes = await _client.executeSentence([
+          '/user-manager/user-profile/add',
+          '=user=$username',
+          '=profile=$profile',
+        ]);
+        if (!profRes.isSuccess) {
+          throw RouterOsProtocolException(
+            'تم إنشاء المستخدم لكن فشل ربط البروفايل: ${profRes.errorMessage ?? ""}',
+          );
+        }
+      }
+      return true;
+    } else {
+      // v6: two-step — user/add then create-and-activate-profile
+      final effectiveCustomer = customer ?? 'admin';
+      final cmd = [
         '/tool/user-manager/user/add',
         '=username=$username',
         '=password=$password',
+        '=customer=$effectiveCustomer',
+        if (comment != null && comment.isNotEmpty) '=comment=$comment',
       ];
-      if (comment != null) legacyCommand.add('=comment=$comment');
-      res = await _client.executeSentence(legacyCommand);
+      final res = await _client.executeSentence(cmd);
+      if (!res.isSuccess) {
+        throw RouterOsProtocolException(
+          'فشل إنشاء المستخدم (v6): ${res.errorMessage ?? ""}',
+        );
+      }
+      if (profile != null && profile.isNotEmpty) {
+        final activateRes = await _client.executeSentence([
+          '/tool/user-manager/user/create-and-activate-profile',
+          '=user=$username',
+          '=customer=$effectiveCustomer',
+          '=profile=$profile',
+        ]);
+        if (!activateRes.isSuccess) {
+          throw RouterOsProtocolException(
+            'تم إنشاء المستخدم لكن فشل تفعيل البروفايل: ${activateRes.errorMessage ?? ""}',
+          );
+        }
+      }
+      return true;
     }
-    return res.isSuccess;
   }
 
   @override
   Future<bool> removeUserManagerUser(String id) async {
-    var res = await _client.executeSentence([
-      '/user-manager/user/remove',
-      '=.id=$id',
-    ]);
+    final path =
+        _isV7 ? '/user-manager/user/remove' : '/tool/user-manager/user/remove';
+    final res = await _client.executeSentence([path, '=.id=$id']);
     if (!res.isSuccess) {
-      res = await _client.executeSentence([
-        '/tool/user-manager/user/remove',
-        '=.id=$id',
-      ]);
+      throw RouterOsProtocolException(
+        'فشل حذف المستخدم: ${res.errorMessage ?? ""}',
+      );
     }
-    return res.isSuccess;
+    return true;
   }
 
   @override
   Future<bool> kickUserManagerSession(String id) async {
-    var res = await _client.executeSentence([
-      '/user-manager/session/remove',
-      '=.id=$id',
-    ]);
-    return res.isSuccess;
+    final path = _isV7
+        ? '/user-manager/session/remove'
+        : '/tool/user-manager/session/remove';
+    final res = await _client.executeSentence([path, '=.id=$id']);
+    if (!res.isSuccess) {
+      throw RouterOsProtocolException(
+        'فشل إنهاء الجلسة: ${res.errorMessage ?? ""}',
+      );
+    }
+    return true;
   }
 }
 
@@ -385,7 +574,10 @@ class RouterOsRestAdapter implements RouterOsAdapter {
   }
 
   @override
-  Future<RouterOsResponse> executeSentence(List<String> words) async {
+  Future<RouterOsResponse> executeSentence(
+    List<String> words, {
+    Duration? commandTimeout,
+  }) async {
     return RouterOsResponse(isSuccess: true, data: []);
   }
 
@@ -402,23 +594,23 @@ class RouterOsRestAdapter implements RouterOsAdapter {
 
   @override
   Future<Map<String, int>> getInterfaceTraffic(String interfaceName) async {
-    try {
-      final res = await _client.post(ApiConstants.interfaceStatsPath, {
-        'interface': interfaceName,
-        'once': true,
-      });
-      if (res.statusCode == 200 &&
-          res.data is List &&
-          (res.data as List).isNotEmpty) {
-        final first = (res.data as List).first as Map;
-        final rx =
-            int.tryParse(first['rx-bits-per-second']?.toString() ?? '0') ?? 0;
-        final tx =
-            int.tryParse(first['tx-bits-per-second']?.toString() ?? '0') ?? 0;
-        return {'rx': rx, 'tx': tx};
-      }
-    } catch (_) {}
-    return {'rx': 0, 'tx': 0};
+    final res = await _client.post(ApiConstants.interfaceStatsPath, {
+      'interface': interfaceName,
+      'once': true,
+    });
+    if (res.statusCode == 200 &&
+        res.data is List &&
+        (res.data as List).isNotEmpty) {
+      final first = (res.data as List).first as Map;
+      final rx =
+          int.tryParse(first['rx-bits-per-second']?.toString() ?? '0') ?? 0;
+      final tx =
+          int.tryParse(first['tx-bits-per-second']?.toString() ?? '0') ?? 0;
+      return {'rx': rx, 'tx': tx};
+    }
+    throw RouterOsProtocolException(
+      'تعذّر جلب إحصائيات الواجهة "$interfaceName" عبر REST (رمز ${res.statusCode})',
+    );
   }
 
   @override
@@ -509,8 +701,19 @@ class RouterOsRestAdapter implements RouterOsAdapter {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getUserManagerSessions() async {
-    return await _client.get('/rest/user-manager/session');
+  Future<List<Map<String, dynamic>>> getUserManagerSessions({
+    bool activeOnly = false,
+  }) async {
+    final path = activeOnly
+        ? '/rest/user-manager/session?active=true'
+        : '/rest/user-manager/session';
+    return await _client.get(path);
+  }
+
+  @override
+  Future<List<String>> getUserManagerCustomers() async {
+    // REST adapter is v7-only; no customer concept
+    return const ['admin'];
   }
 
   @override
@@ -518,6 +721,7 @@ class RouterOsRestAdapter implements RouterOsAdapter {
     required String username,
     required String password,
     String? profile,
+    String? customer,
     String? comment,
   }) async {
     final Map<String, dynamic> body = {

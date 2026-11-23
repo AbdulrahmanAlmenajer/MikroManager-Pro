@@ -1280,6 +1280,98 @@ class $VoucherTemplatesTableTable extends VoucherTemplatesTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(12));
+  static const VerificationMeta _cardWidthMmMeta =
+      const VerificationMeta('cardWidthMm');
+  @override
+  late final GeneratedColumn<double> cardWidthMm = GeneratedColumn<double>(
+      'card_width_mm', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _cardHeightMmMeta =
+      const VerificationMeta('cardHeightMm');
+  @override
+  late final GeneratedColumn<double> cardHeightMm = GeneratedColumn<double>(
+      'card_height_mm', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _marginMmMeta =
+      const VerificationMeta('marginMm');
+  @override
+  late final GeneratedColumn<double> marginMm = GeneratedColumn<double>(
+      'margin_mm', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(4.0));
+  static const VerificationMeta _fontSizeMeta =
+      const VerificationMeta('fontSize');
+  @override
+  late final GeneratedColumn<double> fontSize = GeneratedColumn<double>(
+      'font_size', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(10.0));
+  static const VerificationMeta _titleFontSizeMeta =
+      const VerificationMeta('titleFontSize');
+  @override
+  late final GeneratedColumn<double> titleFontSize = GeneratedColumn<double>(
+      'title_font_size', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(12.0));
+  static const VerificationMeta _primaryColorHexMeta =
+      const VerificationMeta('primaryColorHex');
+  @override
+  late final GeneratedColumn<int> primaryColorHex = GeneratedColumn<int>(
+      'primary_color_hex', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0xFF0F172A));
+  static const VerificationMeta _backgroundColorHexMeta =
+      const VerificationMeta('backgroundColorHex');
+  @override
+  late final GeneratedColumn<int> backgroundColorHex = GeneratedColumn<int>(
+      'background_color_hex', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0xFFFFFFFF));
+  static const VerificationMeta _textColorHexMeta =
+      const VerificationMeta('textColorHex');
+  @override
+  late final GeneratedColumn<int> textColorHex = GeneratedColumn<int>(
+      'text_color_hex', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0xFF1E293B));
+  static const VerificationMeta _titleColorHexMeta =
+      const VerificationMeta('titleColorHex');
+  @override
+  late final GeneratedColumn<int> titleColorHex = GeneratedColumn<int>(
+      'title_color_hex', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0xFF0F172A));
+  static const VerificationMeta _borderColorHexMeta =
+      const VerificationMeta('borderColorHex');
+  @override
+  late final GeneratedColumn<int> borderColorHex = GeneratedColumn<int>(
+      'border_color_hex', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0xFFCBD5E1));
+  static const VerificationMeta _borderWidthMeta =
+      const VerificationMeta('borderWidth');
+  @override
+  late final GeneratedColumn<double> borderWidth = GeneratedColumn<double>(
+      'border_width', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1.0));
+  static const VerificationMeta _borderRadiusMeta =
+      const VerificationMeta('borderRadius');
+  @override
+  late final GeneratedColumn<double> borderRadius = GeneratedColumn<double>(
+      'border_radius', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(8.0));
   static const VerificationMeta _showQrCodeMeta =
       const VerificationMeta('showQrCode');
   @override
@@ -1290,6 +1382,16 @@ class $VoucherTemplatesTableTable extends VoucherTemplatesTable
       defaultConstraints: GeneratedColumn.constraintIsAlways(
           'CHECK ("show_qr_code" IN (0, 1))'),
       defaultValue: const Constant(true));
+  static const VerificationMeta _showBarcodeMeta =
+      const VerificationMeta('showBarcode');
+  @override
+  late final GeneratedColumn<bool> showBarcode = GeneratedColumn<bool>(
+      'show_barcode', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("show_barcode" IN (0, 1))'),
+      defaultValue: const Constant(false));
   static const VerificationMeta _showLogoMeta =
       const VerificationMeta('showLogo');
   @override
@@ -1318,14 +1420,6 @@ class $VoucherTemplatesTableTable extends VoucherTemplatesTable
   late final GeneratedColumn<String> footerText = GeneratedColumn<String>(
       'footer_text', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
-  static const VerificationMeta _primaryColorHexMeta =
-      const VerificationMeta('primaryColorHex');
-  @override
-  late final GeneratedColumn<int> primaryColorHex = GeneratedColumn<int>(
-      'primary_color_hex', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(0xFF0F172A));
   static const VerificationMeta _fontFamilyMeta =
       const VerificationMeta('fontFamily');
   @override
@@ -1334,6 +1428,98 @@ class $VoucherTemplatesTableTable extends VoucherTemplatesTable
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant('Cairo'));
+  static const VerificationMeta _showProfileMeta =
+      const VerificationMeta('showProfile');
+  @override
+  late final GeneratedColumn<bool> showProfile = GeneratedColumn<bool>(
+      'show_profile', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("show_profile" IN (0, 1))'),
+      defaultValue: const Constant(true));
+  static const VerificationMeta _showPriceMeta =
+      const VerificationMeta('showPrice');
+  @override
+  late final GeneratedColumn<bool> showPrice = GeneratedColumn<bool>(
+      'show_price', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("show_price" IN (0, 1))'),
+      defaultValue: const Constant(true));
+  static const VerificationMeta _showValidityMeta =
+      const VerificationMeta('showValidity');
+  @override
+  late final GeneratedColumn<bool> showValidity = GeneratedColumn<bool>(
+      'show_validity', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("show_validity" IN (0, 1))'),
+      defaultValue: const Constant(true));
+  static const VerificationMeta _showUsernameMeta =
+      const VerificationMeta('showUsername');
+  @override
+  late final GeneratedColumn<bool> showUsername = GeneratedColumn<bool>(
+      'show_username', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("show_username" IN (0, 1))'),
+      defaultValue: const Constant(true));
+  static const VerificationMeta _showPasswordMeta =
+      const VerificationMeta('showPassword');
+  @override
+  late final GeneratedColumn<bool> showPassword = GeneratedColumn<bool>(
+      'show_password', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("show_password" IN (0, 1))'),
+      defaultValue: const Constant(true));
+  static const VerificationMeta _showInstructionsMeta =
+      const VerificationMeta('showInstructions');
+  @override
+  late final GeneratedColumn<bool> showInstructions = GeneratedColumn<bool>(
+      'show_instructions', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("show_instructions" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _instructionsTextMeta =
+      const VerificationMeta('instructionsText');
+  @override
+  late final GeneratedColumn<String> instructionsText = GeneratedColumn<String>(
+      'instructions_text', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _contactPhoneMeta =
+      const VerificationMeta('contactPhone');
+  @override
+  late final GeneratedColumn<String> contactPhone = GeneratedColumn<String>(
+      'contact_phone', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _customTextMeta =
+      const VerificationMeta('customText');
+  @override
+  late final GeneratedColumn<String> customText = GeneratedColumn<String>(
+      'custom_text', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _targetCardTypeMeta =
+      const VerificationMeta('targetCardType');
+  @override
+  late final GeneratedColumn<String> targetCardType = GeneratedColumn<String>(
+      'target_card_type', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('all'));
+  static const VerificationMeta _configJsonMeta =
+      const VerificationMeta('configJson');
+  @override
+  late final GeneratedColumn<String> configJson = GeneratedColumn<String>(
+      'config_json', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _isDefaultMeta =
       const VerificationMeta('isDefault');
   @override
@@ -1359,13 +1545,36 @@ class $VoucherTemplatesTableTable extends VoucherTemplatesTable
         paperSize,
         cardsPerRow,
         cardsPerPage,
+        cardWidthMm,
+        cardHeightMm,
+        marginMm,
+        fontSize,
+        titleFontSize,
+        primaryColorHex,
+        backgroundColorHex,
+        textColorHex,
+        titleColorHex,
+        borderColorHex,
+        borderWidth,
+        borderRadius,
         showQrCode,
+        showBarcode,
         showLogo,
         logoPath,
         headerText,
         footerText,
-        primaryColorHex,
         fontFamily,
+        showProfile,
+        showPrice,
+        showValidity,
+        showUsername,
+        showPassword,
+        showInstructions,
+        instructionsText,
+        contactPhone,
+        customText,
+        targetCardType,
+        configJson,
         isDefault,
         createdAt
       ];
@@ -1405,11 +1614,85 @@ class $VoucherTemplatesTableTable extends VoucherTemplatesTable
           cardsPerPage.isAcceptableOrUnknown(
               data['cards_per_page']!, _cardsPerPageMeta));
     }
+    if (data.containsKey('card_width_mm')) {
+      context.handle(
+          _cardWidthMmMeta,
+          cardWidthMm.isAcceptableOrUnknown(
+              data['card_width_mm']!, _cardWidthMmMeta));
+    }
+    if (data.containsKey('card_height_mm')) {
+      context.handle(
+          _cardHeightMmMeta,
+          cardHeightMm.isAcceptableOrUnknown(
+              data['card_height_mm']!, _cardHeightMmMeta));
+    }
+    if (data.containsKey('margin_mm')) {
+      context.handle(_marginMmMeta,
+          marginMm.isAcceptableOrUnknown(data['margin_mm']!, _marginMmMeta));
+    }
+    if (data.containsKey('font_size')) {
+      context.handle(_fontSizeMeta,
+          fontSize.isAcceptableOrUnknown(data['font_size']!, _fontSizeMeta));
+    }
+    if (data.containsKey('title_font_size')) {
+      context.handle(
+          _titleFontSizeMeta,
+          titleFontSize.isAcceptableOrUnknown(
+              data['title_font_size']!, _titleFontSizeMeta));
+    }
+    if (data.containsKey('primary_color_hex')) {
+      context.handle(
+          _primaryColorHexMeta,
+          primaryColorHex.isAcceptableOrUnknown(
+              data['primary_color_hex']!, _primaryColorHexMeta));
+    }
+    if (data.containsKey('background_color_hex')) {
+      context.handle(
+          _backgroundColorHexMeta,
+          backgroundColorHex.isAcceptableOrUnknown(
+              data['background_color_hex']!, _backgroundColorHexMeta));
+    }
+    if (data.containsKey('text_color_hex')) {
+      context.handle(
+          _textColorHexMeta,
+          textColorHex.isAcceptableOrUnknown(
+              data['text_color_hex']!, _textColorHexMeta));
+    }
+    if (data.containsKey('title_color_hex')) {
+      context.handle(
+          _titleColorHexMeta,
+          titleColorHex.isAcceptableOrUnknown(
+              data['title_color_hex']!, _titleColorHexMeta));
+    }
+    if (data.containsKey('border_color_hex')) {
+      context.handle(
+          _borderColorHexMeta,
+          borderColorHex.isAcceptableOrUnknown(
+              data['border_color_hex']!, _borderColorHexMeta));
+    }
+    if (data.containsKey('border_width')) {
+      context.handle(
+          _borderWidthMeta,
+          borderWidth.isAcceptableOrUnknown(
+              data['border_width']!, _borderWidthMeta));
+    }
+    if (data.containsKey('border_radius')) {
+      context.handle(
+          _borderRadiusMeta,
+          borderRadius.isAcceptableOrUnknown(
+              data['border_radius']!, _borderRadiusMeta));
+    }
     if (data.containsKey('show_qr_code')) {
       context.handle(
           _showQrCodeMeta,
           showQrCode.isAcceptableOrUnknown(
               data['show_qr_code']!, _showQrCodeMeta));
+    }
+    if (data.containsKey('show_barcode')) {
+      context.handle(
+          _showBarcodeMeta,
+          showBarcode.isAcceptableOrUnknown(
+              data['show_barcode']!, _showBarcodeMeta));
     }
     if (data.containsKey('show_logo')) {
       context.handle(_showLogoMeta,
@@ -1431,17 +1714,75 @@ class $VoucherTemplatesTableTable extends VoucherTemplatesTable
           footerText.isAcceptableOrUnknown(
               data['footer_text']!, _footerTextMeta));
     }
-    if (data.containsKey('primary_color_hex')) {
-      context.handle(
-          _primaryColorHexMeta,
-          primaryColorHex.isAcceptableOrUnknown(
-              data['primary_color_hex']!, _primaryColorHexMeta));
-    }
     if (data.containsKey('font_family')) {
       context.handle(
           _fontFamilyMeta,
           fontFamily.isAcceptableOrUnknown(
               data['font_family']!, _fontFamilyMeta));
+    }
+    if (data.containsKey('show_profile')) {
+      context.handle(
+          _showProfileMeta,
+          showProfile.isAcceptableOrUnknown(
+              data['show_profile']!, _showProfileMeta));
+    }
+    if (data.containsKey('show_price')) {
+      context.handle(_showPriceMeta,
+          showPrice.isAcceptableOrUnknown(data['show_price']!, _showPriceMeta));
+    }
+    if (data.containsKey('show_validity')) {
+      context.handle(
+          _showValidityMeta,
+          showValidity.isAcceptableOrUnknown(
+              data['show_validity']!, _showValidityMeta));
+    }
+    if (data.containsKey('show_username')) {
+      context.handle(
+          _showUsernameMeta,
+          showUsername.isAcceptableOrUnknown(
+              data['show_username']!, _showUsernameMeta));
+    }
+    if (data.containsKey('show_password')) {
+      context.handle(
+          _showPasswordMeta,
+          showPassword.isAcceptableOrUnknown(
+              data['show_password']!, _showPasswordMeta));
+    }
+    if (data.containsKey('show_instructions')) {
+      context.handle(
+          _showInstructionsMeta,
+          showInstructions.isAcceptableOrUnknown(
+              data['show_instructions']!, _showInstructionsMeta));
+    }
+    if (data.containsKey('instructions_text')) {
+      context.handle(
+          _instructionsTextMeta,
+          instructionsText.isAcceptableOrUnknown(
+              data['instructions_text']!, _instructionsTextMeta));
+    }
+    if (data.containsKey('contact_phone')) {
+      context.handle(
+          _contactPhoneMeta,
+          contactPhone.isAcceptableOrUnknown(
+              data['contact_phone']!, _contactPhoneMeta));
+    }
+    if (data.containsKey('custom_text')) {
+      context.handle(
+          _customTextMeta,
+          customText.isAcceptableOrUnknown(
+              data['custom_text']!, _customTextMeta));
+    }
+    if (data.containsKey('target_card_type')) {
+      context.handle(
+          _targetCardTypeMeta,
+          targetCardType.isAcceptableOrUnknown(
+              data['target_card_type']!, _targetCardTypeMeta));
+    }
+    if (data.containsKey('config_json')) {
+      context.handle(
+          _configJsonMeta,
+          configJson.isAcceptableOrUnknown(
+              data['config_json']!, _configJsonMeta));
     }
     if (data.containsKey('is_default')) {
       context.handle(_isDefaultMeta,
@@ -1471,8 +1812,34 @@ class $VoucherTemplatesTableTable extends VoucherTemplatesTable
           .read(DriftSqlType.int, data['${effectivePrefix}cards_per_row'])!,
       cardsPerPage: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}cards_per_page'])!,
+      cardWidthMm: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}card_width_mm']),
+      cardHeightMm: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}card_height_mm']),
+      marginMm: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}margin_mm'])!,
+      fontSize: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}font_size'])!,
+      titleFontSize: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}title_font_size'])!,
+      primaryColorHex: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}primary_color_hex'])!,
+      backgroundColorHex: attachedDatabase.typeMapping.read(
+          DriftSqlType.int, data['${effectivePrefix}background_color_hex'])!,
+      textColorHex: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}text_color_hex'])!,
+      titleColorHex: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}title_color_hex'])!,
+      borderColorHex: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}border_color_hex'])!,
+      borderWidth: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}border_width'])!,
+      borderRadius: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}border_radius'])!,
       showQrCode: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}show_qr_code'])!,
+      showBarcode: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}show_barcode'])!,
       showLogo: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}show_logo'])!,
       logoPath: attachedDatabase.typeMapping
@@ -1481,10 +1848,30 @@ class $VoucherTemplatesTableTable extends VoucherTemplatesTable
           .read(DriftSqlType.string, data['${effectivePrefix}header_text']),
       footerText: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}footer_text']),
-      primaryColorHex: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}primary_color_hex'])!,
       fontFamily: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}font_family'])!,
+      showProfile: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}show_profile'])!,
+      showPrice: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}show_price'])!,
+      showValidity: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}show_validity'])!,
+      showUsername: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}show_username'])!,
+      showPassword: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}show_password'])!,
+      showInstructions: attachedDatabase.typeMapping.read(
+          DriftSqlType.bool, data['${effectivePrefix}show_instructions'])!,
+      instructionsText: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}instructions_text']),
+      contactPhone: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}contact_phone']),
+      customText: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}custom_text']),
+      targetCardType: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}target_card_type'])!,
+      configJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}config_json']),
       isDefault: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_default'])!,
       createdAt: attachedDatabase.typeMapping
@@ -1505,13 +1892,36 @@ class VoucherTemplatesTableData extends DataClass
   final String paperSize;
   final int cardsPerRow;
   final int cardsPerPage;
+  final double? cardWidthMm;
+  final double? cardHeightMm;
+  final double marginMm;
+  final double fontSize;
+  final double titleFontSize;
+  final int primaryColorHex;
+  final int backgroundColorHex;
+  final int textColorHex;
+  final int titleColorHex;
+  final int borderColorHex;
+  final double borderWidth;
+  final double borderRadius;
   final bool showQrCode;
+  final bool showBarcode;
   final bool showLogo;
   final String? logoPath;
   final String? headerText;
   final String? footerText;
-  final int primaryColorHex;
   final String fontFamily;
+  final bool showProfile;
+  final bool showPrice;
+  final bool showValidity;
+  final bool showUsername;
+  final bool showPassword;
+  final bool showInstructions;
+  final String? instructionsText;
+  final String? contactPhone;
+  final String? customText;
+  final String targetCardType;
+  final String? configJson;
   final bool isDefault;
   final DateTime createdAt;
   const VoucherTemplatesTableData(
@@ -1520,13 +1930,36 @@ class VoucherTemplatesTableData extends DataClass
       required this.paperSize,
       required this.cardsPerRow,
       required this.cardsPerPage,
+      this.cardWidthMm,
+      this.cardHeightMm,
+      required this.marginMm,
+      required this.fontSize,
+      required this.titleFontSize,
+      required this.primaryColorHex,
+      required this.backgroundColorHex,
+      required this.textColorHex,
+      required this.titleColorHex,
+      required this.borderColorHex,
+      required this.borderWidth,
+      required this.borderRadius,
       required this.showQrCode,
+      required this.showBarcode,
       required this.showLogo,
       this.logoPath,
       this.headerText,
       this.footerText,
-      required this.primaryColorHex,
       required this.fontFamily,
+      required this.showProfile,
+      required this.showPrice,
+      required this.showValidity,
+      required this.showUsername,
+      required this.showPassword,
+      required this.showInstructions,
+      this.instructionsText,
+      this.contactPhone,
+      this.customText,
+      required this.targetCardType,
+      this.configJson,
       required this.isDefault,
       required this.createdAt});
   @override
@@ -1537,7 +1970,24 @@ class VoucherTemplatesTableData extends DataClass
     map['paper_size'] = Variable<String>(paperSize);
     map['cards_per_row'] = Variable<int>(cardsPerRow);
     map['cards_per_page'] = Variable<int>(cardsPerPage);
+    if (!nullToAbsent || cardWidthMm != null) {
+      map['card_width_mm'] = Variable<double>(cardWidthMm);
+    }
+    if (!nullToAbsent || cardHeightMm != null) {
+      map['card_height_mm'] = Variable<double>(cardHeightMm);
+    }
+    map['margin_mm'] = Variable<double>(marginMm);
+    map['font_size'] = Variable<double>(fontSize);
+    map['title_font_size'] = Variable<double>(titleFontSize);
+    map['primary_color_hex'] = Variable<int>(primaryColorHex);
+    map['background_color_hex'] = Variable<int>(backgroundColorHex);
+    map['text_color_hex'] = Variable<int>(textColorHex);
+    map['title_color_hex'] = Variable<int>(titleColorHex);
+    map['border_color_hex'] = Variable<int>(borderColorHex);
+    map['border_width'] = Variable<double>(borderWidth);
+    map['border_radius'] = Variable<double>(borderRadius);
     map['show_qr_code'] = Variable<bool>(showQrCode);
+    map['show_barcode'] = Variable<bool>(showBarcode);
     map['show_logo'] = Variable<bool>(showLogo);
     if (!nullToAbsent || logoPath != null) {
       map['logo_path'] = Variable<String>(logoPath);
@@ -1548,8 +1998,26 @@ class VoucherTemplatesTableData extends DataClass
     if (!nullToAbsent || footerText != null) {
       map['footer_text'] = Variable<String>(footerText);
     }
-    map['primary_color_hex'] = Variable<int>(primaryColorHex);
     map['font_family'] = Variable<String>(fontFamily);
+    map['show_profile'] = Variable<bool>(showProfile);
+    map['show_price'] = Variable<bool>(showPrice);
+    map['show_validity'] = Variable<bool>(showValidity);
+    map['show_username'] = Variable<bool>(showUsername);
+    map['show_password'] = Variable<bool>(showPassword);
+    map['show_instructions'] = Variable<bool>(showInstructions);
+    if (!nullToAbsent || instructionsText != null) {
+      map['instructions_text'] = Variable<String>(instructionsText);
+    }
+    if (!nullToAbsent || contactPhone != null) {
+      map['contact_phone'] = Variable<String>(contactPhone);
+    }
+    if (!nullToAbsent || customText != null) {
+      map['custom_text'] = Variable<String>(customText);
+    }
+    map['target_card_type'] = Variable<String>(targetCardType);
+    if (!nullToAbsent || configJson != null) {
+      map['config_json'] = Variable<String>(configJson);
+    }
     map['is_default'] = Variable<bool>(isDefault);
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
@@ -1562,7 +2030,24 @@ class VoucherTemplatesTableData extends DataClass
       paperSize: Value(paperSize),
       cardsPerRow: Value(cardsPerRow),
       cardsPerPage: Value(cardsPerPage),
+      cardWidthMm: cardWidthMm == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cardWidthMm),
+      cardHeightMm: cardHeightMm == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cardHeightMm),
+      marginMm: Value(marginMm),
+      fontSize: Value(fontSize),
+      titleFontSize: Value(titleFontSize),
+      primaryColorHex: Value(primaryColorHex),
+      backgroundColorHex: Value(backgroundColorHex),
+      textColorHex: Value(textColorHex),
+      titleColorHex: Value(titleColorHex),
+      borderColorHex: Value(borderColorHex),
+      borderWidth: Value(borderWidth),
+      borderRadius: Value(borderRadius),
       showQrCode: Value(showQrCode),
+      showBarcode: Value(showBarcode),
       showLogo: Value(showLogo),
       logoPath: logoPath == null && nullToAbsent
           ? const Value.absent()
@@ -1573,8 +2058,26 @@ class VoucherTemplatesTableData extends DataClass
       footerText: footerText == null && nullToAbsent
           ? const Value.absent()
           : Value(footerText),
-      primaryColorHex: Value(primaryColorHex),
       fontFamily: Value(fontFamily),
+      showProfile: Value(showProfile),
+      showPrice: Value(showPrice),
+      showValidity: Value(showValidity),
+      showUsername: Value(showUsername),
+      showPassword: Value(showPassword),
+      showInstructions: Value(showInstructions),
+      instructionsText: instructionsText == null && nullToAbsent
+          ? const Value.absent()
+          : Value(instructionsText),
+      contactPhone: contactPhone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(contactPhone),
+      customText: customText == null && nullToAbsent
+          ? const Value.absent()
+          : Value(customText),
+      targetCardType: Value(targetCardType),
+      configJson: configJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(configJson),
       isDefault: Value(isDefault),
       createdAt: Value(createdAt),
     );
@@ -1589,13 +2092,36 @@ class VoucherTemplatesTableData extends DataClass
       paperSize: serializer.fromJson<String>(json['paperSize']),
       cardsPerRow: serializer.fromJson<int>(json['cardsPerRow']),
       cardsPerPage: serializer.fromJson<int>(json['cardsPerPage']),
+      cardWidthMm: serializer.fromJson<double?>(json['cardWidthMm']),
+      cardHeightMm: serializer.fromJson<double?>(json['cardHeightMm']),
+      marginMm: serializer.fromJson<double>(json['marginMm']),
+      fontSize: serializer.fromJson<double>(json['fontSize']),
+      titleFontSize: serializer.fromJson<double>(json['titleFontSize']),
+      primaryColorHex: serializer.fromJson<int>(json['primaryColorHex']),
+      backgroundColorHex: serializer.fromJson<int>(json['backgroundColorHex']),
+      textColorHex: serializer.fromJson<int>(json['textColorHex']),
+      titleColorHex: serializer.fromJson<int>(json['titleColorHex']),
+      borderColorHex: serializer.fromJson<int>(json['borderColorHex']),
+      borderWidth: serializer.fromJson<double>(json['borderWidth']),
+      borderRadius: serializer.fromJson<double>(json['borderRadius']),
       showQrCode: serializer.fromJson<bool>(json['showQrCode']),
+      showBarcode: serializer.fromJson<bool>(json['showBarcode']),
       showLogo: serializer.fromJson<bool>(json['showLogo']),
       logoPath: serializer.fromJson<String?>(json['logoPath']),
       headerText: serializer.fromJson<String?>(json['headerText']),
       footerText: serializer.fromJson<String?>(json['footerText']),
-      primaryColorHex: serializer.fromJson<int>(json['primaryColorHex']),
       fontFamily: serializer.fromJson<String>(json['fontFamily']),
+      showProfile: serializer.fromJson<bool>(json['showProfile']),
+      showPrice: serializer.fromJson<bool>(json['showPrice']),
+      showValidity: serializer.fromJson<bool>(json['showValidity']),
+      showUsername: serializer.fromJson<bool>(json['showUsername']),
+      showPassword: serializer.fromJson<bool>(json['showPassword']),
+      showInstructions: serializer.fromJson<bool>(json['showInstructions']),
+      instructionsText: serializer.fromJson<String?>(json['instructionsText']),
+      contactPhone: serializer.fromJson<String?>(json['contactPhone']),
+      customText: serializer.fromJson<String?>(json['customText']),
+      targetCardType: serializer.fromJson<String>(json['targetCardType']),
+      configJson: serializer.fromJson<String?>(json['configJson']),
       isDefault: serializer.fromJson<bool>(json['isDefault']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
@@ -1609,13 +2135,36 @@ class VoucherTemplatesTableData extends DataClass
       'paperSize': serializer.toJson<String>(paperSize),
       'cardsPerRow': serializer.toJson<int>(cardsPerRow),
       'cardsPerPage': serializer.toJson<int>(cardsPerPage),
+      'cardWidthMm': serializer.toJson<double?>(cardWidthMm),
+      'cardHeightMm': serializer.toJson<double?>(cardHeightMm),
+      'marginMm': serializer.toJson<double>(marginMm),
+      'fontSize': serializer.toJson<double>(fontSize),
+      'titleFontSize': serializer.toJson<double>(titleFontSize),
+      'primaryColorHex': serializer.toJson<int>(primaryColorHex),
+      'backgroundColorHex': serializer.toJson<int>(backgroundColorHex),
+      'textColorHex': serializer.toJson<int>(textColorHex),
+      'titleColorHex': serializer.toJson<int>(titleColorHex),
+      'borderColorHex': serializer.toJson<int>(borderColorHex),
+      'borderWidth': serializer.toJson<double>(borderWidth),
+      'borderRadius': serializer.toJson<double>(borderRadius),
       'showQrCode': serializer.toJson<bool>(showQrCode),
+      'showBarcode': serializer.toJson<bool>(showBarcode),
       'showLogo': serializer.toJson<bool>(showLogo),
       'logoPath': serializer.toJson<String?>(logoPath),
       'headerText': serializer.toJson<String?>(headerText),
       'footerText': serializer.toJson<String?>(footerText),
-      'primaryColorHex': serializer.toJson<int>(primaryColorHex),
       'fontFamily': serializer.toJson<String>(fontFamily),
+      'showProfile': serializer.toJson<bool>(showProfile),
+      'showPrice': serializer.toJson<bool>(showPrice),
+      'showValidity': serializer.toJson<bool>(showValidity),
+      'showUsername': serializer.toJson<bool>(showUsername),
+      'showPassword': serializer.toJson<bool>(showPassword),
+      'showInstructions': serializer.toJson<bool>(showInstructions),
+      'instructionsText': serializer.toJson<String?>(instructionsText),
+      'contactPhone': serializer.toJson<String?>(contactPhone),
+      'customText': serializer.toJson<String?>(customText),
+      'targetCardType': serializer.toJson<String>(targetCardType),
+      'configJson': serializer.toJson<String?>(configJson),
       'isDefault': serializer.toJson<bool>(isDefault),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
@@ -1627,13 +2176,36 @@ class VoucherTemplatesTableData extends DataClass
           String? paperSize,
           int? cardsPerRow,
           int? cardsPerPage,
+          Value<double?> cardWidthMm = const Value.absent(),
+          Value<double?> cardHeightMm = const Value.absent(),
+          double? marginMm,
+          double? fontSize,
+          double? titleFontSize,
+          int? primaryColorHex,
+          int? backgroundColorHex,
+          int? textColorHex,
+          int? titleColorHex,
+          int? borderColorHex,
+          double? borderWidth,
+          double? borderRadius,
           bool? showQrCode,
+          bool? showBarcode,
           bool? showLogo,
           Value<String?> logoPath = const Value.absent(),
           Value<String?> headerText = const Value.absent(),
           Value<String?> footerText = const Value.absent(),
-          int? primaryColorHex,
           String? fontFamily,
+          bool? showProfile,
+          bool? showPrice,
+          bool? showValidity,
+          bool? showUsername,
+          bool? showPassword,
+          bool? showInstructions,
+          Value<String?> instructionsText = const Value.absent(),
+          Value<String?> contactPhone = const Value.absent(),
+          Value<String?> customText = const Value.absent(),
+          String? targetCardType,
+          Value<String?> configJson = const Value.absent(),
           bool? isDefault,
           DateTime? createdAt}) =>
       VoucherTemplatesTableData(
@@ -1642,13 +2214,40 @@ class VoucherTemplatesTableData extends DataClass
         paperSize: paperSize ?? this.paperSize,
         cardsPerRow: cardsPerRow ?? this.cardsPerRow,
         cardsPerPage: cardsPerPage ?? this.cardsPerPage,
+        cardWidthMm: cardWidthMm.present ? cardWidthMm.value : this.cardWidthMm,
+        cardHeightMm:
+            cardHeightMm.present ? cardHeightMm.value : this.cardHeightMm,
+        marginMm: marginMm ?? this.marginMm,
+        fontSize: fontSize ?? this.fontSize,
+        titleFontSize: titleFontSize ?? this.titleFontSize,
+        primaryColorHex: primaryColorHex ?? this.primaryColorHex,
+        backgroundColorHex: backgroundColorHex ?? this.backgroundColorHex,
+        textColorHex: textColorHex ?? this.textColorHex,
+        titleColorHex: titleColorHex ?? this.titleColorHex,
+        borderColorHex: borderColorHex ?? this.borderColorHex,
+        borderWidth: borderWidth ?? this.borderWidth,
+        borderRadius: borderRadius ?? this.borderRadius,
         showQrCode: showQrCode ?? this.showQrCode,
+        showBarcode: showBarcode ?? this.showBarcode,
         showLogo: showLogo ?? this.showLogo,
         logoPath: logoPath.present ? logoPath.value : this.logoPath,
         headerText: headerText.present ? headerText.value : this.headerText,
         footerText: footerText.present ? footerText.value : this.footerText,
-        primaryColorHex: primaryColorHex ?? this.primaryColorHex,
         fontFamily: fontFamily ?? this.fontFamily,
+        showProfile: showProfile ?? this.showProfile,
+        showPrice: showPrice ?? this.showPrice,
+        showValidity: showValidity ?? this.showValidity,
+        showUsername: showUsername ?? this.showUsername,
+        showPassword: showPassword ?? this.showPassword,
+        showInstructions: showInstructions ?? this.showInstructions,
+        instructionsText: instructionsText.present
+            ? instructionsText.value
+            : this.instructionsText,
+        contactPhone:
+            contactPhone.present ? contactPhone.value : this.contactPhone,
+        customText: customText.present ? customText.value : this.customText,
+        targetCardType: targetCardType ?? this.targetCardType,
+        configJson: configJson.present ? configJson.value : this.configJson,
         isDefault: isDefault ?? this.isDefault,
         createdAt: createdAt ?? this.createdAt,
       );
@@ -1663,19 +2262,76 @@ class VoucherTemplatesTableData extends DataClass
       cardsPerPage: data.cardsPerPage.present
           ? data.cardsPerPage.value
           : this.cardsPerPage,
+      cardWidthMm:
+          data.cardWidthMm.present ? data.cardWidthMm.value : this.cardWidthMm,
+      cardHeightMm: data.cardHeightMm.present
+          ? data.cardHeightMm.value
+          : this.cardHeightMm,
+      marginMm: data.marginMm.present ? data.marginMm.value : this.marginMm,
+      fontSize: data.fontSize.present ? data.fontSize.value : this.fontSize,
+      titleFontSize: data.titleFontSize.present
+          ? data.titleFontSize.value
+          : this.titleFontSize,
+      primaryColorHex: data.primaryColorHex.present
+          ? data.primaryColorHex.value
+          : this.primaryColorHex,
+      backgroundColorHex: data.backgroundColorHex.present
+          ? data.backgroundColorHex.value
+          : this.backgroundColorHex,
+      textColorHex: data.textColorHex.present
+          ? data.textColorHex.value
+          : this.textColorHex,
+      titleColorHex: data.titleColorHex.present
+          ? data.titleColorHex.value
+          : this.titleColorHex,
+      borderColorHex: data.borderColorHex.present
+          ? data.borderColorHex.value
+          : this.borderColorHex,
+      borderWidth:
+          data.borderWidth.present ? data.borderWidth.value : this.borderWidth,
+      borderRadius: data.borderRadius.present
+          ? data.borderRadius.value
+          : this.borderRadius,
       showQrCode:
           data.showQrCode.present ? data.showQrCode.value : this.showQrCode,
+      showBarcode:
+          data.showBarcode.present ? data.showBarcode.value : this.showBarcode,
       showLogo: data.showLogo.present ? data.showLogo.value : this.showLogo,
       logoPath: data.logoPath.present ? data.logoPath.value : this.logoPath,
       headerText:
           data.headerText.present ? data.headerText.value : this.headerText,
       footerText:
           data.footerText.present ? data.footerText.value : this.footerText,
-      primaryColorHex: data.primaryColorHex.present
-          ? data.primaryColorHex.value
-          : this.primaryColorHex,
       fontFamily:
           data.fontFamily.present ? data.fontFamily.value : this.fontFamily,
+      showProfile:
+          data.showProfile.present ? data.showProfile.value : this.showProfile,
+      showPrice: data.showPrice.present ? data.showPrice.value : this.showPrice,
+      showValidity: data.showValidity.present
+          ? data.showValidity.value
+          : this.showValidity,
+      showUsername: data.showUsername.present
+          ? data.showUsername.value
+          : this.showUsername,
+      showPassword: data.showPassword.present
+          ? data.showPassword.value
+          : this.showPassword,
+      showInstructions: data.showInstructions.present
+          ? data.showInstructions.value
+          : this.showInstructions,
+      instructionsText: data.instructionsText.present
+          ? data.instructionsText.value
+          : this.instructionsText,
+      contactPhone: data.contactPhone.present
+          ? data.contactPhone.value
+          : this.contactPhone,
+      customText:
+          data.customText.present ? data.customText.value : this.customText,
+      targetCardType: data.targetCardType.present
+          ? data.targetCardType.value
+          : this.targetCardType,
+      configJson:
+          data.configJson.present ? data.configJson.value : this.configJson,
       isDefault: data.isDefault.present ? data.isDefault.value : this.isDefault,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
@@ -1689,13 +2345,36 @@ class VoucherTemplatesTableData extends DataClass
           ..write('paperSize: $paperSize, ')
           ..write('cardsPerRow: $cardsPerRow, ')
           ..write('cardsPerPage: $cardsPerPage, ')
+          ..write('cardWidthMm: $cardWidthMm, ')
+          ..write('cardHeightMm: $cardHeightMm, ')
+          ..write('marginMm: $marginMm, ')
+          ..write('fontSize: $fontSize, ')
+          ..write('titleFontSize: $titleFontSize, ')
+          ..write('primaryColorHex: $primaryColorHex, ')
+          ..write('backgroundColorHex: $backgroundColorHex, ')
+          ..write('textColorHex: $textColorHex, ')
+          ..write('titleColorHex: $titleColorHex, ')
+          ..write('borderColorHex: $borderColorHex, ')
+          ..write('borderWidth: $borderWidth, ')
+          ..write('borderRadius: $borderRadius, ')
           ..write('showQrCode: $showQrCode, ')
+          ..write('showBarcode: $showBarcode, ')
           ..write('showLogo: $showLogo, ')
           ..write('logoPath: $logoPath, ')
           ..write('headerText: $headerText, ')
           ..write('footerText: $footerText, ')
-          ..write('primaryColorHex: $primaryColorHex, ')
           ..write('fontFamily: $fontFamily, ')
+          ..write('showProfile: $showProfile, ')
+          ..write('showPrice: $showPrice, ')
+          ..write('showValidity: $showValidity, ')
+          ..write('showUsername: $showUsername, ')
+          ..write('showPassword: $showPassword, ')
+          ..write('showInstructions: $showInstructions, ')
+          ..write('instructionsText: $instructionsText, ')
+          ..write('contactPhone: $contactPhone, ')
+          ..write('customText: $customText, ')
+          ..write('targetCardType: $targetCardType, ')
+          ..write('configJson: $configJson, ')
           ..write('isDefault: $isDefault, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
@@ -1703,21 +2382,45 @@ class VoucherTemplatesTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(
-      id,
-      name,
-      paperSize,
-      cardsPerRow,
-      cardsPerPage,
-      showQrCode,
-      showLogo,
-      logoPath,
-      headerText,
-      footerText,
-      primaryColorHex,
-      fontFamily,
-      isDefault,
-      createdAt);
+  int get hashCode => Object.hashAll([
+        id,
+        name,
+        paperSize,
+        cardsPerRow,
+        cardsPerPage,
+        cardWidthMm,
+        cardHeightMm,
+        marginMm,
+        fontSize,
+        titleFontSize,
+        primaryColorHex,
+        backgroundColorHex,
+        textColorHex,
+        titleColorHex,
+        borderColorHex,
+        borderWidth,
+        borderRadius,
+        showQrCode,
+        showBarcode,
+        showLogo,
+        logoPath,
+        headerText,
+        footerText,
+        fontFamily,
+        showProfile,
+        showPrice,
+        showValidity,
+        showUsername,
+        showPassword,
+        showInstructions,
+        instructionsText,
+        contactPhone,
+        customText,
+        targetCardType,
+        configJson,
+        isDefault,
+        createdAt
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1727,13 +2430,36 @@ class VoucherTemplatesTableData extends DataClass
           other.paperSize == this.paperSize &&
           other.cardsPerRow == this.cardsPerRow &&
           other.cardsPerPage == this.cardsPerPage &&
+          other.cardWidthMm == this.cardWidthMm &&
+          other.cardHeightMm == this.cardHeightMm &&
+          other.marginMm == this.marginMm &&
+          other.fontSize == this.fontSize &&
+          other.titleFontSize == this.titleFontSize &&
+          other.primaryColorHex == this.primaryColorHex &&
+          other.backgroundColorHex == this.backgroundColorHex &&
+          other.textColorHex == this.textColorHex &&
+          other.titleColorHex == this.titleColorHex &&
+          other.borderColorHex == this.borderColorHex &&
+          other.borderWidth == this.borderWidth &&
+          other.borderRadius == this.borderRadius &&
           other.showQrCode == this.showQrCode &&
+          other.showBarcode == this.showBarcode &&
           other.showLogo == this.showLogo &&
           other.logoPath == this.logoPath &&
           other.headerText == this.headerText &&
           other.footerText == this.footerText &&
-          other.primaryColorHex == this.primaryColorHex &&
           other.fontFamily == this.fontFamily &&
+          other.showProfile == this.showProfile &&
+          other.showPrice == this.showPrice &&
+          other.showValidity == this.showValidity &&
+          other.showUsername == this.showUsername &&
+          other.showPassword == this.showPassword &&
+          other.showInstructions == this.showInstructions &&
+          other.instructionsText == this.instructionsText &&
+          other.contactPhone == this.contactPhone &&
+          other.customText == this.customText &&
+          other.targetCardType == this.targetCardType &&
+          other.configJson == this.configJson &&
           other.isDefault == this.isDefault &&
           other.createdAt == this.createdAt);
 }
@@ -1745,13 +2471,36 @@ class VoucherTemplatesTableCompanion
   final Value<String> paperSize;
   final Value<int> cardsPerRow;
   final Value<int> cardsPerPage;
+  final Value<double?> cardWidthMm;
+  final Value<double?> cardHeightMm;
+  final Value<double> marginMm;
+  final Value<double> fontSize;
+  final Value<double> titleFontSize;
+  final Value<int> primaryColorHex;
+  final Value<int> backgroundColorHex;
+  final Value<int> textColorHex;
+  final Value<int> titleColorHex;
+  final Value<int> borderColorHex;
+  final Value<double> borderWidth;
+  final Value<double> borderRadius;
   final Value<bool> showQrCode;
+  final Value<bool> showBarcode;
   final Value<bool> showLogo;
   final Value<String?> logoPath;
   final Value<String?> headerText;
   final Value<String?> footerText;
-  final Value<int> primaryColorHex;
   final Value<String> fontFamily;
+  final Value<bool> showProfile;
+  final Value<bool> showPrice;
+  final Value<bool> showValidity;
+  final Value<bool> showUsername;
+  final Value<bool> showPassword;
+  final Value<bool> showInstructions;
+  final Value<String?> instructionsText;
+  final Value<String?> contactPhone;
+  final Value<String?> customText;
+  final Value<String> targetCardType;
+  final Value<String?> configJson;
   final Value<bool> isDefault;
   final Value<DateTime> createdAt;
   const VoucherTemplatesTableCompanion({
@@ -1760,13 +2509,36 @@ class VoucherTemplatesTableCompanion
     this.paperSize = const Value.absent(),
     this.cardsPerRow = const Value.absent(),
     this.cardsPerPage = const Value.absent(),
+    this.cardWidthMm = const Value.absent(),
+    this.cardHeightMm = const Value.absent(),
+    this.marginMm = const Value.absent(),
+    this.fontSize = const Value.absent(),
+    this.titleFontSize = const Value.absent(),
+    this.primaryColorHex = const Value.absent(),
+    this.backgroundColorHex = const Value.absent(),
+    this.textColorHex = const Value.absent(),
+    this.titleColorHex = const Value.absent(),
+    this.borderColorHex = const Value.absent(),
+    this.borderWidth = const Value.absent(),
+    this.borderRadius = const Value.absent(),
     this.showQrCode = const Value.absent(),
+    this.showBarcode = const Value.absent(),
     this.showLogo = const Value.absent(),
     this.logoPath = const Value.absent(),
     this.headerText = const Value.absent(),
     this.footerText = const Value.absent(),
-    this.primaryColorHex = const Value.absent(),
     this.fontFamily = const Value.absent(),
+    this.showProfile = const Value.absent(),
+    this.showPrice = const Value.absent(),
+    this.showValidity = const Value.absent(),
+    this.showUsername = const Value.absent(),
+    this.showPassword = const Value.absent(),
+    this.showInstructions = const Value.absent(),
+    this.instructionsText = const Value.absent(),
+    this.contactPhone = const Value.absent(),
+    this.customText = const Value.absent(),
+    this.targetCardType = const Value.absent(),
+    this.configJson = const Value.absent(),
     this.isDefault = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
@@ -1776,13 +2548,36 @@ class VoucherTemplatesTableCompanion
     this.paperSize = const Value.absent(),
     this.cardsPerRow = const Value.absent(),
     this.cardsPerPage = const Value.absent(),
+    this.cardWidthMm = const Value.absent(),
+    this.cardHeightMm = const Value.absent(),
+    this.marginMm = const Value.absent(),
+    this.fontSize = const Value.absent(),
+    this.titleFontSize = const Value.absent(),
+    this.primaryColorHex = const Value.absent(),
+    this.backgroundColorHex = const Value.absent(),
+    this.textColorHex = const Value.absent(),
+    this.titleColorHex = const Value.absent(),
+    this.borderColorHex = const Value.absent(),
+    this.borderWidth = const Value.absent(),
+    this.borderRadius = const Value.absent(),
     this.showQrCode = const Value.absent(),
+    this.showBarcode = const Value.absent(),
     this.showLogo = const Value.absent(),
     this.logoPath = const Value.absent(),
     this.headerText = const Value.absent(),
     this.footerText = const Value.absent(),
-    this.primaryColorHex = const Value.absent(),
     this.fontFamily = const Value.absent(),
+    this.showProfile = const Value.absent(),
+    this.showPrice = const Value.absent(),
+    this.showValidity = const Value.absent(),
+    this.showUsername = const Value.absent(),
+    this.showPassword = const Value.absent(),
+    this.showInstructions = const Value.absent(),
+    this.instructionsText = const Value.absent(),
+    this.contactPhone = const Value.absent(),
+    this.customText = const Value.absent(),
+    this.targetCardType = const Value.absent(),
+    this.configJson = const Value.absent(),
     this.isDefault = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : name = Value(name);
@@ -1792,13 +2587,36 @@ class VoucherTemplatesTableCompanion
     Expression<String>? paperSize,
     Expression<int>? cardsPerRow,
     Expression<int>? cardsPerPage,
+    Expression<double>? cardWidthMm,
+    Expression<double>? cardHeightMm,
+    Expression<double>? marginMm,
+    Expression<double>? fontSize,
+    Expression<double>? titleFontSize,
+    Expression<int>? primaryColorHex,
+    Expression<int>? backgroundColorHex,
+    Expression<int>? textColorHex,
+    Expression<int>? titleColorHex,
+    Expression<int>? borderColorHex,
+    Expression<double>? borderWidth,
+    Expression<double>? borderRadius,
     Expression<bool>? showQrCode,
+    Expression<bool>? showBarcode,
     Expression<bool>? showLogo,
     Expression<String>? logoPath,
     Expression<String>? headerText,
     Expression<String>? footerText,
-    Expression<int>? primaryColorHex,
     Expression<String>? fontFamily,
+    Expression<bool>? showProfile,
+    Expression<bool>? showPrice,
+    Expression<bool>? showValidity,
+    Expression<bool>? showUsername,
+    Expression<bool>? showPassword,
+    Expression<bool>? showInstructions,
+    Expression<String>? instructionsText,
+    Expression<String>? contactPhone,
+    Expression<String>? customText,
+    Expression<String>? targetCardType,
+    Expression<String>? configJson,
     Expression<bool>? isDefault,
     Expression<DateTime>? createdAt,
   }) {
@@ -1808,13 +2626,37 @@ class VoucherTemplatesTableCompanion
       if (paperSize != null) 'paper_size': paperSize,
       if (cardsPerRow != null) 'cards_per_row': cardsPerRow,
       if (cardsPerPage != null) 'cards_per_page': cardsPerPage,
+      if (cardWidthMm != null) 'card_width_mm': cardWidthMm,
+      if (cardHeightMm != null) 'card_height_mm': cardHeightMm,
+      if (marginMm != null) 'margin_mm': marginMm,
+      if (fontSize != null) 'font_size': fontSize,
+      if (titleFontSize != null) 'title_font_size': titleFontSize,
+      if (primaryColorHex != null) 'primary_color_hex': primaryColorHex,
+      if (backgroundColorHex != null)
+        'background_color_hex': backgroundColorHex,
+      if (textColorHex != null) 'text_color_hex': textColorHex,
+      if (titleColorHex != null) 'title_color_hex': titleColorHex,
+      if (borderColorHex != null) 'border_color_hex': borderColorHex,
+      if (borderWidth != null) 'border_width': borderWidth,
+      if (borderRadius != null) 'border_radius': borderRadius,
       if (showQrCode != null) 'show_qr_code': showQrCode,
+      if (showBarcode != null) 'show_barcode': showBarcode,
       if (showLogo != null) 'show_logo': showLogo,
       if (logoPath != null) 'logo_path': logoPath,
       if (headerText != null) 'header_text': headerText,
       if (footerText != null) 'footer_text': footerText,
-      if (primaryColorHex != null) 'primary_color_hex': primaryColorHex,
       if (fontFamily != null) 'font_family': fontFamily,
+      if (showProfile != null) 'show_profile': showProfile,
+      if (showPrice != null) 'show_price': showPrice,
+      if (showValidity != null) 'show_validity': showValidity,
+      if (showUsername != null) 'show_username': showUsername,
+      if (showPassword != null) 'show_password': showPassword,
+      if (showInstructions != null) 'show_instructions': showInstructions,
+      if (instructionsText != null) 'instructions_text': instructionsText,
+      if (contactPhone != null) 'contact_phone': contactPhone,
+      if (customText != null) 'custom_text': customText,
+      if (targetCardType != null) 'target_card_type': targetCardType,
+      if (configJson != null) 'config_json': configJson,
       if (isDefault != null) 'is_default': isDefault,
       if (createdAt != null) 'created_at': createdAt,
     });
@@ -1826,13 +2668,36 @@ class VoucherTemplatesTableCompanion
       Value<String>? paperSize,
       Value<int>? cardsPerRow,
       Value<int>? cardsPerPage,
+      Value<double?>? cardWidthMm,
+      Value<double?>? cardHeightMm,
+      Value<double>? marginMm,
+      Value<double>? fontSize,
+      Value<double>? titleFontSize,
+      Value<int>? primaryColorHex,
+      Value<int>? backgroundColorHex,
+      Value<int>? textColorHex,
+      Value<int>? titleColorHex,
+      Value<int>? borderColorHex,
+      Value<double>? borderWidth,
+      Value<double>? borderRadius,
       Value<bool>? showQrCode,
+      Value<bool>? showBarcode,
       Value<bool>? showLogo,
       Value<String?>? logoPath,
       Value<String?>? headerText,
       Value<String?>? footerText,
-      Value<int>? primaryColorHex,
       Value<String>? fontFamily,
+      Value<bool>? showProfile,
+      Value<bool>? showPrice,
+      Value<bool>? showValidity,
+      Value<bool>? showUsername,
+      Value<bool>? showPassword,
+      Value<bool>? showInstructions,
+      Value<String?>? instructionsText,
+      Value<String?>? contactPhone,
+      Value<String?>? customText,
+      Value<String>? targetCardType,
+      Value<String?>? configJson,
       Value<bool>? isDefault,
       Value<DateTime>? createdAt}) {
     return VoucherTemplatesTableCompanion(
@@ -1841,13 +2706,36 @@ class VoucherTemplatesTableCompanion
       paperSize: paperSize ?? this.paperSize,
       cardsPerRow: cardsPerRow ?? this.cardsPerRow,
       cardsPerPage: cardsPerPage ?? this.cardsPerPage,
+      cardWidthMm: cardWidthMm ?? this.cardWidthMm,
+      cardHeightMm: cardHeightMm ?? this.cardHeightMm,
+      marginMm: marginMm ?? this.marginMm,
+      fontSize: fontSize ?? this.fontSize,
+      titleFontSize: titleFontSize ?? this.titleFontSize,
+      primaryColorHex: primaryColorHex ?? this.primaryColorHex,
+      backgroundColorHex: backgroundColorHex ?? this.backgroundColorHex,
+      textColorHex: textColorHex ?? this.textColorHex,
+      titleColorHex: titleColorHex ?? this.titleColorHex,
+      borderColorHex: borderColorHex ?? this.borderColorHex,
+      borderWidth: borderWidth ?? this.borderWidth,
+      borderRadius: borderRadius ?? this.borderRadius,
       showQrCode: showQrCode ?? this.showQrCode,
+      showBarcode: showBarcode ?? this.showBarcode,
       showLogo: showLogo ?? this.showLogo,
       logoPath: logoPath ?? this.logoPath,
       headerText: headerText ?? this.headerText,
       footerText: footerText ?? this.footerText,
-      primaryColorHex: primaryColorHex ?? this.primaryColorHex,
       fontFamily: fontFamily ?? this.fontFamily,
+      showProfile: showProfile ?? this.showProfile,
+      showPrice: showPrice ?? this.showPrice,
+      showValidity: showValidity ?? this.showValidity,
+      showUsername: showUsername ?? this.showUsername,
+      showPassword: showPassword ?? this.showPassword,
+      showInstructions: showInstructions ?? this.showInstructions,
+      instructionsText: instructionsText ?? this.instructionsText,
+      contactPhone: contactPhone ?? this.contactPhone,
+      customText: customText ?? this.customText,
+      targetCardType: targetCardType ?? this.targetCardType,
+      configJson: configJson ?? this.configJson,
       isDefault: isDefault ?? this.isDefault,
       createdAt: createdAt ?? this.createdAt,
     );
@@ -1871,8 +2759,47 @@ class VoucherTemplatesTableCompanion
     if (cardsPerPage.present) {
       map['cards_per_page'] = Variable<int>(cardsPerPage.value);
     }
+    if (cardWidthMm.present) {
+      map['card_width_mm'] = Variable<double>(cardWidthMm.value);
+    }
+    if (cardHeightMm.present) {
+      map['card_height_mm'] = Variable<double>(cardHeightMm.value);
+    }
+    if (marginMm.present) {
+      map['margin_mm'] = Variable<double>(marginMm.value);
+    }
+    if (fontSize.present) {
+      map['font_size'] = Variable<double>(fontSize.value);
+    }
+    if (titleFontSize.present) {
+      map['title_font_size'] = Variable<double>(titleFontSize.value);
+    }
+    if (primaryColorHex.present) {
+      map['primary_color_hex'] = Variable<int>(primaryColorHex.value);
+    }
+    if (backgroundColorHex.present) {
+      map['background_color_hex'] = Variable<int>(backgroundColorHex.value);
+    }
+    if (textColorHex.present) {
+      map['text_color_hex'] = Variable<int>(textColorHex.value);
+    }
+    if (titleColorHex.present) {
+      map['title_color_hex'] = Variable<int>(titleColorHex.value);
+    }
+    if (borderColorHex.present) {
+      map['border_color_hex'] = Variable<int>(borderColorHex.value);
+    }
+    if (borderWidth.present) {
+      map['border_width'] = Variable<double>(borderWidth.value);
+    }
+    if (borderRadius.present) {
+      map['border_radius'] = Variable<double>(borderRadius.value);
+    }
     if (showQrCode.present) {
       map['show_qr_code'] = Variable<bool>(showQrCode.value);
+    }
+    if (showBarcode.present) {
+      map['show_barcode'] = Variable<bool>(showBarcode.value);
     }
     if (showLogo.present) {
       map['show_logo'] = Variable<bool>(showLogo.value);
@@ -1886,11 +2813,41 @@ class VoucherTemplatesTableCompanion
     if (footerText.present) {
       map['footer_text'] = Variable<String>(footerText.value);
     }
-    if (primaryColorHex.present) {
-      map['primary_color_hex'] = Variable<int>(primaryColorHex.value);
-    }
     if (fontFamily.present) {
       map['font_family'] = Variable<String>(fontFamily.value);
+    }
+    if (showProfile.present) {
+      map['show_profile'] = Variable<bool>(showProfile.value);
+    }
+    if (showPrice.present) {
+      map['show_price'] = Variable<bool>(showPrice.value);
+    }
+    if (showValidity.present) {
+      map['show_validity'] = Variable<bool>(showValidity.value);
+    }
+    if (showUsername.present) {
+      map['show_username'] = Variable<bool>(showUsername.value);
+    }
+    if (showPassword.present) {
+      map['show_password'] = Variable<bool>(showPassword.value);
+    }
+    if (showInstructions.present) {
+      map['show_instructions'] = Variable<bool>(showInstructions.value);
+    }
+    if (instructionsText.present) {
+      map['instructions_text'] = Variable<String>(instructionsText.value);
+    }
+    if (contactPhone.present) {
+      map['contact_phone'] = Variable<String>(contactPhone.value);
+    }
+    if (customText.present) {
+      map['custom_text'] = Variable<String>(customText.value);
+    }
+    if (targetCardType.present) {
+      map['target_card_type'] = Variable<String>(targetCardType.value);
+    }
+    if (configJson.present) {
+      map['config_json'] = Variable<String>(configJson.value);
     }
     if (isDefault.present) {
       map['is_default'] = Variable<bool>(isDefault.value);
@@ -1909,13 +2866,36 @@ class VoucherTemplatesTableCompanion
           ..write('paperSize: $paperSize, ')
           ..write('cardsPerRow: $cardsPerRow, ')
           ..write('cardsPerPage: $cardsPerPage, ')
+          ..write('cardWidthMm: $cardWidthMm, ')
+          ..write('cardHeightMm: $cardHeightMm, ')
+          ..write('marginMm: $marginMm, ')
+          ..write('fontSize: $fontSize, ')
+          ..write('titleFontSize: $titleFontSize, ')
+          ..write('primaryColorHex: $primaryColorHex, ')
+          ..write('backgroundColorHex: $backgroundColorHex, ')
+          ..write('textColorHex: $textColorHex, ')
+          ..write('titleColorHex: $titleColorHex, ')
+          ..write('borderColorHex: $borderColorHex, ')
+          ..write('borderWidth: $borderWidth, ')
+          ..write('borderRadius: $borderRadius, ')
           ..write('showQrCode: $showQrCode, ')
+          ..write('showBarcode: $showBarcode, ')
           ..write('showLogo: $showLogo, ')
           ..write('logoPath: $logoPath, ')
           ..write('headerText: $headerText, ')
           ..write('footerText: $footerText, ')
-          ..write('primaryColorHex: $primaryColorHex, ')
           ..write('fontFamily: $fontFamily, ')
+          ..write('showProfile: $showProfile, ')
+          ..write('showPrice: $showPrice, ')
+          ..write('showValidity: $showValidity, ')
+          ..write('showUsername: $showUsername, ')
+          ..write('showPassword: $showPassword, ')
+          ..write('showInstructions: $showInstructions, ')
+          ..write('instructionsText: $instructionsText, ')
+          ..write('contactPhone: $contactPhone, ')
+          ..write('customText: $customText, ')
+          ..write('targetCardType: $targetCardType, ')
+          ..write('configJson: $configJson, ')
           ..write('isDefault: $isDefault, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
@@ -3252,6 +4232,14 @@ class $UsageObservationsTableTable extends UsageObservationsTable
   late final GeneratedColumn<String> profile = GeneratedColumn<String>(
       'profile', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _cardTypeMeta =
+      const VerificationMeta('cardType');
+  @override
+  late final GeneratedColumn<String> cardType = GeneratedColumn<String>(
+      'card_type', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('hotspot'));
   static const VerificationMeta _firstSeenAtMeta =
       const VerificationMeta('firstSeenAt');
   @override
@@ -3271,8 +4259,15 @@ class $UsageObservationsTableTable extends UsageObservationsTable
           'CHECK ("date_is_approximate" IN (0, 1))'),
       defaultValue: const Constant(false));
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, connectionId, cardName, profile, firstSeenAt, dateIsApproximate];
+  List<GeneratedColumn> get $columns => [
+        id,
+        connectionId,
+        cardName,
+        profile,
+        cardType,
+        firstSeenAt,
+        dateIsApproximate
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -3307,6 +4302,10 @@ class $UsageObservationsTableTable extends UsageObservationsTable
     } else if (isInserting) {
       context.missing(_profileMeta);
     }
+    if (data.containsKey('card_type')) {
+      context.handle(_cardTypeMeta,
+          cardType.isAcceptableOrUnknown(data['card_type']!, _cardTypeMeta));
+    }
     if (data.containsKey('first_seen_at')) {
       context.handle(
           _firstSeenAtMeta,
@@ -3337,6 +4336,8 @@ class $UsageObservationsTableTable extends UsageObservationsTable
           .read(DriftSqlType.string, data['${effectivePrefix}card_name'])!,
       profile: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}profile'])!,
+      cardType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}card_type'])!,
       firstSeenAt: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}first_seen_at'])!,
       dateIsApproximate: attachedDatabase.typeMapping.read(
@@ -3356,6 +4357,7 @@ class UsageObservationsTableData extends DataClass
   final int connectionId;
   final String cardName;
   final String profile;
+  final String cardType;
   final DateTime firstSeenAt;
   final bool dateIsApproximate;
   const UsageObservationsTableData(
@@ -3363,6 +4365,7 @@ class UsageObservationsTableData extends DataClass
       required this.connectionId,
       required this.cardName,
       required this.profile,
+      required this.cardType,
       required this.firstSeenAt,
       required this.dateIsApproximate});
   @override
@@ -3372,6 +4375,7 @@ class UsageObservationsTableData extends DataClass
     map['connection_id'] = Variable<int>(connectionId);
     map['card_name'] = Variable<String>(cardName);
     map['profile'] = Variable<String>(profile);
+    map['card_type'] = Variable<String>(cardType);
     map['first_seen_at'] = Variable<DateTime>(firstSeenAt);
     map['date_is_approximate'] = Variable<bool>(dateIsApproximate);
     return map;
@@ -3383,6 +4387,7 @@ class UsageObservationsTableData extends DataClass
       connectionId: Value(connectionId),
       cardName: Value(cardName),
       profile: Value(profile),
+      cardType: Value(cardType),
       firstSeenAt: Value(firstSeenAt),
       dateIsApproximate: Value(dateIsApproximate),
     );
@@ -3396,6 +4401,7 @@ class UsageObservationsTableData extends DataClass
       connectionId: serializer.fromJson<int>(json['connectionId']),
       cardName: serializer.fromJson<String>(json['cardName']),
       profile: serializer.fromJson<String>(json['profile']),
+      cardType: serializer.fromJson<String>(json['cardType']),
       firstSeenAt: serializer.fromJson<DateTime>(json['firstSeenAt']),
       dateIsApproximate: serializer.fromJson<bool>(json['dateIsApproximate']),
     );
@@ -3408,6 +4414,7 @@ class UsageObservationsTableData extends DataClass
       'connectionId': serializer.toJson<int>(connectionId),
       'cardName': serializer.toJson<String>(cardName),
       'profile': serializer.toJson<String>(profile),
+      'cardType': serializer.toJson<String>(cardType),
       'firstSeenAt': serializer.toJson<DateTime>(firstSeenAt),
       'dateIsApproximate': serializer.toJson<bool>(dateIsApproximate),
     };
@@ -3418,6 +4425,7 @@ class UsageObservationsTableData extends DataClass
           int? connectionId,
           String? cardName,
           String? profile,
+          String? cardType,
           DateTime? firstSeenAt,
           bool? dateIsApproximate}) =>
       UsageObservationsTableData(
@@ -3425,6 +4433,7 @@ class UsageObservationsTableData extends DataClass
         connectionId: connectionId ?? this.connectionId,
         cardName: cardName ?? this.cardName,
         profile: profile ?? this.profile,
+        cardType: cardType ?? this.cardType,
         firstSeenAt: firstSeenAt ?? this.firstSeenAt,
         dateIsApproximate: dateIsApproximate ?? this.dateIsApproximate,
       );
@@ -3437,6 +4446,7 @@ class UsageObservationsTableData extends DataClass
           : this.connectionId,
       cardName: data.cardName.present ? data.cardName.value : this.cardName,
       profile: data.profile.present ? data.profile.value : this.profile,
+      cardType: data.cardType.present ? data.cardType.value : this.cardType,
       firstSeenAt:
           data.firstSeenAt.present ? data.firstSeenAt.value : this.firstSeenAt,
       dateIsApproximate: data.dateIsApproximate.present
@@ -3452,6 +4462,7 @@ class UsageObservationsTableData extends DataClass
           ..write('connectionId: $connectionId, ')
           ..write('cardName: $cardName, ')
           ..write('profile: $profile, ')
+          ..write('cardType: $cardType, ')
           ..write('firstSeenAt: $firstSeenAt, ')
           ..write('dateIsApproximate: $dateIsApproximate')
           ..write(')'))
@@ -3459,8 +4470,8 @@ class UsageObservationsTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, connectionId, cardName, profile, firstSeenAt, dateIsApproximate);
+  int get hashCode => Object.hash(id, connectionId, cardName, profile, cardType,
+      firstSeenAt, dateIsApproximate);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3469,6 +4480,7 @@ class UsageObservationsTableData extends DataClass
           other.connectionId == this.connectionId &&
           other.cardName == this.cardName &&
           other.profile == this.profile &&
+          other.cardType == this.cardType &&
           other.firstSeenAt == this.firstSeenAt &&
           other.dateIsApproximate == this.dateIsApproximate);
 }
@@ -3479,6 +4491,7 @@ class UsageObservationsTableCompanion
   final Value<int> connectionId;
   final Value<String> cardName;
   final Value<String> profile;
+  final Value<String> cardType;
   final Value<DateTime> firstSeenAt;
   final Value<bool> dateIsApproximate;
   const UsageObservationsTableCompanion({
@@ -3486,6 +4499,7 @@ class UsageObservationsTableCompanion
     this.connectionId = const Value.absent(),
     this.cardName = const Value.absent(),
     this.profile = const Value.absent(),
+    this.cardType = const Value.absent(),
     this.firstSeenAt = const Value.absent(),
     this.dateIsApproximate = const Value.absent(),
   });
@@ -3494,6 +4508,7 @@ class UsageObservationsTableCompanion
     required int connectionId,
     required String cardName,
     required String profile,
+    this.cardType = const Value.absent(),
     this.firstSeenAt = const Value.absent(),
     this.dateIsApproximate = const Value.absent(),
   })  : connectionId = Value(connectionId),
@@ -3504,6 +4519,7 @@ class UsageObservationsTableCompanion
     Expression<int>? connectionId,
     Expression<String>? cardName,
     Expression<String>? profile,
+    Expression<String>? cardType,
     Expression<DateTime>? firstSeenAt,
     Expression<bool>? dateIsApproximate,
   }) {
@@ -3512,6 +4528,7 @@ class UsageObservationsTableCompanion
       if (connectionId != null) 'connection_id': connectionId,
       if (cardName != null) 'card_name': cardName,
       if (profile != null) 'profile': profile,
+      if (cardType != null) 'card_type': cardType,
       if (firstSeenAt != null) 'first_seen_at': firstSeenAt,
       if (dateIsApproximate != null) 'date_is_approximate': dateIsApproximate,
     });
@@ -3522,6 +4539,7 @@ class UsageObservationsTableCompanion
       Value<int>? connectionId,
       Value<String>? cardName,
       Value<String>? profile,
+      Value<String>? cardType,
       Value<DateTime>? firstSeenAt,
       Value<bool>? dateIsApproximate}) {
     return UsageObservationsTableCompanion(
@@ -3529,6 +4547,7 @@ class UsageObservationsTableCompanion
       connectionId: connectionId ?? this.connectionId,
       cardName: cardName ?? this.cardName,
       profile: profile ?? this.profile,
+      cardType: cardType ?? this.cardType,
       firstSeenAt: firstSeenAt ?? this.firstSeenAt,
       dateIsApproximate: dateIsApproximate ?? this.dateIsApproximate,
     );
@@ -3549,6 +4568,9 @@ class UsageObservationsTableCompanion
     if (profile.present) {
       map['profile'] = Variable<String>(profile.value);
     }
+    if (cardType.present) {
+      map['card_type'] = Variable<String>(cardType.value);
+    }
     if (firstSeenAt.present) {
       map['first_seen_at'] = Variable<DateTime>(firstSeenAt.value);
     }
@@ -3565,6 +4587,7 @@ class UsageObservationsTableCompanion
           ..write('connectionId: $connectionId, ')
           ..write('cardName: $cardName, ')
           ..write('profile: $profile, ')
+          ..write('cardType: $cardType, ')
           ..write('firstSeenAt: $firstSeenAt, ')
           ..write('dateIsApproximate: $dateIsApproximate')
           ..write(')'))
@@ -10100,6 +11123,754 @@ class ResellerSettlementsTableCompanion
   }
 }
 
+class $CardSalesTableTable extends CardSalesTable
+    with TableInfo<$CardSalesTableTable, CardSalesTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CardSalesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _connectionIdMeta =
+      const VerificationMeta('connectionId');
+  @override
+  late final GeneratedColumn<int> connectionId = GeneratedColumn<int>(
+      'connection_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _saleIdMeta = const VerificationMeta('saleId');
+  @override
+  late final GeneratedColumn<String> saleId = GeneratedColumn<String>(
+      'sale_id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _cardTypeMeta =
+      const VerificationMeta('cardType');
+  @override
+  late final GeneratedColumn<String> cardType = GeneratedColumn<String>(
+      'card_type', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('hotspot'));
+  static const VerificationMeta _usernameMeta =
+      const VerificationMeta('username');
+  @override
+  late final GeneratedColumn<String> username = GeneratedColumn<String>(
+      'username', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _profileMeta =
+      const VerificationMeta('profile');
+  @override
+  late final GeneratedColumn<String> profile = GeneratedColumn<String>(
+      'profile', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _priceMeta = const VerificationMeta('price');
+  @override
+  late final GeneratedColumn<double> price = GeneratedColumn<double>(
+      'price', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
+  static const VerificationMeta _costMeta = const VerificationMeta('cost');
+  @override
+  late final GeneratedColumn<double> cost = GeneratedColumn<double>(
+      'cost', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
+  static const VerificationMeta _soldByMeta = const VerificationMeta('soldBy');
+  @override
+  late final GeneratedColumn<String> soldBy = GeneratedColumn<String>(
+      'sold_by', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('admin'));
+  static const VerificationMeta _paymentMethodMeta =
+      const VerificationMeta('paymentMethod');
+  @override
+  late final GeneratedColumn<String> paymentMethod = GeneratedColumn<String>(
+      'payment_method', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('cash'));
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('completed'));
+  static const VerificationMeta _customerNameMeta =
+      const VerificationMeta('customerName');
+  @override
+  late final GeneratedColumn<String> customerName = GeneratedColumn<String>(
+      'customer_name', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _customerPhoneMeta =
+      const VerificationMeta('customerPhone');
+  @override
+  late final GeneratedColumn<String> customerPhone = GeneratedColumn<String>(
+      'customer_phone', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+      'notes', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _isPrintedMeta =
+      const VerificationMeta('isPrinted');
+  @override
+  late final GeneratedColumn<bool> isPrinted = GeneratedColumn<bool>(
+      'is_printed', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_printed" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _soldAtMeta = const VerificationMeta('soldAt');
+  @override
+  late final GeneratedColumn<DateTime> soldAt = GeneratedColumn<DateTime>(
+      'sold_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        connectionId,
+        saleId,
+        cardType,
+        username,
+        profile,
+        price,
+        cost,
+        soldBy,
+        paymentMethod,
+        status,
+        customerName,
+        customerPhone,
+        notes,
+        isPrinted,
+        soldAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'card_sales';
+  @override
+  VerificationContext validateIntegrity(Insertable<CardSalesTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('connection_id')) {
+      context.handle(
+          _connectionIdMeta,
+          connectionId.isAcceptableOrUnknown(
+              data['connection_id']!, _connectionIdMeta));
+    } else if (isInserting) {
+      context.missing(_connectionIdMeta);
+    }
+    if (data.containsKey('sale_id')) {
+      context.handle(_saleIdMeta,
+          saleId.isAcceptableOrUnknown(data['sale_id']!, _saleIdMeta));
+    } else if (isInserting) {
+      context.missing(_saleIdMeta);
+    }
+    if (data.containsKey('card_type')) {
+      context.handle(_cardTypeMeta,
+          cardType.isAcceptableOrUnknown(data['card_type']!, _cardTypeMeta));
+    }
+    if (data.containsKey('username')) {
+      context.handle(_usernameMeta,
+          username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
+    } else if (isInserting) {
+      context.missing(_usernameMeta);
+    }
+    if (data.containsKey('profile')) {
+      context.handle(_profileMeta,
+          profile.isAcceptableOrUnknown(data['profile']!, _profileMeta));
+    } else if (isInserting) {
+      context.missing(_profileMeta);
+    }
+    if (data.containsKey('price')) {
+      context.handle(
+          _priceMeta, price.isAcceptableOrUnknown(data['price']!, _priceMeta));
+    }
+    if (data.containsKey('cost')) {
+      context.handle(
+          _costMeta, cost.isAcceptableOrUnknown(data['cost']!, _costMeta));
+    }
+    if (data.containsKey('sold_by')) {
+      context.handle(_soldByMeta,
+          soldBy.isAcceptableOrUnknown(data['sold_by']!, _soldByMeta));
+    }
+    if (data.containsKey('payment_method')) {
+      context.handle(
+          _paymentMethodMeta,
+          paymentMethod.isAcceptableOrUnknown(
+              data['payment_method']!, _paymentMethodMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    if (data.containsKey('customer_name')) {
+      context.handle(
+          _customerNameMeta,
+          customerName.isAcceptableOrUnknown(
+              data['customer_name']!, _customerNameMeta));
+    }
+    if (data.containsKey('customer_phone')) {
+      context.handle(
+          _customerPhoneMeta,
+          customerPhone.isAcceptableOrUnknown(
+              data['customer_phone']!, _customerPhoneMeta));
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+          _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
+    }
+    if (data.containsKey('is_printed')) {
+      context.handle(_isPrintedMeta,
+          isPrinted.isAcceptableOrUnknown(data['is_printed']!, _isPrintedMeta));
+    }
+    if (data.containsKey('sold_at')) {
+      context.handle(_soldAtMeta,
+          soldAt.isAcceptableOrUnknown(data['sold_at']!, _soldAtMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CardSalesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CardSalesTableData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      connectionId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}connection_id'])!,
+      saleId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}sale_id'])!,
+      cardType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}card_type'])!,
+      username: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}username'])!,
+      profile: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}profile'])!,
+      price: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}price'])!,
+      cost: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}cost'])!,
+      soldBy: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}sold_by'])!,
+      paymentMethod: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}payment_method'])!,
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+      customerName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}customer_name']),
+      customerPhone: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}customer_phone']),
+      notes: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}notes']),
+      isPrinted: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_printed'])!,
+      soldAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}sold_at'])!,
+    );
+  }
+
+  @override
+  $CardSalesTableTable createAlias(String alias) {
+    return $CardSalesTableTable(attachedDatabase, alias);
+  }
+}
+
+class CardSalesTableData extends DataClass
+    implements Insertable<CardSalesTableData> {
+  final int id;
+  final int connectionId;
+  final String saleId;
+  final String cardType;
+  final String username;
+  final String profile;
+  final double price;
+  final double cost;
+  final String soldBy;
+  final String paymentMethod;
+  final String status;
+  final String? customerName;
+  final String? customerPhone;
+  final String? notes;
+  final bool isPrinted;
+  final DateTime soldAt;
+  const CardSalesTableData(
+      {required this.id,
+      required this.connectionId,
+      required this.saleId,
+      required this.cardType,
+      required this.username,
+      required this.profile,
+      required this.price,
+      required this.cost,
+      required this.soldBy,
+      required this.paymentMethod,
+      required this.status,
+      this.customerName,
+      this.customerPhone,
+      this.notes,
+      required this.isPrinted,
+      required this.soldAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['connection_id'] = Variable<int>(connectionId);
+    map['sale_id'] = Variable<String>(saleId);
+    map['card_type'] = Variable<String>(cardType);
+    map['username'] = Variable<String>(username);
+    map['profile'] = Variable<String>(profile);
+    map['price'] = Variable<double>(price);
+    map['cost'] = Variable<double>(cost);
+    map['sold_by'] = Variable<String>(soldBy);
+    map['payment_method'] = Variable<String>(paymentMethod);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || customerName != null) {
+      map['customer_name'] = Variable<String>(customerName);
+    }
+    if (!nullToAbsent || customerPhone != null) {
+      map['customer_phone'] = Variable<String>(customerPhone);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['is_printed'] = Variable<bool>(isPrinted);
+    map['sold_at'] = Variable<DateTime>(soldAt);
+    return map;
+  }
+
+  CardSalesTableCompanion toCompanion(bool nullToAbsent) {
+    return CardSalesTableCompanion(
+      id: Value(id),
+      connectionId: Value(connectionId),
+      saleId: Value(saleId),
+      cardType: Value(cardType),
+      username: Value(username),
+      profile: Value(profile),
+      price: Value(price),
+      cost: Value(cost),
+      soldBy: Value(soldBy),
+      paymentMethod: Value(paymentMethod),
+      status: Value(status),
+      customerName: customerName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(customerName),
+      customerPhone: customerPhone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(customerPhone),
+      notes:
+          notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      isPrinted: Value(isPrinted),
+      soldAt: Value(soldAt),
+    );
+  }
+
+  factory CardSalesTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CardSalesTableData(
+      id: serializer.fromJson<int>(json['id']),
+      connectionId: serializer.fromJson<int>(json['connectionId']),
+      saleId: serializer.fromJson<String>(json['saleId']),
+      cardType: serializer.fromJson<String>(json['cardType']),
+      username: serializer.fromJson<String>(json['username']),
+      profile: serializer.fromJson<String>(json['profile']),
+      price: serializer.fromJson<double>(json['price']),
+      cost: serializer.fromJson<double>(json['cost']),
+      soldBy: serializer.fromJson<String>(json['soldBy']),
+      paymentMethod: serializer.fromJson<String>(json['paymentMethod']),
+      status: serializer.fromJson<String>(json['status']),
+      customerName: serializer.fromJson<String?>(json['customerName']),
+      customerPhone: serializer.fromJson<String?>(json['customerPhone']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      isPrinted: serializer.fromJson<bool>(json['isPrinted']),
+      soldAt: serializer.fromJson<DateTime>(json['soldAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'connectionId': serializer.toJson<int>(connectionId),
+      'saleId': serializer.toJson<String>(saleId),
+      'cardType': serializer.toJson<String>(cardType),
+      'username': serializer.toJson<String>(username),
+      'profile': serializer.toJson<String>(profile),
+      'price': serializer.toJson<double>(price),
+      'cost': serializer.toJson<double>(cost),
+      'soldBy': serializer.toJson<String>(soldBy),
+      'paymentMethod': serializer.toJson<String>(paymentMethod),
+      'status': serializer.toJson<String>(status),
+      'customerName': serializer.toJson<String?>(customerName),
+      'customerPhone': serializer.toJson<String?>(customerPhone),
+      'notes': serializer.toJson<String?>(notes),
+      'isPrinted': serializer.toJson<bool>(isPrinted),
+      'soldAt': serializer.toJson<DateTime>(soldAt),
+    };
+  }
+
+  CardSalesTableData copyWith(
+          {int? id,
+          int? connectionId,
+          String? saleId,
+          String? cardType,
+          String? username,
+          String? profile,
+          double? price,
+          double? cost,
+          String? soldBy,
+          String? paymentMethod,
+          String? status,
+          Value<String?> customerName = const Value.absent(),
+          Value<String?> customerPhone = const Value.absent(),
+          Value<String?> notes = const Value.absent(),
+          bool? isPrinted,
+          DateTime? soldAt}) =>
+      CardSalesTableData(
+        id: id ?? this.id,
+        connectionId: connectionId ?? this.connectionId,
+        saleId: saleId ?? this.saleId,
+        cardType: cardType ?? this.cardType,
+        username: username ?? this.username,
+        profile: profile ?? this.profile,
+        price: price ?? this.price,
+        cost: cost ?? this.cost,
+        soldBy: soldBy ?? this.soldBy,
+        paymentMethod: paymentMethod ?? this.paymentMethod,
+        status: status ?? this.status,
+        customerName:
+            customerName.present ? customerName.value : this.customerName,
+        customerPhone:
+            customerPhone.present ? customerPhone.value : this.customerPhone,
+        notes: notes.present ? notes.value : this.notes,
+        isPrinted: isPrinted ?? this.isPrinted,
+        soldAt: soldAt ?? this.soldAt,
+      );
+  CardSalesTableData copyWithCompanion(CardSalesTableCompanion data) {
+    return CardSalesTableData(
+      id: data.id.present ? data.id.value : this.id,
+      connectionId: data.connectionId.present
+          ? data.connectionId.value
+          : this.connectionId,
+      saleId: data.saleId.present ? data.saleId.value : this.saleId,
+      cardType: data.cardType.present ? data.cardType.value : this.cardType,
+      username: data.username.present ? data.username.value : this.username,
+      profile: data.profile.present ? data.profile.value : this.profile,
+      price: data.price.present ? data.price.value : this.price,
+      cost: data.cost.present ? data.cost.value : this.cost,
+      soldBy: data.soldBy.present ? data.soldBy.value : this.soldBy,
+      paymentMethod: data.paymentMethod.present
+          ? data.paymentMethod.value
+          : this.paymentMethod,
+      status: data.status.present ? data.status.value : this.status,
+      customerName: data.customerName.present
+          ? data.customerName.value
+          : this.customerName,
+      customerPhone: data.customerPhone.present
+          ? data.customerPhone.value
+          : this.customerPhone,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      isPrinted: data.isPrinted.present ? data.isPrinted.value : this.isPrinted,
+      soldAt: data.soldAt.present ? data.soldAt.value : this.soldAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CardSalesTableData(')
+          ..write('id: $id, ')
+          ..write('connectionId: $connectionId, ')
+          ..write('saleId: $saleId, ')
+          ..write('cardType: $cardType, ')
+          ..write('username: $username, ')
+          ..write('profile: $profile, ')
+          ..write('price: $price, ')
+          ..write('cost: $cost, ')
+          ..write('soldBy: $soldBy, ')
+          ..write('paymentMethod: $paymentMethod, ')
+          ..write('status: $status, ')
+          ..write('customerName: $customerName, ')
+          ..write('customerPhone: $customerPhone, ')
+          ..write('notes: $notes, ')
+          ..write('isPrinted: $isPrinted, ')
+          ..write('soldAt: $soldAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      connectionId,
+      saleId,
+      cardType,
+      username,
+      profile,
+      price,
+      cost,
+      soldBy,
+      paymentMethod,
+      status,
+      customerName,
+      customerPhone,
+      notes,
+      isPrinted,
+      soldAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CardSalesTableData &&
+          other.id == this.id &&
+          other.connectionId == this.connectionId &&
+          other.saleId == this.saleId &&
+          other.cardType == this.cardType &&
+          other.username == this.username &&
+          other.profile == this.profile &&
+          other.price == this.price &&
+          other.cost == this.cost &&
+          other.soldBy == this.soldBy &&
+          other.paymentMethod == this.paymentMethod &&
+          other.status == this.status &&
+          other.customerName == this.customerName &&
+          other.customerPhone == this.customerPhone &&
+          other.notes == this.notes &&
+          other.isPrinted == this.isPrinted &&
+          other.soldAt == this.soldAt);
+}
+
+class CardSalesTableCompanion extends UpdateCompanion<CardSalesTableData> {
+  final Value<int> id;
+  final Value<int> connectionId;
+  final Value<String> saleId;
+  final Value<String> cardType;
+  final Value<String> username;
+  final Value<String> profile;
+  final Value<double> price;
+  final Value<double> cost;
+  final Value<String> soldBy;
+  final Value<String> paymentMethod;
+  final Value<String> status;
+  final Value<String?> customerName;
+  final Value<String?> customerPhone;
+  final Value<String?> notes;
+  final Value<bool> isPrinted;
+  final Value<DateTime> soldAt;
+  const CardSalesTableCompanion({
+    this.id = const Value.absent(),
+    this.connectionId = const Value.absent(),
+    this.saleId = const Value.absent(),
+    this.cardType = const Value.absent(),
+    this.username = const Value.absent(),
+    this.profile = const Value.absent(),
+    this.price = const Value.absent(),
+    this.cost = const Value.absent(),
+    this.soldBy = const Value.absent(),
+    this.paymentMethod = const Value.absent(),
+    this.status = const Value.absent(),
+    this.customerName = const Value.absent(),
+    this.customerPhone = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.isPrinted = const Value.absent(),
+    this.soldAt = const Value.absent(),
+  });
+  CardSalesTableCompanion.insert({
+    this.id = const Value.absent(),
+    required int connectionId,
+    required String saleId,
+    this.cardType = const Value.absent(),
+    required String username,
+    required String profile,
+    this.price = const Value.absent(),
+    this.cost = const Value.absent(),
+    this.soldBy = const Value.absent(),
+    this.paymentMethod = const Value.absent(),
+    this.status = const Value.absent(),
+    this.customerName = const Value.absent(),
+    this.customerPhone = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.isPrinted = const Value.absent(),
+    this.soldAt = const Value.absent(),
+  })  : connectionId = Value(connectionId),
+        saleId = Value(saleId),
+        username = Value(username),
+        profile = Value(profile);
+  static Insertable<CardSalesTableData> custom({
+    Expression<int>? id,
+    Expression<int>? connectionId,
+    Expression<String>? saleId,
+    Expression<String>? cardType,
+    Expression<String>? username,
+    Expression<String>? profile,
+    Expression<double>? price,
+    Expression<double>? cost,
+    Expression<String>? soldBy,
+    Expression<String>? paymentMethod,
+    Expression<String>? status,
+    Expression<String>? customerName,
+    Expression<String>? customerPhone,
+    Expression<String>? notes,
+    Expression<bool>? isPrinted,
+    Expression<DateTime>? soldAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (connectionId != null) 'connection_id': connectionId,
+      if (saleId != null) 'sale_id': saleId,
+      if (cardType != null) 'card_type': cardType,
+      if (username != null) 'username': username,
+      if (profile != null) 'profile': profile,
+      if (price != null) 'price': price,
+      if (cost != null) 'cost': cost,
+      if (soldBy != null) 'sold_by': soldBy,
+      if (paymentMethod != null) 'payment_method': paymentMethod,
+      if (status != null) 'status': status,
+      if (customerName != null) 'customer_name': customerName,
+      if (customerPhone != null) 'customer_phone': customerPhone,
+      if (notes != null) 'notes': notes,
+      if (isPrinted != null) 'is_printed': isPrinted,
+      if (soldAt != null) 'sold_at': soldAt,
+    });
+  }
+
+  CardSalesTableCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? connectionId,
+      Value<String>? saleId,
+      Value<String>? cardType,
+      Value<String>? username,
+      Value<String>? profile,
+      Value<double>? price,
+      Value<double>? cost,
+      Value<String>? soldBy,
+      Value<String>? paymentMethod,
+      Value<String>? status,
+      Value<String?>? customerName,
+      Value<String?>? customerPhone,
+      Value<String?>? notes,
+      Value<bool>? isPrinted,
+      Value<DateTime>? soldAt}) {
+    return CardSalesTableCompanion(
+      id: id ?? this.id,
+      connectionId: connectionId ?? this.connectionId,
+      saleId: saleId ?? this.saleId,
+      cardType: cardType ?? this.cardType,
+      username: username ?? this.username,
+      profile: profile ?? this.profile,
+      price: price ?? this.price,
+      cost: cost ?? this.cost,
+      soldBy: soldBy ?? this.soldBy,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      status: status ?? this.status,
+      customerName: customerName ?? this.customerName,
+      customerPhone: customerPhone ?? this.customerPhone,
+      notes: notes ?? this.notes,
+      isPrinted: isPrinted ?? this.isPrinted,
+      soldAt: soldAt ?? this.soldAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (connectionId.present) {
+      map['connection_id'] = Variable<int>(connectionId.value);
+    }
+    if (saleId.present) {
+      map['sale_id'] = Variable<String>(saleId.value);
+    }
+    if (cardType.present) {
+      map['card_type'] = Variable<String>(cardType.value);
+    }
+    if (username.present) {
+      map['username'] = Variable<String>(username.value);
+    }
+    if (profile.present) {
+      map['profile'] = Variable<String>(profile.value);
+    }
+    if (price.present) {
+      map['price'] = Variable<double>(price.value);
+    }
+    if (cost.present) {
+      map['cost'] = Variable<double>(cost.value);
+    }
+    if (soldBy.present) {
+      map['sold_by'] = Variable<String>(soldBy.value);
+    }
+    if (paymentMethod.present) {
+      map['payment_method'] = Variable<String>(paymentMethod.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (customerName.present) {
+      map['customer_name'] = Variable<String>(customerName.value);
+    }
+    if (customerPhone.present) {
+      map['customer_phone'] = Variable<String>(customerPhone.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (isPrinted.present) {
+      map['is_printed'] = Variable<bool>(isPrinted.value);
+    }
+    if (soldAt.present) {
+      map['sold_at'] = Variable<DateTime>(soldAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CardSalesTableCompanion(')
+          ..write('id: $id, ')
+          ..write('connectionId: $connectionId, ')
+          ..write('saleId: $saleId, ')
+          ..write('cardType: $cardType, ')
+          ..write('username: $username, ')
+          ..write('profile: $profile, ')
+          ..write('price: $price, ')
+          ..write('cost: $cost, ')
+          ..write('soldBy: $soldBy, ')
+          ..write('paymentMethod: $paymentMethod, ')
+          ..write('status: $status, ')
+          ..write('customerName: $customerName, ')
+          ..write('customerPhone: $customerPhone, ')
+          ..write('notes: $notes, ')
+          ..write('isPrinted: $isPrinted, ')
+          ..write('soldAt: $soldAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -10147,6 +11918,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $ResellerAllocationsTableTable(this);
   late final $ResellerSettlementsTableTable resellerSettlementsTable =
       $ResellerSettlementsTableTable(this);
+  late final $CardSalesTableTable cardSalesTable = $CardSalesTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -10176,7 +11948,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         umDiagnosticsLogTable,
         resellersTable,
         resellerAllocationsTable,
-        resellerSettlementsTable
+        resellerSettlementsTable,
+        cardSalesTable
       ];
 }
 
@@ -10765,13 +12538,36 @@ typedef $$VoucherTemplatesTableTableCreateCompanionBuilder
   Value<String> paperSize,
   Value<int> cardsPerRow,
   Value<int> cardsPerPage,
+  Value<double?> cardWidthMm,
+  Value<double?> cardHeightMm,
+  Value<double> marginMm,
+  Value<double> fontSize,
+  Value<double> titleFontSize,
+  Value<int> primaryColorHex,
+  Value<int> backgroundColorHex,
+  Value<int> textColorHex,
+  Value<int> titleColorHex,
+  Value<int> borderColorHex,
+  Value<double> borderWidth,
+  Value<double> borderRadius,
   Value<bool> showQrCode,
+  Value<bool> showBarcode,
   Value<bool> showLogo,
   Value<String?> logoPath,
   Value<String?> headerText,
   Value<String?> footerText,
-  Value<int> primaryColorHex,
   Value<String> fontFamily,
+  Value<bool> showProfile,
+  Value<bool> showPrice,
+  Value<bool> showValidity,
+  Value<bool> showUsername,
+  Value<bool> showPassword,
+  Value<bool> showInstructions,
+  Value<String?> instructionsText,
+  Value<String?> contactPhone,
+  Value<String?> customText,
+  Value<String> targetCardType,
+  Value<String?> configJson,
   Value<bool> isDefault,
   Value<DateTime> createdAt,
 });
@@ -10782,13 +12578,36 @@ typedef $$VoucherTemplatesTableTableUpdateCompanionBuilder
   Value<String> paperSize,
   Value<int> cardsPerRow,
   Value<int> cardsPerPage,
+  Value<double?> cardWidthMm,
+  Value<double?> cardHeightMm,
+  Value<double> marginMm,
+  Value<double> fontSize,
+  Value<double> titleFontSize,
+  Value<int> primaryColorHex,
+  Value<int> backgroundColorHex,
+  Value<int> textColorHex,
+  Value<int> titleColorHex,
+  Value<int> borderColorHex,
+  Value<double> borderWidth,
+  Value<double> borderRadius,
   Value<bool> showQrCode,
+  Value<bool> showBarcode,
   Value<bool> showLogo,
   Value<String?> logoPath,
   Value<String?> headerText,
   Value<String?> footerText,
-  Value<int> primaryColorHex,
   Value<String> fontFamily,
+  Value<bool> showProfile,
+  Value<bool> showPrice,
+  Value<bool> showValidity,
+  Value<bool> showUsername,
+  Value<bool> showPassword,
+  Value<bool> showInstructions,
+  Value<String?> instructionsText,
+  Value<String?> contactPhone,
+  Value<String?> customText,
+  Value<String> targetCardType,
+  Value<String?> configJson,
   Value<bool> isDefault,
   Value<DateTime> createdAt,
 });
@@ -10817,8 +12636,50 @@ class $$VoucherTemplatesTableTableFilterComposer
   ColumnFilters<int> get cardsPerPage => $composableBuilder(
       column: $table.cardsPerPage, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<double> get cardWidthMm => $composableBuilder(
+      column: $table.cardWidthMm, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get cardHeightMm => $composableBuilder(
+      column: $table.cardHeightMm, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get marginMm => $composableBuilder(
+      column: $table.marginMm, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get fontSize => $composableBuilder(
+      column: $table.fontSize, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get titleFontSize => $composableBuilder(
+      column: $table.titleFontSize, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get primaryColorHex => $composableBuilder(
+      column: $table.primaryColorHex,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get backgroundColorHex => $composableBuilder(
+      column: $table.backgroundColorHex,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get textColorHex => $composableBuilder(
+      column: $table.textColorHex, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get titleColorHex => $composableBuilder(
+      column: $table.titleColorHex, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get borderColorHex => $composableBuilder(
+      column: $table.borderColorHex,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get borderWidth => $composableBuilder(
+      column: $table.borderWidth, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get borderRadius => $composableBuilder(
+      column: $table.borderRadius, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<bool> get showQrCode => $composableBuilder(
       column: $table.showQrCode, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get showBarcode => $composableBuilder(
+      column: $table.showBarcode, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<bool> get showLogo => $composableBuilder(
       column: $table.showLogo, builder: (column) => ColumnFilters(column));
@@ -10832,12 +12693,44 @@ class $$VoucherTemplatesTableTableFilterComposer
   ColumnFilters<String> get footerText => $composableBuilder(
       column: $table.footerText, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get primaryColorHex => $composableBuilder(
-      column: $table.primaryColorHex,
-      builder: (column) => ColumnFilters(column));
-
   ColumnFilters<String> get fontFamily => $composableBuilder(
       column: $table.fontFamily, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get showProfile => $composableBuilder(
+      column: $table.showProfile, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get showPrice => $composableBuilder(
+      column: $table.showPrice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get showValidity => $composableBuilder(
+      column: $table.showValidity, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get showUsername => $composableBuilder(
+      column: $table.showUsername, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get showPassword => $composableBuilder(
+      column: $table.showPassword, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get showInstructions => $composableBuilder(
+      column: $table.showInstructions,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get instructionsText => $composableBuilder(
+      column: $table.instructionsText,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get contactPhone => $composableBuilder(
+      column: $table.contactPhone, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get customText => $composableBuilder(
+      column: $table.customText, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get targetCardType => $composableBuilder(
+      column: $table.targetCardType,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get configJson => $composableBuilder(
+      column: $table.configJson, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<bool> get isDefault => $composableBuilder(
       column: $table.isDefault, builder: (column) => ColumnFilters(column));
@@ -10871,8 +12764,55 @@ class $$VoucherTemplatesTableTableOrderingComposer
       column: $table.cardsPerPage,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<double> get cardWidthMm => $composableBuilder(
+      column: $table.cardWidthMm, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get cardHeightMm => $composableBuilder(
+      column: $table.cardHeightMm,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get marginMm => $composableBuilder(
+      column: $table.marginMm, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get fontSize => $composableBuilder(
+      column: $table.fontSize, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get titleFontSize => $composableBuilder(
+      column: $table.titleFontSize,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get primaryColorHex => $composableBuilder(
+      column: $table.primaryColorHex,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get backgroundColorHex => $composableBuilder(
+      column: $table.backgroundColorHex,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get textColorHex => $composableBuilder(
+      column: $table.textColorHex,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get titleColorHex => $composableBuilder(
+      column: $table.titleColorHex,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get borderColorHex => $composableBuilder(
+      column: $table.borderColorHex,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get borderWidth => $composableBuilder(
+      column: $table.borderWidth, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get borderRadius => $composableBuilder(
+      column: $table.borderRadius,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<bool> get showQrCode => $composableBuilder(
       column: $table.showQrCode, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get showBarcode => $composableBuilder(
+      column: $table.showBarcode, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<bool> get showLogo => $composableBuilder(
       column: $table.showLogo, builder: (column) => ColumnOrderings(column));
@@ -10886,12 +12826,48 @@ class $$VoucherTemplatesTableTableOrderingComposer
   ColumnOrderings<String> get footerText => $composableBuilder(
       column: $table.footerText, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get primaryColorHex => $composableBuilder(
-      column: $table.primaryColorHex,
-      builder: (column) => ColumnOrderings(column));
-
   ColumnOrderings<String> get fontFamily => $composableBuilder(
       column: $table.fontFamily, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get showProfile => $composableBuilder(
+      column: $table.showProfile, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get showPrice => $composableBuilder(
+      column: $table.showPrice, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get showValidity => $composableBuilder(
+      column: $table.showValidity,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get showUsername => $composableBuilder(
+      column: $table.showUsername,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get showPassword => $composableBuilder(
+      column: $table.showPassword,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get showInstructions => $composableBuilder(
+      column: $table.showInstructions,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get instructionsText => $composableBuilder(
+      column: $table.instructionsText,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get contactPhone => $composableBuilder(
+      column: $table.contactPhone,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get customText => $composableBuilder(
+      column: $table.customText, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get targetCardType => $composableBuilder(
+      column: $table.targetCardType,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get configJson => $composableBuilder(
+      column: $table.configJson, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<bool> get isDefault => $composableBuilder(
       column: $table.isDefault, builder: (column) => ColumnOrderings(column));
@@ -10924,8 +12900,47 @@ class $$VoucherTemplatesTableTableAnnotationComposer
   GeneratedColumn<int> get cardsPerPage => $composableBuilder(
       column: $table.cardsPerPage, builder: (column) => column);
 
+  GeneratedColumn<double> get cardWidthMm => $composableBuilder(
+      column: $table.cardWidthMm, builder: (column) => column);
+
+  GeneratedColumn<double> get cardHeightMm => $composableBuilder(
+      column: $table.cardHeightMm, builder: (column) => column);
+
+  GeneratedColumn<double> get marginMm =>
+      $composableBuilder(column: $table.marginMm, builder: (column) => column);
+
+  GeneratedColumn<double> get fontSize =>
+      $composableBuilder(column: $table.fontSize, builder: (column) => column);
+
+  GeneratedColumn<double> get titleFontSize => $composableBuilder(
+      column: $table.titleFontSize, builder: (column) => column);
+
+  GeneratedColumn<int> get primaryColorHex => $composableBuilder(
+      column: $table.primaryColorHex, builder: (column) => column);
+
+  GeneratedColumn<int> get backgroundColorHex => $composableBuilder(
+      column: $table.backgroundColorHex, builder: (column) => column);
+
+  GeneratedColumn<int> get textColorHex => $composableBuilder(
+      column: $table.textColorHex, builder: (column) => column);
+
+  GeneratedColumn<int> get titleColorHex => $composableBuilder(
+      column: $table.titleColorHex, builder: (column) => column);
+
+  GeneratedColumn<int> get borderColorHex => $composableBuilder(
+      column: $table.borderColorHex, builder: (column) => column);
+
+  GeneratedColumn<double> get borderWidth => $composableBuilder(
+      column: $table.borderWidth, builder: (column) => column);
+
+  GeneratedColumn<double> get borderRadius => $composableBuilder(
+      column: $table.borderRadius, builder: (column) => column);
+
   GeneratedColumn<bool> get showQrCode => $composableBuilder(
       column: $table.showQrCode, builder: (column) => column);
+
+  GeneratedColumn<bool> get showBarcode => $composableBuilder(
+      column: $table.showBarcode, builder: (column) => column);
 
   GeneratedColumn<bool> get showLogo =>
       $composableBuilder(column: $table.showLogo, builder: (column) => column);
@@ -10939,11 +12954,41 @@ class $$VoucherTemplatesTableTableAnnotationComposer
   GeneratedColumn<String> get footerText => $composableBuilder(
       column: $table.footerText, builder: (column) => column);
 
-  GeneratedColumn<int> get primaryColorHex => $composableBuilder(
-      column: $table.primaryColorHex, builder: (column) => column);
-
   GeneratedColumn<String> get fontFamily => $composableBuilder(
       column: $table.fontFamily, builder: (column) => column);
+
+  GeneratedColumn<bool> get showProfile => $composableBuilder(
+      column: $table.showProfile, builder: (column) => column);
+
+  GeneratedColumn<bool> get showPrice =>
+      $composableBuilder(column: $table.showPrice, builder: (column) => column);
+
+  GeneratedColumn<bool> get showValidity => $composableBuilder(
+      column: $table.showValidity, builder: (column) => column);
+
+  GeneratedColumn<bool> get showUsername => $composableBuilder(
+      column: $table.showUsername, builder: (column) => column);
+
+  GeneratedColumn<bool> get showPassword => $composableBuilder(
+      column: $table.showPassword, builder: (column) => column);
+
+  GeneratedColumn<bool> get showInstructions => $composableBuilder(
+      column: $table.showInstructions, builder: (column) => column);
+
+  GeneratedColumn<String> get instructionsText => $composableBuilder(
+      column: $table.instructionsText, builder: (column) => column);
+
+  GeneratedColumn<String> get contactPhone => $composableBuilder(
+      column: $table.contactPhone, builder: (column) => column);
+
+  GeneratedColumn<String> get customText => $composableBuilder(
+      column: $table.customText, builder: (column) => column);
+
+  GeneratedColumn<String> get targetCardType => $composableBuilder(
+      column: $table.targetCardType, builder: (column) => column);
+
+  GeneratedColumn<String> get configJson => $composableBuilder(
+      column: $table.configJson, builder: (column) => column);
 
   GeneratedColumn<bool> get isDefault =>
       $composableBuilder(column: $table.isDefault, builder: (column) => column);
@@ -10988,13 +13033,36 @@ class $$VoucherTemplatesTableTableTableManager extends RootTableManager<
             Value<String> paperSize = const Value.absent(),
             Value<int> cardsPerRow = const Value.absent(),
             Value<int> cardsPerPage = const Value.absent(),
+            Value<double?> cardWidthMm = const Value.absent(),
+            Value<double?> cardHeightMm = const Value.absent(),
+            Value<double> marginMm = const Value.absent(),
+            Value<double> fontSize = const Value.absent(),
+            Value<double> titleFontSize = const Value.absent(),
+            Value<int> primaryColorHex = const Value.absent(),
+            Value<int> backgroundColorHex = const Value.absent(),
+            Value<int> textColorHex = const Value.absent(),
+            Value<int> titleColorHex = const Value.absent(),
+            Value<int> borderColorHex = const Value.absent(),
+            Value<double> borderWidth = const Value.absent(),
+            Value<double> borderRadius = const Value.absent(),
             Value<bool> showQrCode = const Value.absent(),
+            Value<bool> showBarcode = const Value.absent(),
             Value<bool> showLogo = const Value.absent(),
             Value<String?> logoPath = const Value.absent(),
             Value<String?> headerText = const Value.absent(),
             Value<String?> footerText = const Value.absent(),
-            Value<int> primaryColorHex = const Value.absent(),
             Value<String> fontFamily = const Value.absent(),
+            Value<bool> showProfile = const Value.absent(),
+            Value<bool> showPrice = const Value.absent(),
+            Value<bool> showValidity = const Value.absent(),
+            Value<bool> showUsername = const Value.absent(),
+            Value<bool> showPassword = const Value.absent(),
+            Value<bool> showInstructions = const Value.absent(),
+            Value<String?> instructionsText = const Value.absent(),
+            Value<String?> contactPhone = const Value.absent(),
+            Value<String?> customText = const Value.absent(),
+            Value<String> targetCardType = const Value.absent(),
+            Value<String?> configJson = const Value.absent(),
             Value<bool> isDefault = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
           }) =>
@@ -11004,13 +13072,36 @@ class $$VoucherTemplatesTableTableTableManager extends RootTableManager<
             paperSize: paperSize,
             cardsPerRow: cardsPerRow,
             cardsPerPage: cardsPerPage,
+            cardWidthMm: cardWidthMm,
+            cardHeightMm: cardHeightMm,
+            marginMm: marginMm,
+            fontSize: fontSize,
+            titleFontSize: titleFontSize,
+            primaryColorHex: primaryColorHex,
+            backgroundColorHex: backgroundColorHex,
+            textColorHex: textColorHex,
+            titleColorHex: titleColorHex,
+            borderColorHex: borderColorHex,
+            borderWidth: borderWidth,
+            borderRadius: borderRadius,
             showQrCode: showQrCode,
+            showBarcode: showBarcode,
             showLogo: showLogo,
             logoPath: logoPath,
             headerText: headerText,
             footerText: footerText,
-            primaryColorHex: primaryColorHex,
             fontFamily: fontFamily,
+            showProfile: showProfile,
+            showPrice: showPrice,
+            showValidity: showValidity,
+            showUsername: showUsername,
+            showPassword: showPassword,
+            showInstructions: showInstructions,
+            instructionsText: instructionsText,
+            contactPhone: contactPhone,
+            customText: customText,
+            targetCardType: targetCardType,
+            configJson: configJson,
             isDefault: isDefault,
             createdAt: createdAt,
           ),
@@ -11020,13 +13111,36 @@ class $$VoucherTemplatesTableTableTableManager extends RootTableManager<
             Value<String> paperSize = const Value.absent(),
             Value<int> cardsPerRow = const Value.absent(),
             Value<int> cardsPerPage = const Value.absent(),
+            Value<double?> cardWidthMm = const Value.absent(),
+            Value<double?> cardHeightMm = const Value.absent(),
+            Value<double> marginMm = const Value.absent(),
+            Value<double> fontSize = const Value.absent(),
+            Value<double> titleFontSize = const Value.absent(),
+            Value<int> primaryColorHex = const Value.absent(),
+            Value<int> backgroundColorHex = const Value.absent(),
+            Value<int> textColorHex = const Value.absent(),
+            Value<int> titleColorHex = const Value.absent(),
+            Value<int> borderColorHex = const Value.absent(),
+            Value<double> borderWidth = const Value.absent(),
+            Value<double> borderRadius = const Value.absent(),
             Value<bool> showQrCode = const Value.absent(),
+            Value<bool> showBarcode = const Value.absent(),
             Value<bool> showLogo = const Value.absent(),
             Value<String?> logoPath = const Value.absent(),
             Value<String?> headerText = const Value.absent(),
             Value<String?> footerText = const Value.absent(),
-            Value<int> primaryColorHex = const Value.absent(),
             Value<String> fontFamily = const Value.absent(),
+            Value<bool> showProfile = const Value.absent(),
+            Value<bool> showPrice = const Value.absent(),
+            Value<bool> showValidity = const Value.absent(),
+            Value<bool> showUsername = const Value.absent(),
+            Value<bool> showPassword = const Value.absent(),
+            Value<bool> showInstructions = const Value.absent(),
+            Value<String?> instructionsText = const Value.absent(),
+            Value<String?> contactPhone = const Value.absent(),
+            Value<String?> customText = const Value.absent(),
+            Value<String> targetCardType = const Value.absent(),
+            Value<String?> configJson = const Value.absent(),
             Value<bool> isDefault = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
           }) =>
@@ -11036,13 +13150,36 @@ class $$VoucherTemplatesTableTableTableManager extends RootTableManager<
             paperSize: paperSize,
             cardsPerRow: cardsPerRow,
             cardsPerPage: cardsPerPage,
+            cardWidthMm: cardWidthMm,
+            cardHeightMm: cardHeightMm,
+            marginMm: marginMm,
+            fontSize: fontSize,
+            titleFontSize: titleFontSize,
+            primaryColorHex: primaryColorHex,
+            backgroundColorHex: backgroundColorHex,
+            textColorHex: textColorHex,
+            titleColorHex: titleColorHex,
+            borderColorHex: borderColorHex,
+            borderWidth: borderWidth,
+            borderRadius: borderRadius,
             showQrCode: showQrCode,
+            showBarcode: showBarcode,
             showLogo: showLogo,
             logoPath: logoPath,
             headerText: headerText,
             footerText: footerText,
-            primaryColorHex: primaryColorHex,
             fontFamily: fontFamily,
+            showProfile: showProfile,
+            showPrice: showPrice,
+            showValidity: showValidity,
+            showUsername: showUsername,
+            showPassword: showPassword,
+            showInstructions: showInstructions,
+            instructionsText: instructionsText,
+            contactPhone: contactPhone,
+            customText: customText,
+            targetCardType: targetCardType,
+            configJson: configJson,
             isDefault: isDefault,
             createdAt: createdAt,
           ),
@@ -11744,6 +13881,7 @@ typedef $$UsageObservationsTableTableCreateCompanionBuilder
   required int connectionId,
   required String cardName,
   required String profile,
+  Value<String> cardType,
   Value<DateTime> firstSeenAt,
   Value<bool> dateIsApproximate,
 });
@@ -11753,6 +13891,7 @@ typedef $$UsageObservationsTableTableUpdateCompanionBuilder
   Value<int> connectionId,
   Value<String> cardName,
   Value<String> profile,
+  Value<String> cardType,
   Value<DateTime> firstSeenAt,
   Value<bool> dateIsApproximate,
 });
@@ -11777,6 +13916,9 @@ class $$UsageObservationsTableTableFilterComposer
 
   ColumnFilters<String> get profile => $composableBuilder(
       column: $table.profile, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get cardType => $composableBuilder(
+      column: $table.cardType, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get firstSeenAt => $composableBuilder(
       column: $table.firstSeenAt, builder: (column) => ColumnFilters(column));
@@ -11808,6 +13950,9 @@ class $$UsageObservationsTableTableOrderingComposer
   ColumnOrderings<String> get profile => $composableBuilder(
       column: $table.profile, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get cardType => $composableBuilder(
+      column: $table.cardType, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get firstSeenAt => $composableBuilder(
       column: $table.firstSeenAt, builder: (column) => ColumnOrderings(column));
 
@@ -11836,6 +13981,9 @@ class $$UsageObservationsTableTableAnnotationComposer
 
   GeneratedColumn<String> get profile =>
       $composableBuilder(column: $table.profile, builder: (column) => column);
+
+  GeneratedColumn<String> get cardType =>
+      $composableBuilder(column: $table.cardType, builder: (column) => column);
 
   GeneratedColumn<DateTime> get firstSeenAt => $composableBuilder(
       column: $table.firstSeenAt, builder: (column) => column);
@@ -11879,6 +14027,7 @@ class $$UsageObservationsTableTableTableManager extends RootTableManager<
             Value<int> connectionId = const Value.absent(),
             Value<String> cardName = const Value.absent(),
             Value<String> profile = const Value.absent(),
+            Value<String> cardType = const Value.absent(),
             Value<DateTime> firstSeenAt = const Value.absent(),
             Value<bool> dateIsApproximate = const Value.absent(),
           }) =>
@@ -11887,6 +14036,7 @@ class $$UsageObservationsTableTableTableManager extends RootTableManager<
             connectionId: connectionId,
             cardName: cardName,
             profile: profile,
+            cardType: cardType,
             firstSeenAt: firstSeenAt,
             dateIsApproximate: dateIsApproximate,
           ),
@@ -11895,6 +14045,7 @@ class $$UsageObservationsTableTableTableManager extends RootTableManager<
             required int connectionId,
             required String cardName,
             required String profile,
+            Value<String> cardType = const Value.absent(),
             Value<DateTime> firstSeenAt = const Value.absent(),
             Value<bool> dateIsApproximate = const Value.absent(),
           }) =>
@@ -11903,6 +14054,7 @@ class $$UsageObservationsTableTableTableManager extends RootTableManager<
             connectionId: connectionId,
             cardName: cardName,
             profile: profile,
+            cardType: cardType,
             firstSeenAt: firstSeenAt,
             dateIsApproximate: dateIsApproximate,
           ),
@@ -15510,6 +17662,348 @@ typedef $$ResellerSettlementsTableTableProcessedTableManager
         ),
         ResellerSettlementsTableData,
         PrefetchHooks Function()>;
+typedef $$CardSalesTableTableCreateCompanionBuilder = CardSalesTableCompanion
+    Function({
+  Value<int> id,
+  required int connectionId,
+  required String saleId,
+  Value<String> cardType,
+  required String username,
+  required String profile,
+  Value<double> price,
+  Value<double> cost,
+  Value<String> soldBy,
+  Value<String> paymentMethod,
+  Value<String> status,
+  Value<String?> customerName,
+  Value<String?> customerPhone,
+  Value<String?> notes,
+  Value<bool> isPrinted,
+  Value<DateTime> soldAt,
+});
+typedef $$CardSalesTableTableUpdateCompanionBuilder = CardSalesTableCompanion
+    Function({
+  Value<int> id,
+  Value<int> connectionId,
+  Value<String> saleId,
+  Value<String> cardType,
+  Value<String> username,
+  Value<String> profile,
+  Value<double> price,
+  Value<double> cost,
+  Value<String> soldBy,
+  Value<String> paymentMethod,
+  Value<String> status,
+  Value<String?> customerName,
+  Value<String?> customerPhone,
+  Value<String?> notes,
+  Value<bool> isPrinted,
+  Value<DateTime> soldAt,
+});
+
+class $$CardSalesTableTableFilterComposer
+    extends Composer<_$AppDatabase, $CardSalesTableTable> {
+  $$CardSalesTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get connectionId => $composableBuilder(
+      column: $table.connectionId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get saleId => $composableBuilder(
+      column: $table.saleId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get cardType => $composableBuilder(
+      column: $table.cardType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get username => $composableBuilder(
+      column: $table.username, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get profile => $composableBuilder(
+      column: $table.profile, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get price => $composableBuilder(
+      column: $table.price, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get cost => $composableBuilder(
+      column: $table.cost, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get soldBy => $composableBuilder(
+      column: $table.soldBy, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get paymentMethod => $composableBuilder(
+      column: $table.paymentMethod, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get customerName => $composableBuilder(
+      column: $table.customerName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get customerPhone => $composableBuilder(
+      column: $table.customerPhone, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isPrinted => $composableBuilder(
+      column: $table.isPrinted, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get soldAt => $composableBuilder(
+      column: $table.soldAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$CardSalesTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $CardSalesTableTable> {
+  $$CardSalesTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get connectionId => $composableBuilder(
+      column: $table.connectionId,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get saleId => $composableBuilder(
+      column: $table.saleId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get cardType => $composableBuilder(
+      column: $table.cardType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get username => $composableBuilder(
+      column: $table.username, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get profile => $composableBuilder(
+      column: $table.profile, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get price => $composableBuilder(
+      column: $table.price, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get cost => $composableBuilder(
+      column: $table.cost, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get soldBy => $composableBuilder(
+      column: $table.soldBy, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get paymentMethod => $composableBuilder(
+      column: $table.paymentMethod,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get customerName => $composableBuilder(
+      column: $table.customerName,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get customerPhone => $composableBuilder(
+      column: $table.customerPhone,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+      column: $table.notes, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isPrinted => $composableBuilder(
+      column: $table.isPrinted, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get soldAt => $composableBuilder(
+      column: $table.soldAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$CardSalesTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CardSalesTableTable> {
+  $$CardSalesTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get connectionId => $composableBuilder(
+      column: $table.connectionId, builder: (column) => column);
+
+  GeneratedColumn<String> get saleId =>
+      $composableBuilder(column: $table.saleId, builder: (column) => column);
+
+  GeneratedColumn<String> get cardType =>
+      $composableBuilder(column: $table.cardType, builder: (column) => column);
+
+  GeneratedColumn<String> get username =>
+      $composableBuilder(column: $table.username, builder: (column) => column);
+
+  GeneratedColumn<String> get profile =>
+      $composableBuilder(column: $table.profile, builder: (column) => column);
+
+  GeneratedColumn<double> get price =>
+      $composableBuilder(column: $table.price, builder: (column) => column);
+
+  GeneratedColumn<double> get cost =>
+      $composableBuilder(column: $table.cost, builder: (column) => column);
+
+  GeneratedColumn<String> get soldBy =>
+      $composableBuilder(column: $table.soldBy, builder: (column) => column);
+
+  GeneratedColumn<String> get paymentMethod => $composableBuilder(
+      column: $table.paymentMethod, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get customerName => $composableBuilder(
+      column: $table.customerName, builder: (column) => column);
+
+  GeneratedColumn<String> get customerPhone => $composableBuilder(
+      column: $table.customerPhone, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<bool> get isPrinted =>
+      $composableBuilder(column: $table.isPrinted, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get soldAt =>
+      $composableBuilder(column: $table.soldAt, builder: (column) => column);
+}
+
+class $$CardSalesTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $CardSalesTableTable,
+    CardSalesTableData,
+    $$CardSalesTableTableFilterComposer,
+    $$CardSalesTableTableOrderingComposer,
+    $$CardSalesTableTableAnnotationComposer,
+    $$CardSalesTableTableCreateCompanionBuilder,
+    $$CardSalesTableTableUpdateCompanionBuilder,
+    (
+      CardSalesTableData,
+      BaseReferences<_$AppDatabase, $CardSalesTableTable, CardSalesTableData>
+    ),
+    CardSalesTableData,
+    PrefetchHooks Function()> {
+  $$CardSalesTableTableTableManager(
+      _$AppDatabase db, $CardSalesTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CardSalesTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CardSalesTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CardSalesTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> connectionId = const Value.absent(),
+            Value<String> saleId = const Value.absent(),
+            Value<String> cardType = const Value.absent(),
+            Value<String> username = const Value.absent(),
+            Value<String> profile = const Value.absent(),
+            Value<double> price = const Value.absent(),
+            Value<double> cost = const Value.absent(),
+            Value<String> soldBy = const Value.absent(),
+            Value<String> paymentMethod = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> customerName = const Value.absent(),
+            Value<String?> customerPhone = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
+            Value<bool> isPrinted = const Value.absent(),
+            Value<DateTime> soldAt = const Value.absent(),
+          }) =>
+              CardSalesTableCompanion(
+            id: id,
+            connectionId: connectionId,
+            saleId: saleId,
+            cardType: cardType,
+            username: username,
+            profile: profile,
+            price: price,
+            cost: cost,
+            soldBy: soldBy,
+            paymentMethod: paymentMethod,
+            status: status,
+            customerName: customerName,
+            customerPhone: customerPhone,
+            notes: notes,
+            isPrinted: isPrinted,
+            soldAt: soldAt,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int connectionId,
+            required String saleId,
+            Value<String> cardType = const Value.absent(),
+            required String username,
+            required String profile,
+            Value<double> price = const Value.absent(),
+            Value<double> cost = const Value.absent(),
+            Value<String> soldBy = const Value.absent(),
+            Value<String> paymentMethod = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> customerName = const Value.absent(),
+            Value<String?> customerPhone = const Value.absent(),
+            Value<String?> notes = const Value.absent(),
+            Value<bool> isPrinted = const Value.absent(),
+            Value<DateTime> soldAt = const Value.absent(),
+          }) =>
+              CardSalesTableCompanion.insert(
+            id: id,
+            connectionId: connectionId,
+            saleId: saleId,
+            cardType: cardType,
+            username: username,
+            profile: profile,
+            price: price,
+            cost: cost,
+            soldBy: soldBy,
+            paymentMethod: paymentMethod,
+            status: status,
+            customerName: customerName,
+            customerPhone: customerPhone,
+            notes: notes,
+            isPrinted: isPrinted,
+            soldAt: soldAt,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable<$CardSalesTableTable, CardSalesTableData>(
+                        table),
+                    BaseReferences<_$AppDatabase, $CardSalesTableTable,
+                        CardSalesTableData>(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$CardSalesTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $CardSalesTableTable,
+    CardSalesTableData,
+    $$CardSalesTableTableFilterComposer,
+    $$CardSalesTableTableOrderingComposer,
+    $$CardSalesTableTableAnnotationComposer,
+    $$CardSalesTableTableCreateCompanionBuilder,
+    $$CardSalesTableTableUpdateCompanionBuilder,
+    (
+      CardSalesTableData,
+      BaseReferences<_$AppDatabase, $CardSalesTableTable, CardSalesTableData>
+    ),
+    CardSalesTableData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -15569,4 +18063,6 @@ class $AppDatabaseManager {
   $$ResellerSettlementsTableTableTableManager get resellerSettlementsTable =>
       $$ResellerSettlementsTableTableTableManager(
           _db, _db.resellerSettlementsTable);
+  $$CardSalesTableTableTableManager get cardSalesTable =>
+      $$CardSalesTableTableTableManager(_db, _db.cardSalesTable);
 }

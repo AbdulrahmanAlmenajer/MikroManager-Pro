@@ -23,11 +23,14 @@ class ReportsScreen extends ConsumerStatefulWidget {
 class _ReportsScreenState extends ConsumerState<ReportsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  String _directSalesFilter =
+      'all'; // 'all', 'hotspot', 'usermanager', 'printed', 'unprinted'
+  String _directSalesSearch = '';
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
   }
 
   @override
@@ -41,6 +44,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     final honestReportAsync = ref.watch(honestReportProvider);
     final paymentsAsync = ref.watch(paymentsListProvider);
     final auditLogsAsync = ref.watch(auditLogsProvider);
+    final cardSalesAsync = ref.watch(cardSalesListProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -54,6 +58,12 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
           isScrollable: true,
           tabs: const [
             Tab(icon: Icon(Icons.analytics_outlined), text: 'الأرقام الصادقة'),
+            Tab(
+                icon: Icon(Icons.compare_arrows_outlined),
+                text: 'مقارنة الأنظمة'),
+            Tab(
+                icon: Icon(Icons.point_of_sale_outlined),
+                text: 'المبيعات المباشرة'),
             Tab(icon: Icon(Icons.payments_outlined), text: 'التحصيلات الفعلية'),
             Tab(icon: Icon(Icons.price_change_outlined), text: 'تسعير الفئات'),
             Tab(icon: Icon(Icons.history_edu_outlined), text: 'سجل العمليات'),
@@ -82,6 +92,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
             onPressed: () {
               ref.invalidate(honestReportProvider);
               ref.invalidate(paymentsListProvider);
+              ref.invalidate(cardSalesListProvider);
               ref.invalidate(auditLogsProvider);
               ref.invalidate(profilePricesListProvider);
             },
@@ -92,6 +103,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
         controller: _tabController,
         children: [
           _buildHonestNumbersTab(honestReportAsync),
+          _buildComparisonTab(honestReportAsync),
+          _buildDirectSalesTab(cardSalesAsync),
           _buildPaymentsTab(paymentsAsync),
           _buildProfilePricesTab(honestReportAsync),
           _buildAuditLogsTab(auditLogsAsync),
@@ -220,6 +233,69 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                   ),
                 ],
               ),
+              const SizedBox(height: 8),
+
+              // Hotspot vs User Manager Stock Breakdown
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: AppColors.cyanAccent,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'Hotspot: ${stock.hotspotCardsCount} كرت (${stock.hotspotValue.toStringAsFixed(0)} ر.ي)',
+                              style: const TextStyle(
+                                  fontSize: 11, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                        height: 16, width: 1, color: Colors.grey.shade300),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: AppColors.navyPrimary,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'User Manager: ${stock.userManCardsCount} كرت (${stock.userManValue.toStringAsFixed(0)} ر.ي)',
+                              style: const TextStyle(
+                                  fontSize: 11, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 20),
 
               // SECTION 2: Estimated Sales (المبيعات التقديرية بناءً على أول ظهور)
@@ -294,6 +370,33 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                             ),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.cyanAccent.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'مبيعات Hotspot: ${sales.hotspotRevenue.toStringAsFixed(0)} ر.ي (${sales.hotspotCardsCount} كرت)',
+                              style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.cyanAccent),
+                            ),
+                            Text(
+                              'مبيعات User Manager: ${sales.userManRevenue.toStringAsFixed(0)} ر.ي (${sales.userManCardsCount} كرت)',
+                              style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.navyPrimary),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -454,7 +557,567 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
   }
 
   // =========================================================================
-  // Tab 2: Payments Management (التحصيلات الفعلية)
+  // Tab 2: Comparison (Hotspot vs User Manager)
+  // =========================================================================
+
+  Widget _buildComparisonTab(AsyncValue<HonestReportData> reportAsync) {
+    return reportAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => Center(child: Text('خطأ في مقارنة الأنظمة: $e')),
+      data: (report) {
+        final c = report.comparison;
+        final totalRev = c.hotspotRevenue + c.userManRevenue;
+        final hsShare =
+            totalRev > 0 ? (c.hotspotRevenue / totalRev) * 100 : 0.0;
+        final umShare =
+            totalRev > 0 ? (c.userManRevenue / totalRev) * 100 : 0.0;
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Leading System Banner
+              Card(
+                color: c.leadingSystem == 'User Manager'
+                    ? AppColors.navyPrimary
+                    : (c.leadingSystem == 'Hotspot'
+                        ? AppColors.cyanAccent
+                        : const Color(0xFF334155)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.emoji_events,
+                          color: Colors.amber, size: 36),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'النظام الأكثر مساهمة في الإيرادات',
+                              style: TextStyle(
+                                  color: Colors.white70, fontSize: 12),
+                            ),
+                            Text(
+                              c.leadingSystem,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'إجمالي الإيراد: ${totalRev.toStringAsFixed(0)} ر.ي',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Side-by-Side Comparison Cards
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Hotspot Card
+                  Expanded(
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.cyanAccent,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'Hotspot',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                              ],
+                            ),
+                            const Divider(height: 16),
+                            _buildComparisonMetric(
+                                'الكروت الكلية', '${c.hotspotTotalCards} كرت'),
+                            _buildComparisonMetric(
+                                'الكروت النشطة', '${c.hotspotActiveCards} كرت'),
+                            _buildComparisonMetric('الإيراد التقديري',
+                                '${c.hotspotRevenue.toStringAsFixed(0)} ر.ي'),
+                            _buildComparisonMetric('متوسط سعر الكرت',
+                                '${c.hotspotAveragePrice.toStringAsFixed(0)} ر.ي'),
+                            _buildComparisonMetric('الحصة من المبيعات',
+                                '${hsShare.toStringAsFixed(1)}%'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // User Manager Card
+                  Expanded(
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.navyPrimary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'User Manager',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                ),
+                              ],
+                            ),
+                            const Divider(height: 16),
+                            _buildComparisonMetric(
+                                'الكروت الكلية', '${c.userManTotalCards} كرت'),
+                            _buildComparisonMetric(
+                                'الكروت النشطة', '${c.userManActiveCards} كرت'),
+                            _buildComparisonMetric('الإيراد التقديري',
+                                '${c.userManRevenue.toStringAsFixed(0)} ر.ي'),
+                            _buildComparisonMetric('متوسط سعر الكرت',
+                                '${c.userManAveragePrice.toStringAsFixed(0)} ر.ي'),
+                            _buildComparisonMetric('الحصة من المبيعات',
+                                '${umShare.toStringAsFixed(1)}%'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // Top Profiles Breakdown
+              const Text(
+                'الفئات (البروفايلات) الأكثر طلباً حسب النظام',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Hotspot Profiles
+                  Expanded(
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('أعلى بروفايلات Hotspot',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: AppColors.cyanAccent)),
+                            const SizedBox(height: 8),
+                            if (c.topHotspotProfiles.isEmpty)
+                              const Text('لا توجد بيانات',
+                                  style: TextStyle(
+                                      fontSize: 11, color: Colors.grey))
+                            else
+                              ...c.topHotspotProfiles.entries.map((e) =>
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 3),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                            child: Text(e.key,
+                                                style: const TextStyle(
+                                                    fontSize: 11),
+                                                overflow:
+                                                    TextOverflow.ellipsis)),
+                                        Text('${e.value} كرت',
+                                            style: const TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                  )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // User Manager Profiles
+                  Expanded(
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('أعلى بروفايلات User Manager',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: AppColors.navyPrimary)),
+                            const SizedBox(height: 8),
+                            if (c.topUserManProfiles.isEmpty)
+                              const Text('لا توجد بيانات',
+                                  style: TextStyle(
+                                      fontSize: 11, color: Colors.grey))
+                            else
+                              ...c.topUserManProfiles.entries.map((e) =>
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 3),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                            child: Text(e.key,
+                                                style: const TextStyle(
+                                                    fontSize: 11),
+                                                overflow:
+                                                    TextOverflow.ellipsis)),
+                                        Text('${e.value} كرت',
+                                            style: const TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                  )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildComparisonMetric(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label,
+              style: const TextStyle(
+                  fontSize: 11, color: AppColors.textSecondary)),
+          Text(value,
+              style:
+                  const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  // =========================================================================
+  // Tab 3: Direct Card Sales (المبيعات المباشرة)
+  // =========================================================================
+
+  Widget _buildDirectSalesTab(
+      AsyncValue<List<CardSalesTableData>> cardSalesAsync) {
+    return cardSalesAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) =>
+          Center(child: Text('خطأ في تحميل المبيعات المباشرة: $e')),
+      data: (sales) {
+        // Filter sales
+        final filtered = sales.where((s) {
+          if (_directSalesSearch.isNotEmpty) {
+            final query = _directSalesSearch.toLowerCase();
+            if (!s.username.toLowerCase().contains(query) &&
+                !(s.customerName?.toLowerCase().contains(query) ?? false) &&
+                !s.profile.toLowerCase().contains(query)) {
+              return false;
+            }
+          }
+          switch (_directSalesFilter) {
+            case 'hotspot':
+              return s.cardType == 'hotspot';
+            case 'usermanager':
+              return s.cardType == 'usermanager';
+            case 'printed':
+              return s.isPrinted;
+            case 'unprinted':
+              return !s.isPrinted;
+            case 'all':
+            default:
+              return true;
+          }
+        }).toList();
+
+        final totalRevenue =
+            filtered.fold<double>(0.0, (acc, s) => acc + s.price);
+        final hsCount = filtered.where((s) => s.cardType == 'hotspot').length;
+        final umCount =
+            filtered.where((s) => s.cardType == 'usermanager').length;
+
+        return Scaffold(
+          floatingActionButton: FloatingActionButton.extended(
+            backgroundColor: AppColors.cyanAccent,
+            foregroundColor: Colors.white,
+            onPressed: () => _showAddSaleDialog(context),
+            icon: const Icon(Icons.add_shopping_cart),
+            label: const Text('تسجيل عملية بيع'),
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Summary Metric Bar
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildStatCard(
+                        'إجمالي المبيعات المباشرة',
+                        '${filtered.length} عملية',
+                        '${totalRevenue.toStringAsFixed(0)} ر.ي',
+                        Icons.point_of_sale,
+                        AppColors.cyanAccent,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildStatCard(
+                        'مبيعات Hotspot',
+                        '$hsCount كرت',
+                        'مباشرة',
+                        Icons.wifi,
+                        Colors.orange,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildStatCard(
+                        'مبيعات User Manager',
+                        '$umCount كرت',
+                        'مباشرة',
+                        Icons.manage_accounts,
+                        AppColors.navyPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+
+                // Filters
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      ChoiceChip(
+                        label: const Text('كافة المبيعات'),
+                        selected: _directSalesFilter == 'all',
+                        onSelected: (val) {
+                          if (val) setState(() => _directSalesFilter = 'all');
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      ChoiceChip(
+                        label: const Text('Hotspot'),
+                        selected: _directSalesFilter == 'hotspot',
+                        onSelected: (val) {
+                          if (val) {
+                            setState(() => _directSalesFilter = 'hotspot');
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      ChoiceChip(
+                        label: const Text('User Manager'),
+                        selected: _directSalesFilter == 'usermanager',
+                        onSelected: (val) {
+                          if (val) {
+                            setState(() => _directSalesFilter = 'usermanager');
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      ChoiceChip(
+                        label: const Text('المطبوعة'),
+                        selected: _directSalesFilter == 'printed',
+                        onSelected: (val) {
+                          if (val) {
+                            setState(() => _directSalesFilter = 'printed');
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      ChoiceChip(
+                        label: const Text('غير المطبوعة'),
+                        selected: _directSalesFilter == 'unprinted',
+                        onSelected: (val) {
+                          if (val) {
+                            setState(() => _directSalesFilter = 'unprinted');
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+
+                // Search Bar
+                TextField(
+                  decoration: const InputDecoration(
+                    hintText: 'بحث باسم الكرت، البروفايل، أو العميل...',
+                    prefixIcon: Icon(Icons.search, size: 20),
+                    isDense: true,
+                  ),
+                  onChanged: (val) =>
+                      setState(() => _directSalesSearch = val.trim()),
+                ),
+                const SizedBox(height: 12),
+
+                // Sales List
+                if (filtered.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 36),
+                    child: Center(
+                      child: Text(
+                          'لا توجد مبيعات مباشرة مسجلة مطابقة لهذا الفلتر.',
+                          style: TextStyle(color: AppColors.textSecondary)),
+                    ),
+                  )
+                else
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: filtered.length,
+                    itemBuilder: (context, idx) {
+                      final item = filtered[idx];
+                      final isUm = item.cardType == 'usermanager';
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: isUm
+                                ? AppColors.navyPrimary.withValues(alpha: 0.15)
+                                : AppColors.cyanAccent.withValues(alpha: 0.15),
+                            child: Icon(
+                              isUm ? Icons.manage_accounts : Icons.wifi,
+                              color: isUm
+                                  ? AppColors.navyPrimary
+                                  : AppColors.cyanAccent,
+                              size: 18,
+                            ),
+                          ),
+                          title: Row(
+                            children: [
+                              Text(item.username,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14)),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: isUm
+                                      ? AppColors.navyPrimary
+                                          .withValues(alpha: 0.1)
+                                      : AppColors.cyanAccent
+                                          .withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  isUm ? 'User Manager' : 'Hotspot',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: isUm
+                                        ? AppColors.navyPrimary
+                                        : AppColors.cyanAccent,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          subtitle: Text(
+                            'الفئة: ${item.profile}  |  ${DateFormat('yyyy/MM/dd HH:mm').format(item.soldAt)}'
+                            '${item.customerName != null ? " | العميل: ${item.customerName}" : ""}',
+                            style: const TextStyle(
+                                fontSize: 11, color: AppColors.textSecondary),
+                          ),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text('${item.price.toStringAsFixed(0)} ر.ي',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: AppColors.success)),
+                              Text(
+                                item.isPrinted ? 'مطبوع' : 'غير مطبوع',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: item.isPrinted
+                                      ? AppColors.textSecondary
+                                      : AppColors.warning,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // =========================================================================
+  // Tab 4: Payments Management (التحصيلات الفعلية)
   // =========================================================================
 
   Widget _buildPaymentsTab(AsyncValue<List<PaymentsTableData>> paymentsAsync) {
@@ -745,6 +1408,163 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     );
   }
 
+  void _showAddSaleDialog(BuildContext context) {
+    String cardType = 'hotspot';
+    final userCtrl = TextEditingController();
+    final profileCtrl = TextEditingController(text: 'default');
+    final priceCtrl = TextEditingController(text: '500');
+    final customerCtrl = TextEditingController();
+    final phoneCtrl = TextEditingController();
+    final notesCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlgState) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.point_of_sale, color: AppColors.cyanAccent),
+              SizedBox(width: 8),
+              Text('تسجيل مبيعات كرت مباشرة'),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: ChoiceChip(
+                        label: const Text('Hotspot'),
+                        selected: cardType == 'hotspot',
+                        onSelected: (val) {
+                          if (val) setDlgState(() => cardType = 'hotspot');
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: ChoiceChip(
+                        label: const Text('User Manager'),
+                        selected: cardType == 'usermanager',
+                        onSelected: (val) {
+                          if (val) setDlgState(() => cardType = 'usermanager');
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: userCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'اسم الكرت / الكود *',
+                    prefixIcon: Icon(Icons.tag),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: profileCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'الفئة (البروفايل) *',
+                          prefixIcon: Icon(Icons.folder_special),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: priceCtrl,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'السعر (ر.ي) *',
+                          prefixIcon: Icon(Icons.attach_money),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: customerCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'اسم العميل / المشترى (اختياري)',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: phoneCtrl,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'رقم هاتف العميل (اختياري)',
+                    prefixIcon: Icon(Icons.phone_outlined),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: notesCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'ملاحظات إضافية (اختياري)',
+                    prefixIcon: Icon(Icons.note_outlined),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('إلغاء'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.cyanAccent,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                final username = userCtrl.text.trim();
+                final profile = profileCtrl.text.trim();
+                final price = double.tryParse(priceCtrl.text.trim()) ?? 0.0;
+                if (username.isEmpty || profile.isEmpty || price <= 0) return;
+
+                final session = ref.read(sessionControllerProvider).session;
+                final connectionId = session?.connectionId ?? 0;
+
+                await ref.read(reportsRepositoryProvider).recordCardSale(
+                      connectionId: connectionId,
+                      cardType: cardType,
+                      username: username,
+                      profile: profile,
+                      price: price,
+                      soldBy: session?.username ?? 'admin',
+                      customerName: customerCtrl.text.trim().isEmpty
+                          ? null
+                          : customerCtrl.text.trim(),
+                      customerPhone: phoneCtrl.text.trim().isEmpty
+                          ? null
+                          : phoneCtrl.text.trim(),
+                      notes: notesCtrl.text.trim().isEmpty
+                          ? null
+                          : notesCtrl.text.trim(),
+                    );
+
+                if (ctx.mounted) Navigator.pop(ctx);
+                ref.invalidate(cardSalesListProvider);
+                ref.invalidate(honestReportProvider);
+              },
+              child: const Text('تسجيل البيع'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showAddPaymentDialog(BuildContext context) {
     final amountController = TextEditingController();
     final noteController = TextEditingController();
@@ -928,6 +1748,19 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                   text:
                       'Last 30 Days: ${data.sales.last30Days.cardsCount} cards (${data.sales.last30Days.totalEstimatedAmount.toStringAsFixed(0)} YER)'),
               pw.SizedBox(height: 16),
+              pw.Text('Hotspot vs User Manager Comparison:',
+                  style: pw.TextStyle(
+                      fontSize: 14, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 8),
+              pw.Bullet(
+                  text: 'Leading System: ${data.comparison.leadingSystem}'),
+              pw.Bullet(
+                  text:
+                      'Hotspot Revenue: ${data.comparison.hotspotRevenue.toStringAsFixed(0)} YER (${data.comparison.hotspotTotalCards} cards)'),
+              pw.Bullet(
+                  text:
+                      'User Manager Revenue: ${data.comparison.userManRevenue.toStringAsFixed(0)} YER (${data.comparison.userManTotalCards} cards)'),
+              pw.SizedBox(height: 16),
               pw.Text('Reconciliation & Payments:',
                   style: pw.TextStyle(
                       fontSize: 14, fontWeight: pw.FontWeight.bold)),
@@ -969,6 +1802,16 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     buffer
         .writeln('Payments,Total Collected YER,${data.payments.totalPayments}');
     buffer.writeln('Payments,Balance YER,${data.payments.balance}');
+    buffer
+        .writeln('Comparison,Leading System,${data.comparison.leadingSystem}');
+    buffer.writeln(
+        'Comparison,Hotspot Revenue YER,${data.comparison.hotspotRevenue}');
+    buffer.writeln(
+        'Comparison,Hotspot Cards,${data.comparison.hotspotTotalCards}');
+    buffer.writeln(
+        'Comparison,User Manager Revenue YER,${data.comparison.userManRevenue}');
+    buffer.writeln(
+        'Comparison,User Manager Cards,${data.comparison.userManTotalCards}');
 
     final bytes = Uint8List.fromList(utf8.encode(buffer.toString()));
     await Printing.sharePdf(

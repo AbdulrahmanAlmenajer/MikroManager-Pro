@@ -5,6 +5,10 @@ class UsageObservationsTable extends Table {
   IntColumn get connectionId => integer()();
   TextColumn get cardName => text()();
   TextColumn get profile => text()();
+  TextColumn get cardType => text()
+      .withDefault(const Constant('hotspot'))(); // 'hotspot' or 'usermanager'
+  TextColumn get cardType =>
+      text().withDefault(const Constant('hotspot'))(); // 'hotspot' or 'usermanager'
   DateTimeColumn get firstSeenAt =>
       dateTime().withDefault(currentDateAndTime)();
   BoolColumn get dateIsApproximate =>

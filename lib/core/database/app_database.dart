@@ -29,6 +29,7 @@ import 'tables/um_diagnostics_log_table.dart';
 import 'tables/resellers_table.dart';
 import 'tables/reseller_allocations_table.dart';
 import 'tables/reseller_settlements_table.dart';
+import 'tables/card_sales_table.dart';
 
 part 'app_database.g.dart';
 
@@ -60,6 +61,7 @@ part 'app_database.g.dart';
     ResellersTable,
     ResellerAllocationsTable,
     ResellerSettlementsTable,
+    CardSalesTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -67,7 +69,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.connection);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration {
@@ -130,6 +132,58 @@ class AppDatabase extends _$AppDatabase {
           await m.createTable(resellersTable);
           await m.createTable(resellerAllocationsTable);
           await m.createTable(resellerSettlementsTable);
+        }
+        if (from < 4) {
+          // v4.1 -- card_sales table, usage_observations cardType, and rich template styling
+          await m.createTable(cardSalesTable);
+          await m.addColumn(
+              usageObservationsTable, usageObservationsTable.cardType);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.cardWidthMm);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.cardHeightMm);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.marginMm);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.fontSize);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.titleFontSize);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.backgroundColorHex);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.textColorHex);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.titleColorHex);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.borderColorHex);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.borderWidth);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.borderRadius);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.showBarcode);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.showProfile);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.showPrice);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.showValidity);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.showUsername);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.showPassword);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.showInstructions);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.instructionsText);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.contactPhone);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.customText);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.targetCardType);
+          await m.addColumn(
+              voucherTemplatesTable, voucherTemplatesTable.configJson);
         }
       },
     );

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/database/app_database.dart';
 import '../../hotspot/domain/hotspot_notifier.dart';
+import '../../userman/domain/userman_notifier.dart';
 import '../domain/voucher_generator_engine.dart';
 import '../domain/vouchers_notifier.dart';
 
@@ -54,12 +55,26 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
   Widget build(BuildContext context) {
     final voucherState = ref.watch(vouchersControllerProvider);
     final hotspotState = ref.watch(hotspotControllerProvider);
+    final usermanState = ref.watch(usermanControllerProvider);
     final batchesAsync = ref.watch(voucherBatchesStreamProvider);
 
     // Update profile if available
-    if (hotspotState.profiles.isNotEmpty && _selectedProfile == 'default') {
-      _selectedProfile =
-          hotspotState.profiles.first['name']?.toString() ?? 'default';
+    if (_isUserManager) {
+      if (usermanState.parsedProfiles.isNotEmpty &&
+          !usermanState.parsedProfiles.any((p) => p.name == _selectedProfile)) {
+        _selectedProfile = usermanState.parsedProfiles.first.name;
+        if (usermanState.parsedProfiles.first.price > 0 &&
+            _priceCtrl.text == '500') {
+          _priceCtrl.text =
+              usermanState.parsedProfiles.first.price.toStringAsFixed(0);
+        }
+      }
+    } else {
+      if (hotspotState.profiles.isNotEmpty &&
+          !hotspotState.profiles.any((p) => p['name'] == _selectedProfile)) {
+        _selectedProfile =
+            hotspotState.profiles.first['name']?.toString() ?? 'default';
+      }
     }
 
     return Scaffold(
@@ -98,7 +113,7 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
         controller: _tabController,
         children: [
           // Tab 1: Generator Form
-          _buildGeneratorForm(voucherState, hotspotState),
+          _buildGeneratorForm(voucherState, hotspotState, usermanState),
           // Tab 2: Batches History
           _buildBatchesHistory(batchesAsync),
         ],
@@ -106,8 +121,8 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
     );
   }
 
-  Widget _buildGeneratorForm(
-      VoucherGeneratorState voucherState, HotspotState hotspotState) {
+  Widget _buildGeneratorForm(VoucherGeneratorState voucherState,
+      HotspotState hotspotState, UsermanState usermanState) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Form(
@@ -203,26 +218,55 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                               labelText: 'البروفايل *',
                               prefixIcon: Icon(Icons.tune),
                             ),
-                            value: hotspotState.profiles
-                                    .any((p) => p['name'] == _selectedProfile)
-                                ? _selectedProfile
-                                : null,
+                            value: _isUserManager
+                                ? (usermanState.parsedProfiles
+                                        .any((p) => p.name == _selectedProfile)
+                                    ? _selectedProfile
+                                    : null)
+                                : (hotspotState.profiles.any(
+                                        (p) => p['name'] == _selectedProfile)
+                                    ? _selectedProfile
+                                    : null),
                             hint: const Text('اختر البروفايل'),
-                            items: hotspotState.profiles.isEmpty
-                                ? [
-                                    const DropdownMenuItem(
-                                        value: 'default',
-                                        child: Text('default'))
-                                  ]
-                                : hotspotState.profiles.map((p) {
-                                    final name =
-                                        p['name']?.toString() ?? 'default';
-                                    return DropdownMenuItem(
-                                        value: name, child: Text(name));
-                                  }).toList(),
+                            items: _isUserManager
+                                ? (usermanState.parsedProfiles.isEmpty
+                                    ? [
+                                        const DropdownMenuItem(
+                                            value: 'default',
+                                            child: Text('default'))
+                                      ]
+                                    : usermanState.parsedProfiles.map((p) {
+                                        return DropdownMenuItem(
+                                            value: p.name,
+                                            child: Text(
+                                                '${p.displayName} (${p.price.toStringAsFixed(0)} YER)'));
+                                      }).toList())
+                                : (hotspotState.profiles.isEmpty
+                                    ? [
+                                        const DropdownMenuItem(
+                                            value: 'default',
+                                            child: Text('default'))
+                                      ]
+                                    : hotspotState.profiles.map((p) {
+                                        final name =
+                                            p['name']?.toString() ?? 'default';
+                                        return DropdownMenuItem(
+                                            value: name, child: Text(name));
+                                      }).toList()),
                             onChanged: (val) {
                               if (val != null) {
-                                setState(() => _selectedProfile = val);
+                                setState(() {
+                                  _selectedProfile = val;
+                                  if (_isUserManager) {
+                                    final match = usermanState.parsedProfiles
+                                        .where((p) => p.name == val);
+                                    if (match.isNotEmpty &&
+                                        match.first.price > 0) {
+                                      _priceCtrl.text =
+                                          match.first.price.toStringAsFixed(0);
+                                    }
+                                  }
+                                });
                               }
                             },
                           ),
@@ -460,8 +504,17 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                                   style: TextStyle(fontSize: 14)),
                               value: false,
                               groupValue: _isUserManager,
-                              onChanged: (val) =>
-                                  setState(() => _isUserManager = val ?? false),
+                              onChanged: (val) {
+                                setState(() {
+                                  _isUserManager = false;
+                                  if (hotspotState.profiles.isNotEmpty) {
+                                    _selectedProfile = hotspotState
+                                            .profiles.first['name']
+                                            ?.toString() ??
+                                        'default';
+                                  }
+                                });
+                              },
                             ),
                           ),
                           Expanded(
@@ -471,8 +524,20 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
                                   style: TextStyle(fontSize: 14)),
                               value: true,
                               groupValue: _isUserManager,
-                              onChanged: (val) =>
-                                  setState(() => _isUserManager = val ?? true),
+                              onChanged: (val) {
+                                setState(() {
+                                  _isUserManager = true;
+                                  if (usermanState.parsedProfiles.isNotEmpty) {
+                                    final first =
+                                        usermanState.parsedProfiles.first;
+                                    _selectedProfile = first.name;
+                                    if (first.price > 0) {
+                                      _priceCtrl.text =
+                                          first.price.toStringAsFixed(0);
+                                    }
+                                  }
+                                });
+                              },
                             ),
                           ),
                         ],

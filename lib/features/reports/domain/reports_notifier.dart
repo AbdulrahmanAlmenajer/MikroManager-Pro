@@ -29,35 +29,42 @@ final honestReportProvider =
   final subscribersRepo = ref.watch(subscribersRepositoryProvider);
 
   if (session == null) {
-    // Return empty fallback when session is not ready (e.g. preview/offline)
     return repo.getHonestReportData(
       connectionId: 0,
       subscribers: const [],
     );
   }
 
-  // 1. Fetch real Hotspot subscribers from router
-  List<SubscriberModel> subscribers = [];
+  // 1. Fetch BOTH Hotspot and User Manager subscribers from router
+  final List<SubscriberModel> allSubscribers = [];
   try {
-    subscribers = await subscribersRepo.getHotspotSubscribers(session.adapter);
+    final hs = await subscribersRepo.getHotspotSubscribers(session.adapter);
+    allSubscribers.addAll(hs);
   } catch (_) {
-    // Fallback if router fetch encounters temporary glitch
+    // Graceful fallback if hotspot table is empty or error
+  }
+
+  try {
+    final um = await subscribersRepo.getUserManSubscribers(session.adapter);
+    allSubscribers.addAll(um);
+  } catch (_) {
+    // Graceful fallback if userman is not installed or empty
   }
 
   // 2. Automatically record first-use observations
   await repo.recordUsageObservations(
     connectionId: session.connectionId,
-    subscribers: subscribers,
+    subscribers: allSubscribers,
   );
 
   // 3. Reseller prefix scoping
   final String? resellerPrefix =
       session.role == UserRole.reseller ? session.username : null;
 
-  // 4. Return aggregated honest report
+  // 4. Return aggregated honest report with Hotspot and User Manager breakdown
   return await repo.getHonestReportData(
     connectionId: session.connectionId,
-    subscribers: subscribers,
+    subscribers: allSubscribers,
     resellerPrefix: resellerPrefix,
   );
 });
@@ -76,4 +83,12 @@ final paymentsListProvider =
   final repo = ref.watch(reportsRepositoryProvider);
   if (session == null) return [];
   return await repo.getPayments(session.connectionId);
+});
+
+final cardSalesListProvider =
+    FutureProvider.autoDispose<List<CardSalesTableData>>((ref) async {
+  final session = ref.watch(sessionControllerProvider).session;
+  final repo = ref.watch(reportsRepositoryProvider);
+  if (session == null) return [];
+  return await repo.getCardSales(session.connectionId);
 });

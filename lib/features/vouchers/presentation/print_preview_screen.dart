@@ -4,10 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:printing/printing.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/database/app_database.dart';
 import '../../../core/utils/pdf_generator_helper.dart';
 import '../../routers/domain/routers_notifier.dart';
 import '../data/pdf_archive_repository.dart';
 import '../domain/vouchers_notifier.dart';
+import 'template_gallery_screen.dart';
 
 enum PrintLayoutType { a4Grid, thermal58, thermal80 }
 
@@ -23,11 +25,22 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
   int _cardsPerRow = 3;
   int _cardsPerPage = 12;
   bool _showQrCode = true;
+  VoucherTemplatesTableData? _selectedTemplate;
 
   @override
   Widget build(BuildContext context) {
     final voucherState = ref.watch(vouchersControllerProvider);
+    final templatesAsync = ref.watch(voucherTemplatesStreamProvider);
     final vouchers = voucherState.currentVouchers;
+
+    templatesAsync.whenData((templates) {
+      if (_selectedTemplate == null && templates.isNotEmpty) {
+        _selectedTemplate = templates.firstWhere(
+          (t) => t.isDefault,
+          orElse: () => templates.first,
+        );
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -168,79 +181,124 @@ class _PrintPreviewScreenState extends ConsumerState<PrintPreviewScreen> {
       case PrintLayoutType.a4Grid:
         return await PdfGeneratorHelper.generateA4VouchersPdf(
           vouchers: vouchers,
-          cardsPerRow: _cardsPerRow,
-          cardsPerPage: _cardsPerPage,
-          showQrCode: _showQrCode,
+          cardsPerRow: _selectedTemplate?.cardsPerRow ?? _cardsPerRow,
+          cardsPerPage: _selectedTemplate?.cardsPerPage ?? _cardsPerPage,
+          showQrCode: _selectedTemplate?.showQrCode ?? _showQrCode,
+          template: _selectedTemplate,
         );
       case PrintLayoutType.thermal58:
         return await PdfGeneratorHelper.generateThermalReceiptPdf(
           voucher: vouchers.first,
           is80mm: false,
+          template: _selectedTemplate,
         );
       case PrintLayoutType.thermal80:
         return await PdfGeneratorHelper.generateThermalReceiptPdf(
           voucher: vouchers.first,
           is80mm: true,
+          template: _selectedTemplate,
         );
     }
   }
 
   void _showLayoutSettingsDialog(BuildContext context) {
+    final templates =
+        ref.read(voucherTemplatesStreamProvider).valueOrNull ?? [];
+
     showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          title: const Text('إعدادات تخطيط A4'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButtonFormField<int>(
-                decoration:
-                    const InputDecoration(labelText: 'عدد الكروت في كل صف'),
-                value: _cardsPerRow,
-                items: const [
-                  DropdownMenuItem(value: 2, child: Text('كرتان في الصف (2)')),
-                  DropdownMenuItem(
-                      value: 3, child: Text('3 كروت في الصف (مستحسن)')),
-                  DropdownMenuItem(value: 4, child: Text('4 كروت في الصف (4)')),
+          title: const Text('إعدادات وقالب الطباعة'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (templates.isNotEmpty) ...[
+                  DropdownButtonFormField<VoucherTemplatesTableData>(
+                    decoration: const InputDecoration(
+                      labelText: 'اختر قالب التصميم',
+                      prefixIcon: Icon(Icons.palette_outlined),
+                    ),
+                    value: _selectedTemplate,
+                    items: templates.map((t) {
+                      return DropdownMenuItem(
+                        value: t,
+                        child: Text(
+                          '${t.name} (${t.paperSize})',
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) {
+                        setDialogState(() {
+                          _selectedTemplate = val;
+                          _cardsPerRow = val.cardsPerRow;
+                          _cardsPerPage = val.cardsPerPage;
+                          _showQrCode = val.showQrCode;
+                        });
+                        setState(() {
+                          _selectedTemplate = val;
+                          _cardsPerRow = val.cardsPerRow;
+                          _cardsPerPage = val.cardsPerPage;
+                          _showQrCode = val.showQrCode;
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
                 ],
-                onChanged: (val) {
-                  if (val != null) {
-                    setDialogState(() => _cardsPerRow = val);
-                    setState(() => _cardsPerRow = val);
-                  }
-                },
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<int>(
-                decoration:
-                    const InputDecoration(labelText: 'إجمالي الكروت في الصفحة'),
-                value: _cardsPerPage,
-                items: const [
-                  DropdownMenuItem(value: 8, child: Text('8 كروت بالصفحة')),
-                  DropdownMenuItem(
-                      value: 12, child: Text('12 كرت بالصفحة (مستحسن)')),
-                  DropdownMenuItem(value: 15, child: Text('15 كرت بالصفحة')),
-                  DropdownMenuItem(value: 18, child: Text('18 كرت بالصفحة')),
-                ],
-                onChanged: (val) {
-                  if (val != null) {
-                    setDialogState(() => _cardsPerPage = val);
-                    setState(() => _cardsPerPage = val);
-                  }
-                },
-              ),
-              const SizedBox(height: 12),
-              CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('إظهار رمز الاستجابة السريعة (QR Code)'),
-                value: _showQrCode,
-                onChanged: (val) {
-                  setDialogState(() => _showQrCode = val ?? true);
-                  setState(() => _showQrCode = val ?? true);
-                },
-              ),
-            ],
+                DropdownButtonFormField<int>(
+                  decoration:
+                      const InputDecoration(labelText: 'عدد الكروت في كل صف'),
+                  value: _cardsPerRow,
+                  items: const [
+                    DropdownMenuItem(
+                        value: 2, child: Text('كرتان في الصف (2)')),
+                    DropdownMenuItem(
+                        value: 3, child: Text('3 كروت في الصف (مستحسن)')),
+                    DropdownMenuItem(
+                        value: 4, child: Text('4 كروت في الصف (4)')),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) {
+                      setDialogState(() => _cardsPerRow = val);
+                      setState(() => _cardsPerRow = val);
+                    }
+                  },
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<int>(
+                  decoration: const InputDecoration(
+                      labelText: 'إجمالي الكروت في الصفحة'),
+                  value: _cardsPerPage,
+                  items: const [
+                    DropdownMenuItem(value: 8, child: Text('8 كروت بالصفحة')),
+                    DropdownMenuItem(
+                        value: 12, child: Text('12 كرت بالصفحة (مستحسن)')),
+                    DropdownMenuItem(value: 15, child: Text('15 كرت بالصفحة')),
+                    DropdownMenuItem(value: 18, child: Text('18 كرت بالصفحة')),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) {
+                      setDialogState(() => _cardsPerPage = val);
+                      setState(() => _cardsPerPage = val);
+                    }
+                  },
+                ),
+                const SizedBox(height: 12),
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('إظهار رمز الاستجابة السريعة (QR Code)'),
+                  value: _showQrCode,
+                  onChanged: (val) {
+                    setDialogState(() => _showQrCode = val ?? true);
+                    setState(() => _showQrCode = val ?? true);
+                  },
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(

@@ -81,5 +81,36 @@ void main() {
         expect(v.username != v.password, isTrue);
       }
     });
+
+    test('Generates sequential serial numbers with custom prefix and padding', () {
+      final vouchers = VoucherGeneratorEngine.generateBatch(
+        quantity: 10,
+        profile: 'Serial-Test',
+        price: 250,
+        enableSerial: true,
+        serialPrefix: 'SN-',
+        serialStart: 101,
+        serialPadding: 5,
+      );
+
+      expect(vouchers.length, equals(10));
+      for (int i = 0; i < vouchers.length; i++) {
+        final expectedSerial = 'SN-${(101 + i).toString().padLeft(5, '0')}';
+        expect(vouchers[i].serialNumber, equals(expectedSerial));
+      }
+    });
+
+    test('Omits serial number when enableSerial is false', () {
+      final vouchers = VoucherGeneratorEngine.generateBatch(
+        quantity: 5,
+        profile: 'No-Serial',
+        price: 150,
+        enableSerial: false,
+      );
+
+      for (final v in vouchers) {
+        expect(v.serialNumber, isNull);
+      }
+    });
   });
 }

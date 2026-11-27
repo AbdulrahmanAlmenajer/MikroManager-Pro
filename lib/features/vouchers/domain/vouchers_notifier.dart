@@ -8,6 +8,7 @@ import '../../../core/utils/pdf_generator_helper.dart';
 import '../../routers/domain/active_router_provider.dart';
 import '../../routers/domain/routers_notifier.dart';
 import '../data/vouchers_repository.dart';
+import 'unified_card_model.dart';
 import 'voucher_generator_engine.dart';
 
 final vouchersRepositoryProvider = Provider<VouchersRepository>((ref) {
@@ -22,6 +23,36 @@ final voucherBatchesStreamProvider =
   return repo.watchBatches();
 });
 
+class DraftBatchParams {
+  final CardSystemType systemType;
+  final bool isUserManager;
+  final String profile;
+  final double price;
+  final String prefix;
+  final int codeLength;
+  final bool enableSerial;
+  final String serialPrefix;
+  final int serialStart;
+  final int serialPadding;
+  final String? networkName;
+  final String? notes;
+
+  const DraftBatchParams({
+    required this.systemType,
+    required this.isUserManager,
+    required this.profile,
+    required this.price,
+    this.prefix = '',
+    this.codeLength = 8,
+    this.enableSerial = false,
+    this.serialPrefix = 'SN-',
+    this.serialStart = 1,
+    this.serialPadding = 4,
+    this.networkName,
+    this.notes,
+  });
+}
+
 class VoucherGeneratorState {
   final List<VoucherCardData> currentVouchers;
   final bool isGenerating;
@@ -32,6 +63,8 @@ class VoucherGeneratorState {
   final bool isCancelled;
   final String? message;
   final String? errorMessage;
+  final bool isDraft; // For pre-commit preview
+  final DraftBatchParams? draftParams;
 
   const VoucherGeneratorState({
     this.currentVouchers = const [],
@@ -43,6 +76,8 @@ class VoucherGeneratorState {
     this.isCancelled = false,
     this.message,
     this.errorMessage,
+    this.isDraft = false,
+    this.draftParams,
   });
 
   VoucherGeneratorState copyWith({
@@ -55,6 +90,8 @@ class VoucherGeneratorState {
     bool? isCancelled,
     String? message,
     String? errorMessage,
+    bool? isDraft,
+    DraftBatchParams? draftParams,
   }) {
     return VoucherGeneratorState(
       currentVouchers: currentVouchers ?? this.currentVouchers,
@@ -66,6 +103,8 @@ class VoucherGeneratorState {
       isCancelled: isCancelled ?? this.isCancelled,
       message: message,
       errorMessage: errorMessage,
+      isDraft: isDraft ?? this.isDraft,
+      draftParams: draftParams ?? this.draftParams,
     );
   }
 }
@@ -78,8 +117,8 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
   VouchersNotifier(this._ref, this._repo)
       : super(const VoucherGeneratorState());
 
-  void setVouchersForPreview(List<VoucherCardData> vouchers) {
-    state = state.copyWith(currentVouchers: vouchers);
+  void setVouchersForPreview(List<VoucherCardData> vouchers, {bool isDraft = false}) {
+    state = state.copyWith(currentVouchers: vouchers, isDraft: isDraft);
   }
 
   void loadFromBatch(VoucherBatchesTableData batch) {
@@ -89,7 +128,7 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
           .map((e) =>
               VoucherCardData.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList();
-      state = state.copyWith(currentVouchers: vouchers);
+      state = state.copyWith(currentVouchers: vouchers, isDraft: false);
     } on FormatException catch (e) {
       state = state.copyWith(
         errorMessage: 'تعذّر قراءة بيانات الدفعة (JSON خاطئ): ${e.message}',
@@ -106,6 +145,74 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
     state = state.copyWith(isCancelled: true);
   }
 
+  /// Generate draft vouchers locally for preview before committing to router
+  List<VoucherCardData> generateDraftVouchers({
+    required int quantity,
+    required String profile,
+    required double price,
+    String prefix = '',
+    int codeLength = 8,
+    VoucherCodeType codeType = VoucherCodeType.numeric,
+    CredentialMode credentialMode = CredentialMode.identical,
+    int passwordLength = 4,
+    VoucherCodeType passwordCodeType = VoucherCodeType.numeric,
+    String? validity,
+    String? networkName,
+    bool enableSerial = false,
+    String serialPrefix = 'SN-',
+    int serialStart = 1,
+    int serialPadding = 4,
+    bool isUserManager = false,
+    CardSystemType? systemType,
+    String? notes,
+  }) {
+    final vouchers = VoucherGeneratorEngine.generateBatch(
+      quantity: quantity,
+      profile: profile,
+      price: price,
+      prefix: prefix,
+      codeLength: codeLength,
+      codeType: codeType,
+      credentialMode: credentialMode,
+      passwordLength: passwordLength,
+      passwordCodeType: passwordCodeType,
+      validity: validity,
+      networkName: networkName,
+      enableSerial: enableSerial,
+      serialPrefix: serialPrefix,
+      serialStart: serialStart,
+      serialPadding: serialPadding,
+    );
+
+    final effectiveSystemType = systemType ??
+        (isUserManager ? CardSystemType.usermanV7 : CardSystemType.hotspot);
+
+    final params = DraftBatchParams(
+      systemType: effectiveSystemType,
+      isUserManager: isUserManager,
+      profile: profile,
+      price: price,
+      prefix: prefix,
+      codeLength: codeLength,
+      enableSerial: enableSerial,
+      serialPrefix: serialPrefix,
+      serialStart: serialStart,
+      serialPadding: serialPadding,
+      networkName: networkName,
+      notes: notes,
+    );
+
+    state = state.copyWith(
+      currentVouchers: vouchers,
+      isDraft: true,
+      draftParams: params,
+      message: 'تم إنشاء معاينة الدفعة (${vouchers.length} كرت). يمكنك المعاينة والطباعة الآن قبل الاعتماد.',
+      errorMessage: null,
+    );
+
+    return vouchers;
+  }
+
   Future<bool> generateAndSave({
     required int quantity,
     required String profile,
@@ -119,7 +226,12 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
     VoucherCodeType passwordCodeType = VoucherCodeType.numeric,
     bool uploadToRouter = true,
     bool isUserManager = false,
+    CardSystemType? systemType,
     String? networkName,
+    bool enableSerial = false,
+    String serialPrefix = 'SN-',
+    int serialStart = 1,
+    int serialPadding = 4,
     String? notes,
   }) async {
     _isCancelRequested = false;
@@ -130,11 +242,15 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
       totalCount: quantity,
       uploadProgress: 0.0,
       isCancelled: false,
+      isDraft: false,
       message: null,
       errorMessage: null,
     );
 
     try {
+      final effectiveSystemType = systemType ??
+          (isUserManager ? CardSystemType.usermanV7 : CardSystemType.hotspot);
+
       // 1. Generate unique vouchers locally
       final vouchers = VoucherGeneratorEngine.generateBatch(
         quantity: quantity,
@@ -147,7 +263,14 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
         passwordLength: passwordLength,
         passwordCodeType: passwordCodeType,
         networkName: networkName,
+        enableSerial: enableSerial,
+        serialPrefix: serialPrefix,
+        serialStart: serialStart,
+        serialPadding: serialPadding,
       );
+
+      final serialEnd =
+          enableSerial ? (serialStart + quantity - 1) : null;
 
       // 2. Upload to Router in chunks of 50 with cancel check and progress
       int uploadedCount = 0;
@@ -171,6 +294,7 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
                 'price': price,
                 'quantity': quantity,
                 'isUserManager': isUserManager,
+                'systemType': effectiveSystemType.name,
               },
             );
           } on Object catch (e) {
@@ -238,6 +362,11 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
         codeLength: codeLength,
         vouchers: vouchers,
         unitPrice: price,
+        systemType: effectiveSystemType.name,
+        serialPrefix: enableSerial ? serialPrefix : null,
+        serialStart: enableSerial ? serialStart : null,
+        serialPadding: enableSerial ? serialPadding : null,
+        serialEnd: serialEnd,
         notes: notes,
       );
 
@@ -272,6 +401,176 @@ class VouchersNotifier extends StateNotifier<VoucherGeneratorState> {
       );
       return false;
     }
+  }
+
+  /// Commit current draft vouchers and upload them to the router
+  Future<bool> commitDraftBatch({
+    void Function(int current, int total)? onProgress,
+  }) async {
+    if (state.currentVouchers.isEmpty || !state.isDraft) {
+      state = state.copyWith(errorMessage: 'لا توجد مسودة كروت جاهزة للاعتماد');
+      return false;
+    }
+
+    final params = state.draftParams;
+    final isUserManager = params?.isUserManager ?? false;
+    final effectiveSystemType = params?.systemType ??
+        (isUserManager ? CardSystemType.usermanV7 : CardSystemType.hotspot);
+    final profile = params?.profile ?? state.currentVouchers.first.profile;
+    final price = params?.price ?? state.currentVouchers.first.price;
+    final prefix = params?.prefix ?? '';
+    final codeLength = params?.codeLength ?? 8;
+    final enableSerial = params?.enableSerial ?? false;
+    final serialPrefix = params?.serialPrefix ?? 'SN-';
+    final serialStart = params?.serialStart ?? 1;
+    final serialPadding = params?.serialPadding ?? 4;
+    final serialEnd = enableSerial
+        ? (serialStart + state.currentVouchers.length - 1)
+        : null;
+    final notes = params?.notes;
+
+    _isCancelRequested = false;
+    state = state.copyWith(
+      isUploading: true,
+      uploadedCount: 0,
+      totalCount: state.currentVouchers.length,
+      uploadProgress: 0.0,
+      isCancelled: false,
+      message: null,
+      errorMessage: null,
+    );
+
+    try {
+      final activeRouter = _ref.read(routersControllerProvider).activeRouter;
+      final routerId = activeRouter?.id ?? 1;
+      final adapter = await _ref.read(activeAdapterProvider.future);
+
+      if (adapter == null) {
+        throw Exception('الراوتر غير متصل. يرجى التحقق من الاتصال بالراوتر أولاً.');
+      }
+
+      // Check collision
+      final collisions = await _repo.checkUsernameCollisions(
+        adapter: adapter,
+        usernames: state.currentVouchers.map((v) => v.username).toList(),
+        isUserManager: isUserManager,
+      );
+
+      if (collisions.isNotEmpty) {
+        state = state.copyWith(
+          isUploading: false,
+          errorMessage:
+              'تم اكتشاف تكرار في أسماء المستخدمين على الراوتر (${collisions.take(3).join(', ')}${collisions.length > 3 ? '...' : ''}). يرجى العودة وإعادة التوليد ببادئة مختلفة.',
+        );
+        return false;
+      }
+
+      // Upload to router
+      final taskRunner = _ref.read(taskRunnerProvider);
+      int? checkpointId;
+      try {
+        checkpointId = await taskRunner.createCheckpoint(
+          taskId: 'voucher_commit_${DateTime.now().millisecondsSinceEpoch}',
+          connectionId: routerId,
+          taskType: 'voucher_upload',
+          totalItems: state.currentVouchers.length,
+          payload: {
+            'profile': profile,
+            'price': price,
+            'quantity': state.currentVouchers.length,
+            'isUserManager': isUserManager,
+            'systemType': effectiveSystemType.name,
+          },
+        );
+      } catch (_) {}
+
+      final uploaded = await _repo.uploadToRouter(
+        adapter: adapter,
+        vouchers: state.currentVouchers,
+        isUserManager: isUserManager,
+        onProgress: (current, total) {
+          onProgress?.call(current, total);
+          if (mounted) {
+            state = state.copyWith(
+              uploadedCount: current,
+              totalCount: total,
+              uploadProgress: total > 0 ? (current / total) : 0.0,
+            );
+          }
+          if (checkpointId != null) {
+            taskRunner.updateProgress(
+              checkpointId: checkpointId,
+              processed: current,
+              succeeded: current,
+              failed: 0,
+              status: _isCancelRequested ? 'failed' : 'running',
+            );
+          }
+        },
+        isCancelled: () => _isCancelRequested,
+      );
+
+      if (checkpointId != null) {
+        if (_isCancelRequested) {
+          await taskRunner.failCheckpoint(checkpointId, 'تم الإلغاء يدوياً');
+        } else {
+          await taskRunner.completeCheckpoint(checkpointId);
+        }
+      }
+
+      // Save batch to Drift local database
+      await _repo.saveBatch(
+        routerId: routerId,
+        profileName: profile,
+        quantity: state.currentVouchers.length,
+        prefix: prefix,
+        codeLength: codeLength,
+        vouchers: state.currentVouchers,
+        unitPrice: price,
+        systemType: effectiveSystemType.name,
+        serialPrefix: enableSerial ? serialPrefix : null,
+        serialStart: enableSerial ? serialStart : null,
+        serialPadding: enableSerial ? serialPadding : null,
+        serialEnd: serialEnd,
+        notes: notes,
+      );
+
+      // Record card event
+      final db = _ref.read(databaseProvider);
+      await db.into(db.cardEventsTable).insert(
+            CardEventsTableCompanion.insert(
+              connectionId: routerId,
+              type: 'generated',
+              count: state.currentVouchers.length,
+              profile: profile,
+            ),
+          );
+
+      state = state.copyWith(
+        isUploading: false,
+        isDraft: false,
+        draftParams: null,
+        message: 'تم اعتماد الدفعة ورفع $uploaded كرت إلى الراوتر بنجاح!',
+      );
+
+      return true;
+    } catch (e) {
+      state = state.copyWith(
+        isUploading: false,
+        errorMessage: 'فشل اعتماد ورفع الكروت: $e',
+      );
+      return false;
+    }
+  }
+
+  void discardDraft() {
+    state = state.copyWith(
+      currentVouchers: [],
+      isDraft: false,
+      draftParams: null,
+      message: null,
+      errorMessage: null,
+    );
   }
 
   Future<bool> deleteBatch(int id) async {

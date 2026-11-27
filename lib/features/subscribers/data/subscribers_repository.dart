@@ -331,14 +331,20 @@ class SubscribersRepository {
     final List<String> reasons = [];
 
     // 1. Search in Hotspot users
-    final res = await adapter
-        .executeSentence(['/ip/hotspot/user/print', '?name=$trimmed']);
+    final isSerial = trimmed.toUpperCase().startsWith('SN-') ||
+        trimmed.toUpperCase().startsWith('SN:');
+    final queryParam = isSerial ? '?comment=*$trimmed*' : '?name=$trimmed';
+
+    var res = await adapter
+        .executeSentence(['/ip/hotspot/user/print', queryParam]);
+
     if (!res.isSuccess || res.data.isEmpty) {
       // Check User Manager
       final umPath = adapter.isV7
           ? '/user-manager/user/print'
           : '/tool/user-manager/user/print';
-      final umRes = await adapter.executeSentence([umPath, '?name=$trimmed']);
+      final umRes = await adapter.executeSentence([umPath, queryParam]);
+
       if (!umRes.isSuccess || umRes.data.isEmpty) {
         return CardDiagnosisResult(
           cardName: trimmed,
@@ -348,6 +354,7 @@ class SubscribersRepository {
           ],
         );
       }
+      res = umRes;
     }
 
     final data = res.data.first;

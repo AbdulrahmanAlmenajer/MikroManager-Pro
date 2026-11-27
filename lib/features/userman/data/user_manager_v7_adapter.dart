@@ -27,7 +27,7 @@ class UserManagerV7Adapter {
     return {'enabled': enabled, 'useProfiles': useProfiles};
   }
 
-  /// Get profiles with minimal proplist
+  /// Get profiles with minimal proplist and enrich with limitations
   Future<List<Map<String, dynamic>>> getProfiles() async {
     const proplist =
         '.id,name,name-for-users,price,validity,starts-when,override-shared-users';
@@ -40,7 +40,59 @@ class UserManagerV7Adapter {
         'تعذّر جلب بروفايلات User Manager v7: ${res.errorMessage ?? ""}',
       );
     }
-    return res.data;
+
+    final profiles = List<Map<String, dynamic>>.from(res.data);
+
+    // Link limitations (rate-limit, uptime-limit, transfer-limit)
+    try {
+      final profLimRes = await client.executeSentence(
+        withProplist(['/user-manager/profile-limitation/print'],
+            '.id,profile,limitation'),
+        commandTimeout: _kFastTimeout,
+      );
+      final limRes = await client.executeSentence(
+        withProplist(['/user-manager/limitation/print'],
+            '.id,name,rate-limit,uptime-limit,download-limit,upload-limit,transfer-limit'),
+        commandTimeout: _kFastTimeout,
+      );
+
+      if (profLimRes.isSuccess && limRes.isSuccess) {
+        final Map<String, Map<String, dynamic>> limMap = {};
+        for (final l in limRes.data) {
+          final name = l['name']?.toString() ?? '';
+          if (name.isNotEmpty) limMap[name] = l;
+        }
+
+        final Map<String, String> profToLim = {};
+        for (final pl in profLimRes.data) {
+          final p = pl['profile']?.toString() ?? '';
+          final l = pl['limitation']?.toString() ?? '';
+          if (p.isNotEmpty && l.isNotEmpty) {
+            profToLim[p] = l;
+          }
+        }
+
+        for (int i = 0; i < profiles.length; i++) {
+          final pName = profiles[i]['name']?.toString() ?? '';
+          final limName = profToLim[pName];
+          if (limName != null && limMap.containsKey(limName)) {
+            final lim = limMap[limName]!;
+            profiles[i] = {
+              ...profiles[i],
+              if (lim['rate-limit'] != null) 'rate-limit': lim['rate-limit'],
+              if (lim['uptime-limit'] != null)
+                'uptime-limit': lim['uptime-limit'],
+              if (lim['transfer-limit'] != null)
+                'transfer-limit': lim['transfer-limit'],
+            };
+          }
+        }
+      }
+    } catch (_) {
+      // Non-fatal if limitations query fails
+    }
+
+    return profiles;
   }
 
   /// Get users with minimal proplist; gracefully handles RouterOS 7.18+ !empty

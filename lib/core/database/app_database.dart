@@ -69,7 +69,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.connection);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration {
@@ -184,6 +184,19 @@ class AppDatabase extends _$AppDatabase {
               voucherTemplatesTable, voucherTemplatesTable.targetCardType);
           await m.addColumn(
               voucherTemplatesTable, voucherTemplatesTable.configJson);
+        }
+        if (from < 5) {
+          // v5.0 -- Strict system isolation & serial number support in voucher batches
+          await m.addColumn(
+              voucherBatchesTable, voucherBatchesTable.systemType);
+          await m.addColumn(
+              voucherBatchesTable, voucherBatchesTable.serialPrefix);
+          await m.addColumn(
+              voucherBatchesTable, voucherBatchesTable.serialStart);
+          await m.addColumn(
+              voucherBatchesTable, voucherBatchesTable.serialPadding);
+          await m.addColumn(
+              voucherBatchesTable, voucherBatchesTable.serialEnd);
         }
       },
     );

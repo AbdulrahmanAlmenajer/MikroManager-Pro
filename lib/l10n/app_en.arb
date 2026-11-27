@@ -112,5 +112,21 @@
   "errorMissingPolicy": "Current user lacks API policy permissions on MikroTik router.",
   "errorGeneral": "An unexpected error occurred: {message}",
   "retry": "Retry",
-  "emptyData": "No data available"
+  "emptyData": "No data available",
+
+  "systemHotspot": "Hotspot",
+  "systemUserManager": "User Manager",
+  "previewDraft": "Preview Draft",
+  "commitVouchers": "Commit & Upload Cards to Router",
+  "cancelAndEdit": "Cancel & Edit",
+  "discardDraftTitle": "Discard Draft?",
+  "discardDraftMsg": "Are you sure you want to discard this draft? Cards will not be saved on the router.",
+  "templateEditorTitle": "Advanced Template Editor",
+  "serialNumber": "Serial Number",
+  "serialPrefix": "Serial Prefix",
+  "serialStart": "Start Serial",
+  "serialPadding": "Padding Digits",
+  "collisionDetected": "Username collision detected on the router",
+  "commitSuccess": "Vouchers committed and uploaded to router successfully!",
+  "umDiagnostics": "User Manager Diagnostics"
 }

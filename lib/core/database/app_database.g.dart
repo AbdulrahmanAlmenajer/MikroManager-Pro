@@ -685,6 +685,38 @@ class $VoucherBatchesTableTable extends VoucherBatchesTable
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
       'notes', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _systemTypeMeta =
+      const VerificationMeta('systemType');
+  @override
+  late final GeneratedColumn<String> systemType = GeneratedColumn<String>(
+      'system_type', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('hotspot'));
+  static const VerificationMeta _serialPrefixMeta =
+      const VerificationMeta('serialPrefix');
+  @override
+  late final GeneratedColumn<String> serialPrefix = GeneratedColumn<String>(
+      'serial_prefix', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _serialStartMeta =
+      const VerificationMeta('serialStart');
+  @override
+  late final GeneratedColumn<int> serialStart = GeneratedColumn<int>(
+      'serial_start', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _serialPaddingMeta =
+      const VerificationMeta('serialPadding');
+  @override
+  late final GeneratedColumn<int> serialPadding = GeneratedColumn<int>(
+      'serial_padding', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _serialEndMeta =
+      const VerificationMeta('serialEnd');
+  @override
+  late final GeneratedColumn<int> serialEnd = GeneratedColumn<int>(
+      'serial_end', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _generatedAtMeta =
       const VerificationMeta('generatedAt');
   @override
@@ -712,6 +744,11 @@ class $VoucherBatchesTableTable extends VoucherBatchesTable
         totalAmount,
         status,
         notes,
+        systemType,
+        serialPrefix,
+        serialStart,
+        serialPadding,
+        serialEnd,
         generatedAt,
         printedAt
       ];
@@ -785,6 +822,34 @@ class $VoucherBatchesTableTable extends VoucherBatchesTable
       context.handle(
           _notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
     }
+    if (data.containsKey('system_type')) {
+      context.handle(
+          _systemTypeMeta,
+          systemType.isAcceptableOrUnknown(
+              data['system_type']!, _systemTypeMeta));
+    }
+    if (data.containsKey('serial_prefix')) {
+      context.handle(
+          _serialPrefixMeta,
+          serialPrefix.isAcceptableOrUnknown(
+              data['serial_prefix']!, _serialPrefixMeta));
+    }
+    if (data.containsKey('serial_start')) {
+      context.handle(
+          _serialStartMeta,
+          serialStart.isAcceptableOrUnknown(
+              data['serial_start']!, _serialStartMeta));
+    }
+    if (data.containsKey('serial_padding')) {
+      context.handle(
+          _serialPaddingMeta,
+          serialPadding.isAcceptableOrUnknown(
+              data['serial_padding']!, _serialPaddingMeta));
+    }
+    if (data.containsKey('serial_end')) {
+      context.handle(_serialEndMeta,
+          serialEnd.isAcceptableOrUnknown(data['serial_end']!, _serialEndMeta));
+    }
     if (data.containsKey('generated_at')) {
       context.handle(
           _generatedAtMeta,
@@ -827,6 +892,16 @@ class $VoucherBatchesTableTable extends VoucherBatchesTable
           .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
       notes: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}notes']),
+      systemType: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}system_type'])!,
+      serialPrefix: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}serial_prefix']),
+      serialStart: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}serial_start']),
+      serialPadding: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}serial_padding']),
+      serialEnd: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}serial_end']),
       generatedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}generated_at'])!,
       printedAt: attachedDatabase.typeMapping
@@ -853,6 +928,11 @@ class VoucherBatchesTableData extends DataClass
   final double totalAmount;
   final String status;
   final String? notes;
+  final String systemType;
+  final String? serialPrefix;
+  final int? serialStart;
+  final int? serialPadding;
+  final int? serialEnd;
   final DateTime generatedAt;
   final DateTime? printedAt;
   const VoucherBatchesTableData(
@@ -867,6 +947,11 @@ class VoucherBatchesTableData extends DataClass
       required this.totalAmount,
       required this.status,
       this.notes,
+      required this.systemType,
+      this.serialPrefix,
+      this.serialStart,
+      this.serialPadding,
+      this.serialEnd,
       required this.generatedAt,
       this.printedAt});
   @override
@@ -884,6 +969,19 @@ class VoucherBatchesTableData extends DataClass
     map['status'] = Variable<String>(status);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
+    }
+    map['system_type'] = Variable<String>(systemType);
+    if (!nullToAbsent || serialPrefix != null) {
+      map['serial_prefix'] = Variable<String>(serialPrefix);
+    }
+    if (!nullToAbsent || serialStart != null) {
+      map['serial_start'] = Variable<int>(serialStart);
+    }
+    if (!nullToAbsent || serialPadding != null) {
+      map['serial_padding'] = Variable<int>(serialPadding);
+    }
+    if (!nullToAbsent || serialEnd != null) {
+      map['serial_end'] = Variable<int>(serialEnd);
     }
     map['generated_at'] = Variable<DateTime>(generatedAt);
     if (!nullToAbsent || printedAt != null) {
@@ -906,6 +1004,19 @@ class VoucherBatchesTableData extends DataClass
       status: Value(status),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      systemType: Value(systemType),
+      serialPrefix: serialPrefix == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serialPrefix),
+      serialStart: serialStart == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serialStart),
+      serialPadding: serialPadding == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serialPadding),
+      serialEnd: serialEnd == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serialEnd),
       generatedAt: Value(generatedAt),
       printedAt: printedAt == null && nullToAbsent
           ? const Value.absent()
@@ -928,6 +1039,11 @@ class VoucherBatchesTableData extends DataClass
       totalAmount: serializer.fromJson<double>(json['totalAmount']),
       status: serializer.fromJson<String>(json['status']),
       notes: serializer.fromJson<String?>(json['notes']),
+      systemType: serializer.fromJson<String>(json['systemType']),
+      serialPrefix: serializer.fromJson<String?>(json['serialPrefix']),
+      serialStart: serializer.fromJson<int?>(json['serialStart']),
+      serialPadding: serializer.fromJson<int?>(json['serialPadding']),
+      serialEnd: serializer.fromJson<int?>(json['serialEnd']),
       generatedAt: serializer.fromJson<DateTime>(json['generatedAt']),
       printedAt: serializer.fromJson<DateTime?>(json['printedAt']),
     );
@@ -947,6 +1063,11 @@ class VoucherBatchesTableData extends DataClass
       'totalAmount': serializer.toJson<double>(totalAmount),
       'status': serializer.toJson<String>(status),
       'notes': serializer.toJson<String?>(notes),
+      'systemType': serializer.toJson<String>(systemType),
+      'serialPrefix': serializer.toJson<String?>(serialPrefix),
+      'serialStart': serializer.toJson<int?>(serialStart),
+      'serialPadding': serializer.toJson<int?>(serialPadding),
+      'serialEnd': serializer.toJson<int?>(serialEnd),
       'generatedAt': serializer.toJson<DateTime>(generatedAt),
       'printedAt': serializer.toJson<DateTime?>(printedAt),
     };
@@ -964,6 +1085,11 @@ class VoucherBatchesTableData extends DataClass
           double? totalAmount,
           String? status,
           Value<String?> notes = const Value.absent(),
+          String? systemType,
+          Value<String?> serialPrefix = const Value.absent(),
+          Value<int?> serialStart = const Value.absent(),
+          Value<int?> serialPadding = const Value.absent(),
+          Value<int?> serialEnd = const Value.absent(),
           DateTime? generatedAt,
           Value<DateTime?> printedAt = const Value.absent()}) =>
       VoucherBatchesTableData(
@@ -978,6 +1104,13 @@ class VoucherBatchesTableData extends DataClass
         totalAmount: totalAmount ?? this.totalAmount,
         status: status ?? this.status,
         notes: notes.present ? notes.value : this.notes,
+        systemType: systemType ?? this.systemType,
+        serialPrefix:
+            serialPrefix.present ? serialPrefix.value : this.serialPrefix,
+        serialStart: serialStart.present ? serialStart.value : this.serialStart,
+        serialPadding:
+            serialPadding.present ? serialPadding.value : this.serialPadding,
+        serialEnd: serialEnd.present ? serialEnd.value : this.serialEnd,
         generatedAt: generatedAt ?? this.generatedAt,
         printedAt: printedAt.present ? printedAt.value : this.printedAt,
       );
@@ -999,6 +1132,17 @@ class VoucherBatchesTableData extends DataClass
           data.totalAmount.present ? data.totalAmount.value : this.totalAmount,
       status: data.status.present ? data.status.value : this.status,
       notes: data.notes.present ? data.notes.value : this.notes,
+      systemType:
+          data.systemType.present ? data.systemType.value : this.systemType,
+      serialPrefix: data.serialPrefix.present
+          ? data.serialPrefix.value
+          : this.serialPrefix,
+      serialStart:
+          data.serialStart.present ? data.serialStart.value : this.serialStart,
+      serialPadding: data.serialPadding.present
+          ? data.serialPadding.value
+          : this.serialPadding,
+      serialEnd: data.serialEnd.present ? data.serialEnd.value : this.serialEnd,
       generatedAt:
           data.generatedAt.present ? data.generatedAt.value : this.generatedAt,
       printedAt: data.printedAt.present ? data.printedAt.value : this.printedAt,
@@ -1019,6 +1163,11 @@ class VoucherBatchesTableData extends DataClass
           ..write('totalAmount: $totalAmount, ')
           ..write('status: $status, ')
           ..write('notes: $notes, ')
+          ..write('systemType: $systemType, ')
+          ..write('serialPrefix: $serialPrefix, ')
+          ..write('serialStart: $serialStart, ')
+          ..write('serialPadding: $serialPadding, ')
+          ..write('serialEnd: $serialEnd, ')
           ..write('generatedAt: $generatedAt, ')
           ..write('printedAt: $printedAt')
           ..write(')'))
@@ -1038,6 +1187,11 @@ class VoucherBatchesTableData extends DataClass
       totalAmount,
       status,
       notes,
+      systemType,
+      serialPrefix,
+      serialStart,
+      serialPadding,
+      serialEnd,
       generatedAt,
       printedAt);
   @override
@@ -1055,6 +1209,11 @@ class VoucherBatchesTableData extends DataClass
           other.totalAmount == this.totalAmount &&
           other.status == this.status &&
           other.notes == this.notes &&
+          other.systemType == this.systemType &&
+          other.serialPrefix == this.serialPrefix &&
+          other.serialStart == this.serialStart &&
+          other.serialPadding == this.serialPadding &&
+          other.serialEnd == this.serialEnd &&
           other.generatedAt == this.generatedAt &&
           other.printedAt == this.printedAt);
 }
@@ -1072,6 +1231,11 @@ class VoucherBatchesTableCompanion
   final Value<double> totalAmount;
   final Value<String> status;
   final Value<String?> notes;
+  final Value<String> systemType;
+  final Value<String?> serialPrefix;
+  final Value<int?> serialStart;
+  final Value<int?> serialPadding;
+  final Value<int?> serialEnd;
   final Value<DateTime> generatedAt;
   final Value<DateTime?> printedAt;
   const VoucherBatchesTableCompanion({
@@ -1086,6 +1250,11 @@ class VoucherBatchesTableCompanion
     this.totalAmount = const Value.absent(),
     this.status = const Value.absent(),
     this.notes = const Value.absent(),
+    this.systemType = const Value.absent(),
+    this.serialPrefix = const Value.absent(),
+    this.serialStart = const Value.absent(),
+    this.serialPadding = const Value.absent(),
+    this.serialEnd = const Value.absent(),
     this.generatedAt = const Value.absent(),
     this.printedAt = const Value.absent(),
   });
@@ -1101,6 +1270,11 @@ class VoucherBatchesTableCompanion
     this.totalAmount = const Value.absent(),
     this.status = const Value.absent(),
     this.notes = const Value.absent(),
+    this.systemType = const Value.absent(),
+    this.serialPrefix = const Value.absent(),
+    this.serialStart = const Value.absent(),
+    this.serialPadding = const Value.absent(),
+    this.serialEnd = const Value.absent(),
     this.generatedAt = const Value.absent(),
     this.printedAt = const Value.absent(),
   })  : routerId = Value(routerId),
@@ -1119,6 +1293,11 @@ class VoucherBatchesTableCompanion
     Expression<double>? totalAmount,
     Expression<String>? status,
     Expression<String>? notes,
+    Expression<String>? systemType,
+    Expression<String>? serialPrefix,
+    Expression<int>? serialStart,
+    Expression<int>? serialPadding,
+    Expression<int>? serialEnd,
     Expression<DateTime>? generatedAt,
     Expression<DateTime>? printedAt,
   }) {
@@ -1134,6 +1313,11 @@ class VoucherBatchesTableCompanion
       if (totalAmount != null) 'total_amount': totalAmount,
       if (status != null) 'status': status,
       if (notes != null) 'notes': notes,
+      if (systemType != null) 'system_type': systemType,
+      if (serialPrefix != null) 'serial_prefix': serialPrefix,
+      if (serialStart != null) 'serial_start': serialStart,
+      if (serialPadding != null) 'serial_padding': serialPadding,
+      if (serialEnd != null) 'serial_end': serialEnd,
       if (generatedAt != null) 'generated_at': generatedAt,
       if (printedAt != null) 'printed_at': printedAt,
     });
@@ -1151,6 +1335,11 @@ class VoucherBatchesTableCompanion
       Value<double>? totalAmount,
       Value<String>? status,
       Value<String?>? notes,
+      Value<String>? systemType,
+      Value<String?>? serialPrefix,
+      Value<int?>? serialStart,
+      Value<int?>? serialPadding,
+      Value<int?>? serialEnd,
       Value<DateTime>? generatedAt,
       Value<DateTime?>? printedAt}) {
     return VoucherBatchesTableCompanion(
@@ -1165,6 +1354,11 @@ class VoucherBatchesTableCompanion
       totalAmount: totalAmount ?? this.totalAmount,
       status: status ?? this.status,
       notes: notes ?? this.notes,
+      systemType: systemType ?? this.systemType,
+      serialPrefix: serialPrefix ?? this.serialPrefix,
+      serialStart: serialStart ?? this.serialStart,
+      serialPadding: serialPadding ?? this.serialPadding,
+      serialEnd: serialEnd ?? this.serialEnd,
       generatedAt: generatedAt ?? this.generatedAt,
       printedAt: printedAt ?? this.printedAt,
     );
@@ -1206,6 +1400,21 @@ class VoucherBatchesTableCompanion
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
+    if (systemType.present) {
+      map['system_type'] = Variable<String>(systemType.value);
+    }
+    if (serialPrefix.present) {
+      map['serial_prefix'] = Variable<String>(serialPrefix.value);
+    }
+    if (serialStart.present) {
+      map['serial_start'] = Variable<int>(serialStart.value);
+    }
+    if (serialPadding.present) {
+      map['serial_padding'] = Variable<int>(serialPadding.value);
+    }
+    if (serialEnd.present) {
+      map['serial_end'] = Variable<int>(serialEnd.value);
+    }
     if (generatedAt.present) {
       map['generated_at'] = Variable<DateTime>(generatedAt.value);
     }
@@ -1229,6 +1438,11 @@ class VoucherBatchesTableCompanion
           ..write('totalAmount: $totalAmount, ')
           ..write('status: $status, ')
           ..write('notes: $notes, ')
+          ..write('systemType: $systemType, ')
+          ..write('serialPrefix: $serialPrefix, ')
+          ..write('serialStart: $serialStart, ')
+          ..write('serialPadding: $serialPadding, ')
+          ..write('serialEnd: $serialEnd, ')
           ..write('generatedAt: $generatedAt, ')
           ..write('printedAt: $printedAt')
           ..write(')'))
@@ -12246,6 +12460,11 @@ typedef $$VoucherBatchesTableTableCreateCompanionBuilder
   Value<double> totalAmount,
   Value<String> status,
   Value<String?> notes,
+  Value<String> systemType,
+  Value<String?> serialPrefix,
+  Value<int?> serialStart,
+  Value<int?> serialPadding,
+  Value<int?> serialEnd,
   Value<DateTime> generatedAt,
   Value<DateTime?> printedAt,
 });
@@ -12262,6 +12481,11 @@ typedef $$VoucherBatchesTableTableUpdateCompanionBuilder
   Value<double> totalAmount,
   Value<String> status,
   Value<String?> notes,
+  Value<String> systemType,
+  Value<String?> serialPrefix,
+  Value<int?> serialStart,
+  Value<int?> serialPadding,
+  Value<int?> serialEnd,
   Value<DateTime> generatedAt,
   Value<DateTime?> printedAt,
 });
@@ -12307,6 +12531,21 @@ class $$VoucherBatchesTableTableFilterComposer
 
   ColumnFilters<String> get notes => $composableBuilder(
       column: $table.notes, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get systemType => $composableBuilder(
+      column: $table.systemType, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get serialPrefix => $composableBuilder(
+      column: $table.serialPrefix, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get serialStart => $composableBuilder(
+      column: $table.serialStart, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get serialPadding => $composableBuilder(
+      column: $table.serialPadding, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get serialEnd => $composableBuilder(
+      column: $table.serialEnd, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get generatedAt => $composableBuilder(
       column: $table.generatedAt, builder: (column) => ColumnFilters(column));
@@ -12358,6 +12597,23 @@ class $$VoucherBatchesTableTableOrderingComposer
   ColumnOrderings<String> get notes => $composableBuilder(
       column: $table.notes, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get systemType => $composableBuilder(
+      column: $table.systemType, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get serialPrefix => $composableBuilder(
+      column: $table.serialPrefix,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get serialStart => $composableBuilder(
+      column: $table.serialStart, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get serialPadding => $composableBuilder(
+      column: $table.serialPadding,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get serialEnd => $composableBuilder(
+      column: $table.serialEnd, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get generatedAt => $composableBuilder(
       column: $table.generatedAt, builder: (column) => ColumnOrderings(column));
 
@@ -12407,6 +12663,21 @@ class $$VoucherBatchesTableTableAnnotationComposer
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
 
+  GeneratedColumn<String> get systemType => $composableBuilder(
+      column: $table.systemType, builder: (column) => column);
+
+  GeneratedColumn<String> get serialPrefix => $composableBuilder(
+      column: $table.serialPrefix, builder: (column) => column);
+
+  GeneratedColumn<int> get serialStart => $composableBuilder(
+      column: $table.serialStart, builder: (column) => column);
+
+  GeneratedColumn<int> get serialPadding => $composableBuilder(
+      column: $table.serialPadding, builder: (column) => column);
+
+  GeneratedColumn<int> get serialEnd =>
+      $composableBuilder(column: $table.serialEnd, builder: (column) => column);
+
   GeneratedColumn<DateTime> get generatedAt => $composableBuilder(
       column: $table.generatedAt, builder: (column) => column);
 
@@ -12455,6 +12726,11 @@ class $$VoucherBatchesTableTableTableManager extends RootTableManager<
             Value<double> totalAmount = const Value.absent(),
             Value<String> status = const Value.absent(),
             Value<String?> notes = const Value.absent(),
+            Value<String> systemType = const Value.absent(),
+            Value<String?> serialPrefix = const Value.absent(),
+            Value<int?> serialStart = const Value.absent(),
+            Value<int?> serialPadding = const Value.absent(),
+            Value<int?> serialEnd = const Value.absent(),
             Value<DateTime> generatedAt = const Value.absent(),
             Value<DateTime?> printedAt = const Value.absent(),
           }) =>
@@ -12470,6 +12746,11 @@ class $$VoucherBatchesTableTableTableManager extends RootTableManager<
             totalAmount: totalAmount,
             status: status,
             notes: notes,
+            systemType: systemType,
+            serialPrefix: serialPrefix,
+            serialStart: serialStart,
+            serialPadding: serialPadding,
+            serialEnd: serialEnd,
             generatedAt: generatedAt,
             printedAt: printedAt,
           ),
@@ -12485,6 +12766,11 @@ class $$VoucherBatchesTableTableTableManager extends RootTableManager<
             Value<double> totalAmount = const Value.absent(),
             Value<String> status = const Value.absent(),
             Value<String?> notes = const Value.absent(),
+            Value<String> systemType = const Value.absent(),
+            Value<String?> serialPrefix = const Value.absent(),
+            Value<int?> serialStart = const Value.absent(),
+            Value<int?> serialPadding = const Value.absent(),
+            Value<int?> serialEnd = const Value.absent(),
             Value<DateTime> generatedAt = const Value.absent(),
             Value<DateTime?> printedAt = const Value.absent(),
           }) =>
@@ -12500,6 +12786,11 @@ class $$VoucherBatchesTableTableTableManager extends RootTableManager<
             totalAmount: totalAmount,
             status: status,
             notes: notes,
+            systemType: systemType,
+            serialPrefix: serialPrefix,
+            serialStart: serialStart,
+            serialPadding: serialPadding,
+            serialEnd: serialEnd,
             generatedAt: generatedAt,
             printedAt: printedAt,
           ),

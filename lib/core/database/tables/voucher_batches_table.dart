@@ -12,6 +12,12 @@ class VoucherBatchesTable extends Table {
   RealColumn get totalAmount => real().withDefault(const Constant(0.0))();
   TextColumn get status => text().withDefault(const Constant('generated'))();
   TextColumn get notes => text().nullable()();
+  TextColumn get systemType =>
+      text().withDefault(const Constant('hotspot'))(); // 'hotspot', 'usermanV6', 'usermanV7'
+  TextColumn get serialPrefix => text().nullable()();
+  IntColumn get serialStart => integer().nullable()();
+  IntColumn get serialPadding => integer().nullable()();
+  IntColumn get serialEnd => integer().nullable()();
   DateTimeColumn get generatedAt =>
       dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get printedAt => dateTime().nullable()();

@@ -9,6 +9,8 @@ class UmProfileModel {
   final String? startsWhen;
   final String? overrideSharedUsers;
   final String? rateLimit;
+  final String? uptimeLimit;
+  final String? transferLimit;
   final int usersCount;
   final int activeSessionsCount;
   final bool isV7;
@@ -24,6 +26,8 @@ class UmProfileModel {
     this.startsWhen,
     this.overrideSharedUsers,
     this.rateLimit,
+    this.uptimeLimit,
+    this.transferLimit,
     this.usersCount = 0,
     this.activeSessionsCount = 0,
     this.isV7 = true,
@@ -65,7 +69,10 @@ class UmProfileModel {
       sharedUsers: parsedSharedUsers,
       startsWhen: map['starts-when']?.toString(),
       overrideSharedUsers: map['override-shared-users']?.toString(),
-      rateLimit: map['rate-limit']?.toString(),
+      rateLimit: (map['rate-limit'] ?? map['rateLimit'])?.toString(),
+      uptimeLimit: (map['uptime-limit'] ?? map['uptimeLimit'])?.toString(),
+      transferLimit:
+          (map['transfer-limit'] ?? map['transferLimit'])?.toString(),
       usersCount: usersCount,
       activeSessionsCount: activeSessionsCount,
       isV7: isV7,
@@ -83,6 +90,8 @@ class UmProfileModel {
     String? startsWhen,
     String? overrideSharedUsers,
     String? rateLimit,
+    String? uptimeLimit,
+    String? transferLimit,
     int? usersCount,
     int? activeSessionsCount,
     bool? isV7,
@@ -98,6 +107,8 @@ class UmProfileModel {
       startsWhen: startsWhen ?? this.startsWhen,
       overrideSharedUsers: overrideSharedUsers ?? this.overrideSharedUsers,
       rateLimit: rateLimit ?? this.rateLimit,
+      uptimeLimit: uptimeLimit ?? this.uptimeLimit,
+      transferLimit: transferLimit ?? this.transferLimit,
       usersCount: usersCount ?? this.usersCount,
       activeSessionsCount: activeSessionsCount ?? this.activeSessionsCount,
       isV7: isV7 ?? this.isV7,
@@ -115,6 +126,11 @@ class UmProfileModel {
         'startsWhen': startsWhen,
         'overrideSharedUsers': overrideSharedUsers,
         'rateLimit': rateLimit,
+        'rate-limit': rateLimit,
+        'uptimeLimit': uptimeLimit,
+        'uptime-limit': uptimeLimit,
+        'transferLimit': transferLimit,
+        'transfer-limit': transferLimit,
         'usersCount': usersCount,
         'activeSessionsCount': activeSessionsCount,
         'isV7': isV7,
@@ -131,7 +147,10 @@ class UmProfileModel {
       sharedUsers: (json['sharedUsers'] as num?)?.toInt() ?? 1,
       startsWhen: json['startsWhen'] as String?,
       overrideSharedUsers: json['overrideSharedUsers'] as String?,
-      rateLimit: json['rateLimit'] as String?,
+      rateLimit: (json['rateLimit'] ?? json['rate-limit']) as String?,
+      uptimeLimit: (json['uptimeLimit'] ?? json['uptime-limit']) as String?,
+      transferLimit:
+          (json['transferLimit'] ?? json['transfer-limit']) as String?,
       usersCount: (json['usersCount'] as num?)?.toInt() ?? 0,
       activeSessionsCount: (json['activeSessionsCount'] as num?)?.toInt() ?? 0,
       isV7: json['isV7'] as bool? ?? true,

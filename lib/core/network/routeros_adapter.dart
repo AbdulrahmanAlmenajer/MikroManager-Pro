@@ -375,6 +375,9 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
         commandTimeout: _kUmTableTimeout,
       );
       if (res.isSuccess) return res.data;
+      throw RouterOsProtocolException(
+        'تعذّر جلب بروفايلات User Manager v7: ${res.errorMessage ?? "تأكد من تفعيل حزمة user-manager وصلاحيات المستخدم"}',
+      );
     }
 
     final res = await _client.executeSentence(
@@ -383,7 +386,7 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
     );
     if (!res.isSuccess) {
       throw RouterOsProtocolException(
-        'تعذّر جلب بروفايلات User Manager: ${res.errorMessage ?? "خطأ غير معروف"}',
+        'تعذّر جلب بروفايلات User Manager v6: ${res.errorMessage ?? "تأكد من تثبيت وتفعيل حزمة user-manager"}',
       );
     }
     return res.data;

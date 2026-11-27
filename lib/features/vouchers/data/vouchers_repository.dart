@@ -11,22 +11,38 @@ class VouchersRepository {
 
   VouchersRepository(this._db, this._auditLogger);
 
-  Stream<List<VoucherBatchesTableData>> watchBatches() {
-    return (_db.select(_db.voucherBatchesTable)
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.generatedAt, mode: OrderingMode.desc)
-          ]))
-        .watch();
+  Stream<List<VoucherBatchesTableData>> watchBatches({String? systemType}) {
+    final query = _db.select(_db.voucherBatchesTable);
+    if (systemType != null && systemType.isNotEmpty) {
+      query.where((t) => t.systemType.equals(systemType));
+    }
+    query.orderBy([
+      (t) => OrderingTerm(expression: t.generatedAt, mode: OrderingMode.desc)
+    ]);
+    return query.watch();
   }
 
-  Future<List<VoucherBatchesTableData>> getBatches() async {
-    return await (_db.select(_db.voucherBatchesTable)
-          ..orderBy([
-            (t) =>
-                OrderingTerm(expression: t.generatedAt, mode: OrderingMode.desc)
-          ]))
-        .get();
+  Future<List<VoucherBatchesTableData>> getBatches({String? systemType}) async {
+    final query = _db.select(_db.voucherBatchesTable);
+    if (systemType != null && systemType.isNotEmpty) {
+      query.where((t) => t.systemType.equals(systemType));
+    }
+    query.orderBy([
+      (t) => OrderingTerm(expression: t.generatedAt, mode: OrderingMode.desc)
+    ]);
+    return await query.get();
+  }
+
+  Future<int?> getLastSerialEnd(int routerId) async {
+    final query = _db.select(_db.voucherBatchesTable)
+      ..where((t) => t.routerId.equals(routerId))
+      ..where((t) => t.serialEnd.isNotNull())
+      ..orderBy([
+        (t) => OrderingTerm(expression: t.serialEnd, mode: OrderingMode.desc)
+      ])
+      ..limit(1);
+    final batch = await query.getSingleOrNull();
+    return batch?.serialEnd;
   }
 
   Future<int> saveBatch({
@@ -37,6 +53,11 @@ class VouchersRepository {
     required int codeLength,
     required List<VoucherCardData> vouchers,
     required double unitPrice,
+    String systemType = 'hotspot',
+    String? serialPrefix,
+    int? serialStart,
+    int? serialPadding,
+    int? serialEnd,
     String? notes,
   }) async {
     final vouchersJson = jsonEncode(vouchers.map((v) => v.toJson()).toList());
@@ -52,6 +73,11 @@ class VouchersRepository {
             vouchersJson: vouchersJson,
             unitPrice: Value(unitPrice),
             totalAmount: Value(totalAmount),
+            systemType: Value(systemType),
+            serialPrefix: Value(serialPrefix),
+            serialStart: Value(serialStart),
+            serialPadding: Value(serialPadding),
+            serialEnd: Value(serialEnd),
             notes: Value(notes),
             generatedAt: Value(DateTime.now()),
           ),
@@ -62,7 +88,7 @@ class VouchersRepository {
       entityType: 'voucher_batch',
       entityId: id.toString(),
       description:
-          'توليد دفعة كروت جديدة (#$id): $quantity كرت لبروفايل $profileName بإجمالي $totalAmount',
+          'توليد دفعة كروت جديدة (#$id - $systemType): $quantity كرت لبروفايل $profileName بإجمالي $totalAmount',
     );
 
     return id;
@@ -83,11 +109,12 @@ class VouchersRepository {
     return deleted > 0;
   }
 
-  /// Upload batch directly to router in batches of 50 with progress
+  /// Upload batch directly to router in batches of 50 with progress and serial comments
   Future<int> uploadToRouter({
     required RouterOsAdapter adapter,
     required List<VoucherCardData> vouchers,
     required bool isUserManager,
+    String batchTag = 'MikroManager-Batch',
     void Function(int current, int total)? onProgress,
     bool Function()? isCancelled,
   }) async {
@@ -102,26 +129,68 @@ class VouchersRepository {
 
       for (final voucher in chunk) {
         if (isCancelled != null && isCancelled()) break;
+        final serialTag = (voucher.serialNumber != null &&
+                voucher.serialNumber!.isNotEmpty)
+            ? '|SN:${voucher.serialNumber}'
+            : '';
+        final comment = '$batchTag$serialTag';
+
         bool ok;
         if (isUserManager) {
           ok = await adapter.addUserManagerUser(
             username: voucher.username,
             password: voucher.password,
             profile: voucher.profile,
-            comment: 'MikroManager-Batch',
+            comment: comment,
           );
         } else {
           ok = await adapter.addHotspotUser(
             name: voucher.username,
             password: voucher.password,
             profile: voucher.profile,
-            comment: 'MikroManager-Batch',
+            comment: comment,
           );
         }
         if (ok) successCount++;
       }
-      onProgress?.call(successCount, vouchers.length);
+
+      onProgress?.call(
+          successCount, vouchers.length);
     }
+
     return successCount;
+  }
+
+  /// Check whether any of the candidate usernames already exist on the router
+  Future<List<String>> checkUsernameCollisions({
+    required RouterOsAdapter adapter,
+    required List<String> usernames,
+    required bool isUserManager,
+  }) async {
+    final collisions = <String>[];
+    try {
+      if (isUserManager) {
+        final existing = await adapter.getUserManagerUsers();
+        final existingNames = existing
+            .map((u) => (u['name'] ?? u['username'] ?? '').toString())
+            .where((s) => s.isNotEmpty)
+            .toSet();
+        for (final u in usernames) {
+          if (existingNames.contains(u)) collisions.add(u);
+        }
+      } else {
+        final existing = await adapter.getHotspotUsers();
+        final existingNames = existing
+            .map((u) => (u['name'] ?? '').toString())
+            .where((s) => s.isNotEmpty)
+            .toSet();
+        for (final u in usernames) {
+          if (existingNames.contains(u)) collisions.add(u);
+        }
+      }
+    } catch (_) {
+      // If fetching full list fails or is unsupported, allow proceed
+    }
+    return collisions;
   }
 }

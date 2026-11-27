@@ -78,7 +78,8 @@ class _CardInquiryScreenState extends ConsumerState<CardInquiryScreen> {
                             textInputAction: TextInputAction.search,
                             onSubmitted: (_) => _runDiagnosis(),
                             decoration: InputDecoration(
-                              hintText: 'مثال: card_105 أو 77123456',
+                              hintText:
+                                  'اسم الكرت أو الرقم التسلسلي (مثال: 77123456 أو SN-0001)',
                               prefixIcon: const Icon(
                                   Icons.confirmation_number_outlined),
                               suffixIcon: _searchController.text.isNotEmpty

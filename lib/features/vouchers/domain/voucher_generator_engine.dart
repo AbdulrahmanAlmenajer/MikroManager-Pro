@@ -18,7 +18,7 @@ class VoucherGeneratorEngine {
   static const String _safeAlphanumeric = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
   static const String _safeAlpha = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 
-  /// Generate a batch of unique voucher cards
+  /// Generate a batch of unique voucher cards with optional sequential serial numbers
   static List<VoucherCardData> generateBatch({
     required int quantity,
     required String profile,
@@ -32,6 +32,10 @@ class VoucherGeneratorEngine {
     VoucherCodeType passwordCodeType = VoucherCodeType.numeric,
     String? validity,
     String? networkName,
+    bool enableSerial = false,
+    String serialPrefix = 'SN-',
+    int serialStart = 1,
+    int serialPadding = 4,
   }) {
     final Random random = Random.secure();
     final Set<String> generatedCodes = {};
@@ -62,6 +66,7 @@ class VoucherGeneratorEngine {
     final targetLength = codeLength - prefix.length;
     final int safeTargetLength = targetLength > 0 ? targetLength : 4;
 
+    int serialIndex = 0;
     while (vouchers.length < quantity) {
       final StringBuffer codeBuffer = StringBuffer(prefix);
       for (int i = 0; i < safeTargetLength; i++) {
@@ -90,6 +95,11 @@ class VoucherGeneratorEngine {
             break;
         }
 
+        final serial = enableSerial
+            ? '$serialPrefix${(serialStart + serialIndex).toString().padLeft(serialPadding, '0')}'
+            : null;
+        serialIndex++;
+
         vouchers.add(
           VoucherCardData(
             username: code,
@@ -98,6 +108,7 @@ class VoucherGeneratorEngine {
             price: price,
             validity: validity,
             networkName: networkName,
+            serialNumber: serial,
           ),
         );
       }

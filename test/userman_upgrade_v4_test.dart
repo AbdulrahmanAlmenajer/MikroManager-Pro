@@ -270,5 +270,30 @@ void main() {
       expect(thermalBytes, isA<Uint8List>());
       expect(thermalBytes.length, greaterThan(500));
     });
+
+    test('UmProfileModel stores and exposes uptimeLimit and transferLimit', () {
+      const profile = UmProfileModel(
+        id: '*P2',
+        name: 'Limited_Profile',
+        price: 500.0,
+        validity: '1d',
+        rateLimit: '2M/2M',
+        uptimeLimit: '12h',
+        transferLimit: '5GiB',
+        isV7: true,
+      );
+
+      expect(profile.uptimeLimit, equals('12h'));
+      expect(profile.transferLimit, equals('5GiB'));
+      expect(profile.rateLimit, equals('2M/2M'));
+
+      final json = profile.toJson();
+      expect(json['uptime-limit'], equals('12h'));
+      expect(json['transfer-limit'], equals('5GiB'));
+
+      final fromJson = UmProfileModel.fromJson(json);
+      expect(fromJson.uptimeLimit, equals('12h'));
+      expect(fromJson.transferLimit, equals('5GiB'));
+    });
   });
 }

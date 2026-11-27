@@ -16,6 +16,8 @@ class CardsToolItem {
   final CardsToolCategory category;
   final String route;
   final Object? extra;
+  final String? badge;
+  final Color? badgeColor;
 
   const CardsToolItem({
     required this.id,
@@ -26,6 +28,8 @@ class CardsToolItem {
     required this.category,
     required this.route,
     this.extra,
+    this.badge,
+    this.badgeColor,
   });
 }
 
@@ -51,6 +55,9 @@ class _CardsHubScreenState extends ConsumerState<CardsHubScreen> {
       iconColor: AppColors.cyanAccent,
       category: CardsToolCategory.create,
       route: '/vouchers/generate',
+      extra: {'isUserManager': false},
+      badge: 'Hotspot',
+      badgeColor: AppColors.cyanAccent,
     ),
     CardsToolItem(
       id: 'userman_generator',
@@ -60,16 +67,21 @@ class _CardsHubScreenState extends ConsumerState<CardsHubScreen> {
       iconColor: Color(0xFF8B5CF6),
       category: CardsToolCategory.create,
       route: '/vouchers/generate',
+      extra: {'isUserManager': true},
+      badge: 'User Manager',
+      badgeColor: Color(0xFF8B5CF6),
     ),
     CardsToolItem(
       id: 'card_inquiry',
       title: 'فاحص سلامة الكرت (تشخيص فوري)',
       subtitle:
-          'الاستعلام عن حالة الكرت، الماك المرتبط، الرصيد المتبقي وفصل الارتباط',
+          'الاستعلام عن حالة الكرت، الماك المرتبط، الرصيد المتبقي والبحث بالرقم التسلسلي',
       icon: Icons.search_rounded,
       iconColor: AppColors.success,
       category: CardsToolCategory.manage,
       route: '/card-inquiry',
+      badge: 'شامل',
+      badgeColor: AppColors.success,
     ),
     CardsToolItem(
       id: 'userman_manager',
@@ -79,6 +91,8 @@ class _CardsHubScreenState extends ConsumerState<CardsHubScreen> {
       iconColor: Color(0xFFF97316),
       category: CardsToolCategory.manage,
       route: '/userman',
+      badge: 'User Manager',
+      badgeColor: Color(0xFF8B5CF6),
     ),
     CardsToolItem(
       id: 'um_diagnostic',
@@ -88,6 +102,8 @@ class _CardsHubScreenState extends ConsumerState<CardsHubScreen> {
       iconColor: Color(0xFFEC4899),
       category: CardsToolCategory.manage,
       route: '/um-diagnostic',
+      badge: 'User Manager',
+      badgeColor: Color(0xFFEC4899),
     ),
     CardsToolItem(
       id: 'template_gallery',
@@ -97,6 +113,8 @@ class _CardsHubScreenState extends ConsumerState<CardsHubScreen> {
       iconColor: Color(0xFF3B82F6),
       category: CardsToolCategory.files,
       route: '/templates',
+      badge: 'طباعة',
+      badgeColor: Color(0xFF3B82F6),
     ),
     CardsToolItem(
       id: 'pdf_archive',
@@ -107,6 +125,8 @@ class _CardsHubScreenState extends ConsumerState<CardsHubScreen> {
       iconColor: AppColors.danger,
       category: CardsToolCategory.files,
       route: '/pdf-archive',
+      badge: 'أرشيف',
+      badgeColor: AppColors.danger,
     ),
   ];
 
@@ -144,7 +164,7 @@ class _CardsHubScreenState extends ConsumerState<CardsHubScreen> {
               child: Chip(
                 avatar: const Icon(Icons.router, size: 16, color: Colors.white),
                 label: Text(
-                  activeRouter.name,
+                  '${activeRouter.name}${activeRouter.routerOsVersion != null ? " (${activeRouter.routerOsVersion})" : ""}',
                   style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -218,34 +238,29 @@ class _CardsHubScreenState extends ConsumerState<CardsHubScreen> {
               builder: (context, snapshot) {
                 final tasks = snapshot.data ?? [];
                 if (tasks.isEmpty) return const SizedBox.shrink();
-
-                final firstTask = tasks.first;
+                final task = tasks.first;
                 return Container(
-                  margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  width: double.infinity,
+                  color: AppColors.warning.withValues(alpha: 0.15),
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppColors.warning.withValues(alpha: 0.15),
-                    border: Border.all(color: AppColors.warning),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Row(
                     children: [
-                      const Icon(Icons.restore_page,
-                          color: AppColors.warning, size: 24),
+                      const Icon(Icons.warning_amber_rounded,
+                          color: AppColors.warning),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          'يوجد دفعة كروت معلقة (${firstTask.processedItems}/${firstTask.totalItems}) يمكنك استئنافها.',
+                          'توجد عملية رفع كروت غير مكتملة (${task.processedItems}/${task.totalItems})',
                           style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFFB45309)),
+                              color: AppColors.warning),
                         ),
                       ),
                       TextButton(
-                        onPressed: () => context.push('/vouchers'),
-                        child: const Text('متابعة الدفعة'),
+                        onPressed: () => context.push('/task-resume', extra: task),
+                        child: const Text('استئناف'),
                       ),
                     ],
                   ),
@@ -253,7 +268,7 @@ class _CardsHubScreenState extends ConsumerState<CardsHubScreen> {
               },
             ),
 
-          // Tools Grid / List
+          // Tool Cards Grid/List
           Expanded(
             child: filteredTools.isEmpty
                 ? Center(
@@ -262,12 +277,11 @@ class _CardsHubScreenState extends ConsumerState<CardsHubScreen> {
                       children: [
                         Icon(Icons.search_off,
                             size: 64,
-                            color:
-                                AppColors.textSecondary.withValues(alpha: 0.4)),
+                            color: AppColors.textSecondary.withValues(alpha: 0.5)),
                         const SizedBox(height: 12),
-                        Text(
-                          'لا توجد أدوات مطابقة لبحثك "$_searchQuery"',
-                          style: const TextStyle(
+                        const Text(
+                          'لم يتم العثور على أداة مطابقة للبحث',
+                          style: TextStyle(
                               fontSize: 15, color: AppColors.textSecondary),
                         ),
                       ],
@@ -328,13 +342,42 @@ class _CardsHubScreenState extends ConsumerState<CardsHubScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      tool.title,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          tool.title,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        if (tool.badge != null) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: (tool.badgeColor ?? AppColors.cyanAccent)
+                                  .withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: (tool.badgeColor ?? AppColors.cyanAccent)
+                                    .withValues(alpha: 0.5),
+                                width: 0.8,
+                              ),
+                            ),
+                            child: Text(
+                              tool.badge!,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: tool.badgeColor ?? AppColors.cyanAccent,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Text(

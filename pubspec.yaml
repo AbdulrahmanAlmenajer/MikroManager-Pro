@@ -1,7 +1,7 @@
 name: mikro_manager_pro
 description: تطبيق إدارة وطباعة كروت الميكروتك - MikroManager Pro
 publish_to: 'none'
-version: 4.0.0+4
+version: 5.0.0+5
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

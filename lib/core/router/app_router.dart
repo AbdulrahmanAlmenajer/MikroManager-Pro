@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../database/app_database.dart';
 import '../../l10n/app_localizations.dart';
 import '../session/session_controller.dart';
 import 'route_guard.dart';
@@ -10,6 +11,7 @@ import '../../features/dashboard/presentation/interfaces_traffic_screen.dart';
 import '../../features/subscribers/presentation/subscribers_screen.dart';
 import '../../features/subscribers/presentation/card_inquiry_screen.dart';
 import '../../features/vouchers/presentation/template_gallery_screen.dart';
+import '../../features/vouchers/presentation/template_editor_screen.dart';
 import '../../features/vouchers/presentation/pdf_archive_screen.dart';
 import '../../features/hotspot/presentation/hotspot_screen.dart';
 import '../../features/vouchers/presentation/voucher_generator_screen.dart';
@@ -88,7 +90,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // مسارات الشاشات الفرعية والخدمات
       GoRoute(
         path: '/vouchers/generate',
-        builder: (context, state) => const VoucherGeneratorScreen(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final isUm = extra?['isUserManager'] as bool? ?? false;
+          return VoucherGeneratorScreen(initialIsUserManager: isUm);
+        },
       ),
       GoRoute(
         path: '/card-inquiry',
@@ -133,6 +139,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/templates',
         builder: (context, state) => const TemplateGalleryScreen(),
+      ),
+      GoRoute(
+        path: '/template-editor',
+        builder: (context, state) {
+          final template = state.extra as VoucherTemplatesTableData?;
+          return TemplateEditorScreen(template: template);
+        },
       ),
       GoRoute(
         path: '/pdf-archive',

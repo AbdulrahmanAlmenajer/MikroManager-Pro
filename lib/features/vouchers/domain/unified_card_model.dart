@@ -8,6 +8,52 @@ enum CardType {
   String get labelArabic => this == CardType.hotspot ? 'هوتسبوت' : 'يوزر منجر';
 }
 
+enum CardSystemType {
+  hotspot,
+  usermanV6,
+  usermanV7;
+
+  bool get isHotspot => this == CardSystemType.hotspot;
+  bool get isUserManager => !isHotspot;
+
+  String get labelArabic {
+    switch (this) {
+      case CardSystemType.hotspot:
+        return 'هوتسبوت';
+      case CardSystemType.usermanV6:
+        return 'يوزر منجر (v6)';
+      case CardSystemType.usermanV7:
+        return 'يوزر منجر (v7)';
+    }
+  }
+
+  String get labelEnglish {
+    switch (this) {
+      case CardSystemType.hotspot:
+        return 'Hotspot';
+      case CardSystemType.usermanV6:
+        return 'User Manager (v6)';
+      case CardSystemType.usermanV7:
+        return 'User Manager (v7)';
+    }
+  }
+
+  static CardSystemType fromString(String? val) {
+    if (val == null) return CardSystemType.hotspot;
+    final lower = val.toLowerCase();
+    if (lower == 'usermanv6' || lower == 'userman_v6' || lower == 'v6') {
+      return CardSystemType.usermanV6;
+    }
+    if (lower == 'usermanv7' || lower == 'userman_v7' || lower == 'v7') {
+      return CardSystemType.usermanV7;
+    }
+    if (lower == 'userman' || lower == 'usermanager') {
+      return CardSystemType.usermanV7;
+    }
+    return CardSystemType.hotspot;
+  }
+}
+
 enum CardStatus {
   newCard,
   printed,
@@ -41,6 +87,7 @@ class UnifiedCardModel {
   final String profile;
   final double price;
   final CardType cardType;
+  final CardSystemType systemType;
   final String source; // 'router', 'local_batch'
   final CardStatus status;
   final String? validity;
@@ -57,6 +104,7 @@ class UnifiedCardModel {
   final String? notes;
   final String? comment;
   final String? networkName;
+  final String? serialNumber;
 
   const UnifiedCardModel({
     required this.id,
@@ -65,6 +113,7 @@ class UnifiedCardModel {
     required this.profile,
     required this.price,
     required this.cardType,
+    this.systemType = CardSystemType.hotspot,
     this.source = 'router',
     this.status = CardStatus.newCard,
     this.validity,
@@ -81,6 +130,7 @@ class UnifiedCardModel {
     this.notes,
     this.comment,
     this.networkName,
+    this.serialNumber,
   });
 
   bool get isUsed =>
@@ -106,6 +156,7 @@ class UnifiedCardModel {
       validity: validity,
       networkName: networkName,
       cardType: cardType == CardType.hotspot ? 'hotspot' : 'usermanager',
+      serialNumber: serialNumber,
       isPrinted: isPrinted,
     );
   }
@@ -115,6 +166,7 @@ class UnifiedCardModel {
     double price = 0.0,
     bool isPrinted = false,
     String? networkName,
+    CardSystemType? systemType,
   }) {
     CardStatus status = CardStatus.newCard;
     if (sub.isDisabled) {
@@ -127,15 +179,18 @@ class UnifiedCardModel {
       status = CardStatus.printed;
     }
 
+    final isUm = sub.type == SubscriberType.userMan;
+    final resolvedSystem = systemType ??
+        (isUm ? CardSystemType.usermanV7 : CardSystemType.hotspot);
+
     return UnifiedCardModel(
       id: sub.id,
       username: sub.username,
       password: sub.password ?? '',
       profile: sub.profile,
       price: price,
-      cardType: sub.type == SubscriberType.userMan
-          ? CardType.userMan
-          : CardType.hotspot,
+      cardType: isUm ? CardType.userMan : CardType.hotspot,
+      systemType: resolvedSystem,
       source: 'router',
       status: status,
       uptime: sub.uptime,
@@ -153,9 +208,15 @@ class UnifiedCardModel {
     VoucherCardData v, {
     String id = '',
     CardType cardType = CardType.hotspot,
+    CardSystemType? systemType,
     CardStatus status = CardStatus.newCard,
     bool isPrinted = false,
   }) {
+    final resolvedSystem = systemType ??
+        (cardType == CardType.userMan
+            ? CardSystemType.usermanV7
+            : CardSystemType.hotspot);
+
     return UnifiedCardModel(
       id: id.isNotEmpty ? id : v.username,
       username: v.username,
@@ -163,10 +224,12 @@ class UnifiedCardModel {
       profile: v.profile,
       price: v.price,
       cardType: cardType,
+      systemType: resolvedSystem,
       source: 'local_batch',
       status: isPrinted ? CardStatus.printed : status,
       validity: v.validity,
       networkName: v.networkName,
+      serialNumber: v.serialNumber,
       isPrinted: isPrinted,
     );
   }
@@ -178,6 +241,7 @@ class UnifiedCardModel {
         'profile': profile,
         'price': price,
         'cardType': cardType.name,
+        'systemType': systemType.name,
         'source': source,
         'status': status.name,
         'validity': validity,
@@ -194,6 +258,7 @@ class UnifiedCardModel {
         'notes': notes,
         'comment': comment,
         'networkName': networkName,
+        'serialNumber': serialNumber,
       };
 
   factory UnifiedCardModel.fromJson(Map<String, dynamic> json) {
@@ -207,6 +272,7 @@ class UnifiedCardModel {
           (json['cardType'] == 'userMan' || json['cardType'] == 'usermanager')
               ? CardType.userMan
               : CardType.hotspot,
+      systemType: CardSystemType.fromString(json['systemType'] as String?),
       source: json['source'] as String? ?? 'router',
       status: CardStatus.values.firstWhere(
         (e) => e.name == json['status'],
@@ -230,6 +296,7 @@ class UnifiedCardModel {
       notes: json['notes'] as String?,
       comment: json['comment'] as String?,
       networkName: json['networkName'] as String?,
+      serialNumber: json['serialNumber'] as String?,
     );
   }
 }

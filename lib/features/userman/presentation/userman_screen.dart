@@ -387,20 +387,36 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
             Text(
               isSearching
                   ? 'لا توجد بروفايلات مطابقة لبحثك "$_searchQuery"'
-                  : 'لا توجد بروفايلات مسجلة في User Manager',
+                  : (state.diagnosticDetails ??
+                      'لا توجد بروفايلات مسجلة في User Manager'),
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () =>
-                  ref.read(usermanControllerProvider.notifier).refreshAll(),
-              icon: const Icon(Icons.refresh),
-              label: const Text('تحديث البروفايلات'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () =>
+                      ref.read(usermanControllerProvider.notifier).refreshAll(),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('تحديث من الراوتر'),
+                ),
+                const SizedBox(width: 10),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFEC4899),
+                    side: const BorderSide(color: Color(0xFFEC4899)),
+                  ),
+                  onPressed: () => context.push('/um-diagnostic'),
+                  icon: const Icon(Icons.health_and_safety, size: 18),
+                  label: const Text('فحص صحة UM'),
+                ),
+              ],
             ),
           ],
         ),

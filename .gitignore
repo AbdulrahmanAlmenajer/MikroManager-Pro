@@ -44,6 +44,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/build/
+/android/.gradle/
+
+# Font downloads (variable font used as source)
+assets/fonts/Cairo-Variable.ttf
 
 # Widget Preview related
 .widget_preview/

@@ -112,5 +112,21 @@
   "errorMissingPolicy": "المستخدم الحالي لا يملك صلاحية API على راوتر الميكروتك.",
   "errorGeneral": "حدث خطأ غير متوقع: {message}",
   "retry": "إعادة المحاولة",
-  "emptyData": "لا توجد بيانات متاحة حالياً"
+  "emptyData": "لا توجد بيانات متاحة حالياً",
+
+  "systemHotspot": "هوتسبوت (Hotspot)",
+  "systemUserManager": "يوزر منجر (User Manager)",
+  "previewDraft": "معاينة قبل الاعتماد",
+  "commitVouchers": "اعتماد ورفع الكروت إلى الراوتر",
+  "cancelAndEdit": "إلغاء وتعديل",
+  "discardDraftTitle": "إلغاء المسودة؟",
+  "discardDraftMsg": "هل تريد بالتأكيد إلغاء هذه المسودة والعودة؟ لن يتم حفظ الكروت في الراوتر.",
+  "templateEditorTitle": "محرر القوالب المتقدم",
+  "serialNumber": "الرقم التسلسلي",
+  "serialPrefix": "بادئة التسلسل",
+  "serialStart": "رقم البداية",
+  "serialPadding": "الخانات",
+  "collisionDetected": "تم اكتشاف تكرار في أسماء المستخدمين على الراوتر",
+  "commitSuccess": "تم اعتماد الكروت ورفعها إلى الراوتر بنجاح!",
+  "umDiagnostics": "تشخيص User Manager"
 }

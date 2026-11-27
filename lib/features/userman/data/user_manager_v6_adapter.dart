@@ -40,8 +40,11 @@ class UserManagerV6Adapter {
         .toList();
   }
 
-  /// Get profiles filtered by customer/owner
+  /// Get profiles with dynamic customer resolution and attached limitations
   Future<List<Map<String, dynamic>>> getProfiles({String? customer}) async {
+    List<Map<String, dynamic>> profiles = [];
+
+    // Attempt 1: Fetch with specified customer, or without owner filter if not specified
     final cmd = ['/tool/user-manager/profile/print'];
     if (customer != null && customer.isNotEmpty) {
       cmd.add('?owner=$customer');
@@ -51,12 +54,86 @@ class UserManagerV6Adapter {
       withProplist(cmd, proplist),
       commandTimeout: _kUmQueryTimeout,
     );
-    if (!res.isSuccess) {
+
+    if (res.isSuccess && res.data.isNotEmpty) {
+      profiles = List<Map<String, dynamic>>.from(res.data);
+    } else if (res.isSuccess && (customer == null || customer.isEmpty)) {
+      // If no customer specified and empty, try discovering customers
+      try {
+        final customers = await getCustomers();
+        if (customers.isNotEmpty) {
+          final firstCustomer = customers.contains('admin') ? 'admin' : customers.first;
+          final fallbackRes = await client.executeSentence(
+            withProplist(['/tool/user-manager/profile/print', '?owner=$firstCustomer'], proplist),
+            commandTimeout: _kUmQueryTimeout,
+          );
+          if (fallbackRes.isSuccess) {
+            profiles = List<Map<String, dynamic>>.from(fallbackRes.data);
+          }
+        }
+      } catch (_) {}
+    } else if (!res.isSuccess) {
       throw RouterOsProtocolException(
         'تعذّر جلب بروفايلات User Manager v6: ${res.errorMessage ?? ""}',
       );
     }
-    return res.data;
+
+    // Link limitations (rate-limit, uptime-limit, transfer-limit)
+    try {
+      final profLimRes = await client.executeSentence(
+        withProplist(['/tool/user-manager/profile/profile-limitation/print'],
+            '.id,profile,limitation'),
+        commandTimeout: _kFastTimeout,
+      );
+      final limRes = await client.executeSentence(
+        withProplist(['/tool/user-manager/profile/limitation/print'],
+            '.id,name,rate-limit-rx,rate-limit-tx,uptime-limit,download-limit,upload-limit,transfer-limit'),
+        commandTimeout: _kFastTimeout,
+      );
+
+      if (profLimRes.isSuccess && limRes.isSuccess) {
+        final Map<String, Map<String, dynamic>> limMap = {};
+        for (final l in limRes.data) {
+          final name = l['name']?.toString() ?? '';
+          if (name.isNotEmpty) limMap[name] = l;
+        }
+
+        final Map<String, String> profToLim = {};
+        for (final pl in profLimRes.data) {
+          final p = pl['profile']?.toString() ?? '';
+          final l = pl['limitation']?.toString() ?? '';
+          if (p.isNotEmpty && l.isNotEmpty) {
+            profToLim[p] = l;
+          }
+        }
+
+        for (int i = 0; i < profiles.length; i++) {
+          final pName = profiles[i]['name']?.toString() ?? '';
+          final limName = profToLim[pName];
+          if (limName != null && limMap.containsKey(limName)) {
+            final lim = limMap[limName]!;
+            final rx = lim['rate-limit-rx']?.toString();
+            final tx = lim['rate-limit-tx']?.toString();
+            String? rateLimit;
+            if (rx != null && tx != null && rx.isNotEmpty && tx.isNotEmpty) {
+              rateLimit = '$rx/$tx';
+            }
+            profiles[i] = {
+              ...profiles[i],
+              if (rateLimit != null) 'rate-limit': rateLimit,
+              if (lim['uptime-limit'] != null)
+                'uptime-limit': lim['uptime-limit'],
+              if (lim['transfer-limit'] != null)
+                'transfer-limit': lim['transfer-limit'],
+            };
+          }
+        }
+      }
+    } catch (_) {
+      // Non-fatal if limitations query is unsupported or restricted
+    }
+
+    return profiles;
   }
 
   /// Get all users with minimal proplist and normalization of username -> name

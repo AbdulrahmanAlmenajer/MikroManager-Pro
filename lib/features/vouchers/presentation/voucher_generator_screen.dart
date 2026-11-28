@@ -13,10 +13,12 @@ import '../domain/vouchers_notifier.dart';
 
 class VoucherGeneratorScreen extends ConsumerStatefulWidget {
   final bool initialIsUserManager;
+  final String? initialProfile;
 
   const VoucherGeneratorScreen({
     super.key,
     this.initialIsUserManager = false,
+    this.initialProfile,
   });
 
   @override
@@ -52,6 +54,9 @@ class _VoucherGeneratorScreenState extends ConsumerState<VoucherGeneratorScreen>
   void initState() {
     super.initState();
     _isUserManager = widget.initialIsUserManager;
+    if (widget.initialProfile != null && widget.initialProfile!.isNotEmpty) {
+      _selectedProfile = widget.initialProfile!;
+    }
     _tabController = TabController(length: 2, vsync: this);
 
     // Auto-fetch next serial number

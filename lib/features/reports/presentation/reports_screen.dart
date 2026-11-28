@@ -10,6 +10,7 @@ import 'package:printing/printing.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/session/session_controller.dart';
+import '../../../core/widgets/task_progress_widget.dart';
 import '../data/reports_repository.dart';
 import '../domain/reports_notifier.dart';
 
@@ -45,70 +46,92 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
     final paymentsAsync = ref.watch(paymentsListProvider);
     final auditLogsAsync = ref.watch(auditLogsProvider);
     final cardSalesAsync = ref.watch(cardSalesListProvider);
+    final progressState = ref.watch(reportsProgressProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('التقارير والمبيعات والجرد'),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: AppColors.cyanAccent,
-          indicatorWeight: 3,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          isScrollable: true,
-          tabs: const [
-            Tab(icon: Icon(Icons.analytics_outlined), text: 'الأرقام الصادقة'),
-            Tab(
-                icon: Icon(Icons.compare_arrows_outlined),
-                text: 'مقارنة الأنظمة'),
-            Tab(
-                icon: Icon(Icons.point_of_sale_outlined),
-                text: 'المبيعات المباشرة'),
-            Tab(icon: Icon(Icons.payments_outlined), text: 'التحصيلات الفعلية'),
-            Tab(icon: Icon(Icons.price_change_outlined), text: 'تسعير الفئات'),
-            Tab(icon: Icon(Icons.history_edu_outlined), text: 'سجل العمليات'),
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          ref.read(reportsCancellationTokenProvider)?.cancel();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('التقارير والمبيعات والجرد'),
+          bottom: TabBar(
+            controller: _tabController,
+            indicatorColor: AppColors.cyanAccent,
+            indicatorWeight: 3,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            isScrollable: true,
+            tabs: const [
+              Tab(icon: Icon(Icons.analytics_outlined), text: 'الأرقام الصادقة'),
+              Tab(
+                  icon: Icon(Icons.compare_arrows_outlined),
+                  text: 'مقارنة الأنظمة'),
+              Tab(
+                  icon: Icon(Icons.point_of_sale_outlined),
+                  text: 'المبيعات المباشرة'),
+              Tab(icon: Icon(Icons.payments_outlined), text: 'التحصيلات الفعلية'),
+              Tab(icon: Icon(Icons.price_change_outlined), text: 'تسعير الفئات'),
+              Tab(icon: Icon(Icons.history_edu_outlined), text: 'سجل العمليات'),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.picture_as_pdf),
+              tooltip: 'تصدير تقرير PDF',
+              onPressed: () {
+                honestReportAsync
+                    .whenData((data) => _exportPdfHonestReport(context, data));
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.table_chart_outlined),
+              tooltip: 'تصدير ملف CSV',
+              onPressed: () {
+                honestReportAsync
+                    .whenData((data) => _exportCsvHonestReport(context, data));
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              tooltip: 'تحديث البيانات',
+              onPressed: () {
+                ref.invalidate(honestReportProvider);
+                ref.invalidate(paymentsListProvider);
+                ref.invalidate(cardSalesListProvider);
+                ref.invalidate(auditLogsProvider);
+                ref.invalidate(profilePricesListProvider);
+              },
+            ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.picture_as_pdf),
-            tooltip: 'تصدير تقرير PDF',
-            onPressed: () {
-              honestReportAsync
-                  .whenData((data) => _exportPdfHonestReport(context, data));
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.table_chart_outlined),
-            tooltip: 'تصدير ملف CSV',
-            onPressed: () {
-              honestReportAsync
-                  .whenData((data) => _exportCsvHonestReport(context, data));
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            tooltip: 'تحديث البيانات',
-            onPressed: () {
-              ref.invalidate(honestReportProvider);
-              ref.invalidate(paymentsListProvider);
-              ref.invalidate(cardSalesListProvider);
-              ref.invalidate(auditLogsProvider);
-              ref.invalidate(profilePricesListProvider);
-            },
-          ),
-        ],
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildHonestNumbersTab(honestReportAsync),
-          _buildComparisonTab(honestReportAsync),
-          _buildDirectSalesTab(cardSalesAsync),
-          _buildPaymentsTab(paymentsAsync),
-          _buildProfilePricesTab(honestReportAsync),
-          _buildAuditLogsTab(auditLogsAsync),
-        ],
+        body: Column(
+          children: [
+            if (progressState != null)
+              AppTaskProgressBanner(
+                progress: progressState,
+                onCancel: () {
+                  ref.read(reportsCancellationTokenProvider)?.cancel();
+                },
+              ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildHonestNumbersTab(honestReportAsync),
+                  _buildComparisonTab(honestReportAsync),
+                  _buildDirectSalesTab(cardSalesAsync),
+                  _buildPaymentsTab(paymentsAsync),
+                  _buildProfilePricesTab(honestReportAsync),
+                  _buildAuditLogsTab(auditLogsAsync),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -34,7 +34,9 @@
   "navSubscribers": "Subscribers",
   "navVouchers": "Vouchers",
   "navReports": "Reports",
+  "navSettings": "Settings",
   "navMore": "More",
+  "safeExit": "Safe Exit",
 
   "dashboardTitle": "Dashboard",
   "cpuUsage": "CPU Usage",

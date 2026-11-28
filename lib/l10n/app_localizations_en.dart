@@ -109,7 +109,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navReports => 'Reports';
 
   @override
+  String get navSettings => 'Settings';
+
+  @override
   String get navMore => 'More';
+
+  @override
+  String get safeExit => 'Safe Exit';
 
   @override
   String get dashboardTitle => 'Dashboard';
@@ -326,4 +332,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emptyData => 'No data available';
+
+  @override
+  String get systemHotspot => 'Hotspot';
+
+  @override
+  String get systemUserManager => 'User Manager';
+
+  @override
+  String get previewDraft => 'Preview Draft';
+
+  @override
+  String get commitVouchers => 'Commit & Upload Cards to Router';
+
+  @override
+  String get cancelAndEdit => 'Cancel & Edit';
+
+  @override
+  String get discardDraftTitle => 'Discard Draft?';
+
+  @override
+  String get discardDraftMsg =>
+      'Are you sure you want to discard this draft? Cards will not be saved on the router.';
+
+  @override
+  String get templateEditorTitle => 'Advanced Template Editor';
+
+  @override
+  String get serialNumber => 'Serial Number';
+
+  @override
+  String get serialPrefix => 'Serial Prefix';
+
+  @override
+  String get serialStart => 'Start Serial';
+
+  @override
+  String get serialPadding => 'Padding Digits';
+
+  @override
+  String get collisionDetected => 'Username collision detected on the router';
+
+  @override
+  String get commitSuccess =>
+      'Vouchers committed and uploaded to router successfully!';
+
+  @override
+  String get umDiagnostics => 'User Manager Diagnostics';
 }

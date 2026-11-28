@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/theme_provider.dart';
 import '../../../core/security/secure_storage_service.dart';
+import '../../../core/services/app_exit_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -288,6 +289,40 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
           ),
+          const SizedBox(height: 16),
+
+          // Section 5: App Exit
+          _buildSectionHeader('جلسة التطبيق', Icons.power_settings_new_rounded),
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(
+                color: AppColors.danger.withValues(alpha: 0.3),
+              ),
+            ),
+            child: ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: AppColors.danger,
+                child: Icon(Icons.power_settings_new_rounded,
+                    color: Colors.white, size: 24),
+              ),
+              title: const Text(
+                'خروج آمن من التطبيق',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.danger,
+                ),
+              ),
+              subtitle: const Text(
+                'إلغاء العمليات النشطة، إغلاق الاتصالات بأمان والخروج من التطبيق',
+                style: TextStyle(fontSize: 12),
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios,
+                  size: 14, color: AppColors.danger),
+              onTap: () => AppExitService.confirmAndExit(context, ref),
+            ),
+          ),
+          const SizedBox(height: 24),
         ],
       ),
     );

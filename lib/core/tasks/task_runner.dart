@@ -183,6 +183,27 @@ class TaskRunner {
       }).toList();
     });
   }
+
+  /// Check if there are any actively running checkpoints
+  Future<bool> hasRunningTasks() async {
+    final running = await (_db.select(_db.taskCheckpointsTable)
+          ..where((t) => t.status.equals('running'))
+          ..limit(1))
+        .get();
+    return running.isNotEmpty;
+  }
+
+  /// Cancel all currently running tasks
+  Future<void> cancelAllRunningTasks() async {
+    await (_db.update(_db.taskCheckpointsTable)
+          ..where((t) => t.status.equals('running')))
+        .write(
+      TaskCheckpointsTableCompanion(
+        status: const Value('cancelled'),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
 }
 
 final taskRunnerProvider = Provider<TaskRunner>((ref) {

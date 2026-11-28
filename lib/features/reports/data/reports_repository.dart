@@ -1,3 +1,4 @@
+import 'dart:isolate';
 import 'package:drift/drift.dart';
 import '../../../core/database/app_database.dart';
 import '../../subscribers/data/subscribers_repository.dart';
@@ -479,215 +480,28 @@ class ReportsRepository {
     required List<SubscriberModel> subscribers,
     String? resellerPrefix,
   }) async {
-    final filteredSubscribers =
-        (resellerPrefix != null && resellerPrefix.isNotEmpty)
-            ? subscribers
-                .where((s) => s.username.startsWith(resellerPrefix))
-                .toList()
-            : subscribers;
-
     final profilePrices = await getProfilePrices(connectionId);
-    final Set<String> unpriced = {};
-
-    int totalCards = filteredSubscribers.length;
-    int unusedCards = 0;
-    double unusedValue = 0.0;
-    int activeCards = 0;
-    double activeValue = 0.0;
-    int expiredCards = 0;
-
-    int hotspotCardsCount = 0;
-    double hotspotValue = 0.0;
-    int userManCardsCount = 0;
-    double userManValue = 0.0;
-    int hotspotActiveCount = 0;
-    int userManActiveCount = 0;
-
-    final Map<String, int> topHotspotProfiles = {};
-    final Map<String, int> topUserManProfiles = {};
-
-    for (final s in filteredSubscribers) {
-      final price = profilePrices[s.profile];
-      if (price == null) {
-        unpriced.add(s.profile);
-      }
-      final unitPrice = price ?? 0.0;
-
-      final isUserMan = s.type == SubscriberType.userMan;
-      if (isUserMan) {
-        userManCardsCount++;
-        userManValue += unitPrice;
-        topUserManProfiles[s.profile] =
-            (topUserManProfiles[s.profile] ?? 0) + 1;
-      } else {
-        hotspotCardsCount++;
-        hotspotValue += unitPrice;
-        topHotspotProfiles[s.profile] =
-            (topHotspotProfiles[s.profile] ?? 0) + 1;
-      }
-
-      final hasUptime =
-          s.uptime != null && s.uptime!.isNotEmpty && s.uptime != '0s';
-      final hasTraffic = (s.bytesIn + s.bytesOut) > 0;
-
-      if (s.isExpired) {
-        expiredCards++;
-      } else if (!hasUptime && !hasTraffic) {
-        unusedCards++;
-        unusedValue += unitPrice;
-      } else {
-        activeCards++;
-        activeValue += unitPrice;
-        if (isUserMan) {
-          userManActiveCount++;
-        } else {
-          hotspotActiveCount++;
-        }
-      }
-    }
-
-    final stockSummary = HonestStockSummary(
-      totalCards: totalCards,
-      unusedCards: unusedCards,
-      unusedValue: unusedValue,
-      activeCards: activeCards,
-      activeValue: activeValue,
-      expiredCards: expiredCards,
-      unpricedProfiles: unpriced.toList(),
-      hotspotCardsCount: hotspotCardsCount,
-      hotspotValue: hotspotValue,
-      userManCardsCount: userManCardsCount,
-      userManValue: userManValue,
-    );
-
-    // 3. Estimated sales from usage observations
-    final now = DateTime.now();
-    final todayStart = DateTime(now.year, now.month, now.day);
-    final sevenDaysAgo = now.subtract(const Duration(days: 7));
-    final thirtyDaysAgo = now.subtract(const Duration(days: 30));
-
     final observations = await getUsageObservations(connectionId);
-
-    final filteredObservations =
-        (resellerPrefix != null && resellerPrefix.isNotEmpty)
-            ? observations
-                .where((o) => o.cardName.startsWith(resellerPrefix))
-                .toList()
-            : observations;
-
-    HonestSalesPeriod calculatePeriod(List<UsageObservationsTableData> list) {
-      double total = 0.0;
-      bool hasApprox = false;
-      for (final item in list) {
-        final p = profilePrices[item.profile] ?? 0.0;
-        total += p;
-        if (item.dateIsApproximate) hasApprox = true;
-      }
-      return HonestSalesPeriod(
-        cardsCount: list.length,
-        totalEstimatedAmount: total,
-        hasApproximateDates: hasApprox,
-      );
-    }
-
-    final todayObs = filteredObservations
-        .where((o) => o.firstSeenAt.isAfter(todayStart))
-        .toList();
-    final weekObs = filteredObservations
-        .where((o) => o.firstSeenAt.isAfter(sevenDaysAgo))
-        .toList();
-    final monthObs = filteredObservations
-        .where((o) => o.firstSeenAt.isAfter(thirtyDaysAgo))
-        .toList();
-
-    // Breakdown by type
-    double hotspotRevenue = 0.0;
-    double userManRevenue = 0.0;
-    int hotspotObsCount = 0;
-    int userManObsCount = 0;
-
-    for (final o in filteredObservations) {
-      final p = profilePrices[o.profile] ?? 0.0;
-      if (o.cardType == 'usermanager') {
-        userManRevenue += p;
-        userManObsCount++;
-      } else {
-        hotspotRevenue += p;
-        hotspotObsCount++;
-      }
-    }
-
-    final estimatedSales = HonestEstimatedSales(
-      today: calculatePeriod(todayObs),
-      last7Days: calculatePeriod(weekObs),
-      last30Days: calculatePeriod(monthObs),
-      allTime: calculatePeriod(filteredObservations),
-      recentObservations: filteredObservations.take(50).toList(),
-      hotspotRevenue: hotspotRevenue,
-      userManRevenue: userManRevenue,
-      hotspotCardsCount: hotspotObsCount,
-      userManCardsCount: userManObsCount,
-    );
-
-    // 4. Comparison summary
-    final hsAvg =
-        hotspotCardsCount > 0 ? (hotspotValue / hotspotCardsCount) : 0.0;
-    final umAvg =
-        userManCardsCount > 0 ? (userManValue / userManCardsCount) : 0.0;
-
-    String leader = 'متساويان';
-    if (hotspotRevenue > userManRevenue) {
-      leader = 'Hotspot متصدر بالمبيعات';
-    } else if (userManRevenue > hotspotRevenue) {
-      leader = 'User Manager متصدر بالمبيعات';
-    }
-
-    final comparison = HonestComparisonSummary(
-      hotspotTotalCards: hotspotCardsCount,
-      hotspotActiveCards: hotspotActiveCount,
-      hotspotRevenue: hotspotRevenue,
-      hotspotAveragePrice: hsAvg,
-      userManTotalCards: userManCardsCount,
-      userManActiveCards: userManActiveCount,
-      userManRevenue: userManRevenue,
-      userManAveragePrice: umAvg,
-      leadingSystem: leader,
-      topHotspotProfiles: topHotspotProfiles,
-      topUserManProfiles: topUserManProfiles,
-    );
-
-    // 5. Payments
     final payments = await getPayments(connectionId);
-    final totalPayments =
-        payments.fold<double>(0.0, (acc, p) => acc + p.amount);
-    final estimatedMonthSales = estimatedSales.last30Days.totalEstimatedAmount;
-    final balance = totalPayments - estimatedMonthSales;
-
-    final paymentsSummary = HonestPaymentsSummary(
-      totalPayments: totalPayments,
-      estimatedSales: estimatedMonthSales,
-      balance: balance,
-      payments: payments,
-    );
-
-    // 6. Explicit Recorded Card Sales
     final recordedSales = await getCardSales(connectionId);
-    final recordedTotal =
-        recordedSales.fold<double>(0.0, (acc, s) => acc + s.price);
-
-    // 7. Legacy Sales Summary for compatibility
     final legacySummary = await getSalesSummary();
 
-    return HonestReportData(
-      stock: stockSummary,
-      sales: estimatedSales,
-      payments: paymentsSummary,
-      comparison: comparison,
-      recordedSales: recordedSales,
-      totalRecordedSalesRevenue: recordedTotal,
+    final params = _ReportComputeParams(
+      subscribers: subscribers,
       profilePrices: profilePrices,
+      observations: observations,
+      payments: payments,
+      recordedSales: recordedSales,
       legacySummary: legacySummary,
+      resellerPrefix: resellerPrefix,
+      now: DateTime.now(),
     );
+
+    try {
+      return await Isolate.run(() => _computeHonestReportStatic(params));
+    } catch (_) {
+      return _computeHonestReportStatic(params);
+    }
   }
 
   Future<int> cleanOldObservations(int connectionId,
@@ -699,4 +513,237 @@ class ReportsRepository {
               t.firstSeenAt.isSmallerThanValue(cutoff)))
         .go();
   }
+}
+
+class _ReportComputeParams {
+  final List<SubscriberModel> subscribers;
+  final Map<String, double> profilePrices;
+  final List<UsageObservationsTableData> observations;
+  final List<PaymentsTableData> payments;
+  final List<CardSalesTableData> recordedSales;
+  final SalesSummary legacySummary;
+  final String? resellerPrefix;
+  final DateTime now;
+
+  _ReportComputeParams({
+    required this.subscribers,
+    required this.profilePrices,
+    required this.observations,
+    required this.payments,
+    required this.recordedSales,
+    required this.legacySummary,
+    this.resellerPrefix,
+    required this.now,
+  });
+}
+
+HonestReportData _computeHonestReportStatic(_ReportComputeParams params) {
+  final resellerPrefix = params.resellerPrefix;
+  final subscribers = params.subscribers;
+  final profilePrices = params.profilePrices;
+
+  final filteredSubscribers =
+      (resellerPrefix != null && resellerPrefix.isNotEmpty)
+          ? subscribers
+              .where((s) => s.username.startsWith(resellerPrefix))
+              .toList()
+          : subscribers;
+
+  final Set<String> unpriced = {};
+  int totalCards = filteredSubscribers.length;
+  int unusedCards = 0;
+  double unusedValue = 0.0;
+  int activeCards = 0;
+  double activeValue = 0.0;
+  int expiredCards = 0;
+
+  int hotspotCardsCount = 0;
+  double hotspotValue = 0.0;
+  int userManCardsCount = 0;
+  double userManValue = 0.0;
+  int hotspotActiveCount = 0;
+  int userManActiveCount = 0;
+
+  final Map<String, int> topHotspotProfiles = {};
+  final Map<String, int> topUserManProfiles = {};
+
+  for (final s in filteredSubscribers) {
+    final price = profilePrices[s.profile];
+    if (price == null) {
+      unpriced.add(s.profile);
+    }
+    final unitPrice = price ?? 0.0;
+
+    final isUserMan = s.type == SubscriberType.userMan;
+    if (isUserMan) {
+      userManCardsCount++;
+      userManValue += unitPrice;
+      topUserManProfiles[s.profile] =
+          (topUserManProfiles[s.profile] ?? 0) + 1;
+    } else {
+      hotspotCardsCount++;
+      hotspotValue += unitPrice;
+      topHotspotProfiles[s.profile] =
+          (topHotspotProfiles[s.profile] ?? 0) + 1;
+    }
+
+    final hasUptime =
+        s.uptime != null && s.uptime!.isNotEmpty && s.uptime != '0s';
+    final hasTraffic = (s.bytesIn + s.bytesOut) > 0;
+
+    if (s.isExpired) {
+      expiredCards++;
+    } else if (!hasUptime && !hasTraffic) {
+      unusedCards++;
+      unusedValue += unitPrice;
+    } else {
+      activeCards++;
+      activeValue += unitPrice;
+      if (isUserMan) {
+        userManActiveCount++;
+      } else {
+        hotspotActiveCount++;
+      }
+    }
+  }
+
+  final stockSummary = HonestStockSummary(
+    totalCards: totalCards,
+    unusedCards: unusedCards,
+    unusedValue: unusedValue,
+    activeCards: activeCards,
+    activeValue: activeValue,
+    expiredCards: expiredCards,
+    unpricedProfiles: unpriced.toList(),
+    hotspotCardsCount: hotspotCardsCount,
+    hotspotValue: hotspotValue,
+    userManCardsCount: userManCardsCount,
+    userManValue: userManValue,
+  );
+
+  // 3. Estimated sales from usage observations
+  final now = params.now;
+  final todayStart = DateTime(now.year, now.month, now.day);
+  final sevenDaysAgo = now.subtract(const Duration(days: 7));
+  final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+
+  final observations = params.observations;
+
+  final filteredObservations =
+      (resellerPrefix != null && resellerPrefix.isNotEmpty)
+          ? observations
+              .where((o) => o.cardName.startsWith(resellerPrefix))
+              .toList()
+          : observations;
+
+  HonestSalesPeriod calculatePeriod(List<UsageObservationsTableData> list) {
+    double total = 0.0;
+    bool hasApprox = false;
+    for (final item in list) {
+      final p = profilePrices[item.profile] ?? 0.0;
+      total += p;
+      if (item.dateIsApproximate) hasApprox = true;
+    }
+    return HonestSalesPeriod(
+      cardsCount: list.length,
+      totalEstimatedAmount: total,
+      hasApproximateDates: hasApprox,
+    );
+  }
+
+  final todayObs = filteredObservations
+      .where((o) => o.firstSeenAt.isAfter(todayStart))
+      .toList();
+  final weekObs = filteredObservations
+      .where((o) => o.firstSeenAt.isAfter(sevenDaysAgo))
+      .toList();
+  final monthObs = filteredObservations
+      .where((o) => o.firstSeenAt.isAfter(thirtyDaysAgo))
+      .toList();
+
+  // Breakdown by type
+  double hotspotRevenue = 0.0;
+  double userManRevenue = 0.0;
+  int hotspotObsCount = 0;
+  int userManObsCount = 0;
+
+  for (final o in filteredObservations) {
+    final p = profilePrices[o.profile] ?? 0.0;
+    if (o.cardType == 'usermanager') {
+      userManRevenue += p;
+      userManObsCount++;
+    } else {
+      hotspotRevenue += p;
+      hotspotObsCount++;
+    }
+  }
+
+  final estimatedSales = HonestEstimatedSales(
+    today: calculatePeriod(todayObs),
+    last7Days: calculatePeriod(weekObs),
+    last30Days: calculatePeriod(monthObs),
+    allTime: calculatePeriod(filteredObservations),
+    recentObservations: filteredObservations.take(50).toList(),
+    hotspotRevenue: hotspotRevenue,
+    userManRevenue: userManRevenue,
+    hotspotCardsCount: hotspotObsCount,
+    userManCardsCount: userManObsCount,
+  );
+
+  // 4. Comparison summary
+  final hsAvg =
+      hotspotCardsCount > 0 ? (hotspotValue / hotspotCardsCount) : 0.0;
+  final umAvg =
+      userManCardsCount > 0 ? (userManValue / userManCardsCount) : 0.0;
+
+  String leader = 'متساويان';
+  if (hotspotRevenue > userManRevenue) {
+    leader = 'Hotspot متصدر بالمبيعات';
+  } else if (userManRevenue > hotspotRevenue) {
+    leader = 'User Manager متصدر بالمبيعات';
+  }
+
+  final comparison = HonestComparisonSummary(
+    hotspotTotalCards: hotspotCardsCount,
+    hotspotActiveCards: hotspotActiveCount,
+    hotspotRevenue: hotspotRevenue,
+    hotspotAveragePrice: hsAvg,
+    userManTotalCards: userManCardsCount,
+    userManActiveCards: userManActiveCount,
+    userManRevenue: userManRevenue,
+    userManAveragePrice: umAvg,
+    leadingSystem: leader,
+    topHotspotProfiles: topHotspotProfiles,
+    topUserManProfiles: topUserManProfiles,
+  );
+
+  // 5. Payments
+  final payments = params.payments;
+  final totalPayments =
+      payments.fold<double>(0.0, (acc, p) => acc + p.amount);
+  final estimatedMonthSales = estimatedSales.last30Days.totalEstimatedAmount;
+  final balance = totalPayments - estimatedMonthSales;
+
+  final paymentsSummary = HonestPaymentsSummary(
+    totalPayments: totalPayments,
+    estimatedSales: estimatedMonthSales,
+    balance: balance,
+    payments: payments,
+  );
+
+  // 6. Explicit Recorded Card Sales
+  final recordedSales = params.recordedSales;
+  final recordedTotal =
+      recordedSales.fold<double>(0.0, (acc, s) => acc + s.price);
+
+  return HonestReportData(
+    stock: stockSummary,
+    sales: estimatedSales,
+    payments: paymentsSummary,
+    comparison: comparison,
+    recordedSales: recordedSales,
+    totalRecordedSalesRevenue: recordedTotal,
+    profilePrices: profilePrices,
+    legacySummary: params.legacySummary,
+  );
 }

@@ -290,11 +290,23 @@ abstract class AppLocalizations {
   /// **'التقارير'**
   String get navReports;
 
+  /// No description provided for @navSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإعدادات'**
+  String get navSettings;
+
   /// No description provided for @navMore.
   ///
   /// In ar, this message translates to:
   /// **'المزيد'**
   String get navMore;
+
+  /// No description provided for @safeExit.
+  ///
+  /// In ar, this message translates to:
+  /// **'خروج آمن'**
+  String get safeExit;
 
   /// No description provided for @dashboardTitle.
   ///
@@ -709,6 +721,96 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لا توجد بيانات متاحة حالياً'**
   String get emptyData;
+
+  /// No description provided for @systemHotspot.
+  ///
+  /// In ar, this message translates to:
+  /// **'هوتسبوت (Hotspot)'**
+  String get systemHotspot;
+
+  /// No description provided for @systemUserManager.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوزر منجر (User Manager)'**
+  String get systemUserManager;
+
+  /// No description provided for @previewDraft.
+  ///
+  /// In ar, this message translates to:
+  /// **'معاينة قبل الاعتماد'**
+  String get previewDraft;
+
+  /// No description provided for @commitVouchers.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعتماد ورفع الكروت إلى الراوتر'**
+  String get commitVouchers;
+
+  /// No description provided for @cancelAndEdit.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء وتعديل'**
+  String get cancelAndEdit;
+
+  /// No description provided for @discardDraftTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء المسودة؟'**
+  String get discardDraftTitle;
+
+  /// No description provided for @discardDraftMsg.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد بالتأكيد إلغاء هذه المسودة والعودة؟ لن يتم حفظ الكروت في الراوتر.'**
+  String get discardDraftMsg;
+
+  /// No description provided for @templateEditorTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'محرر القوالب المتقدم'**
+  String get templateEditorTitle;
+
+  /// No description provided for @serialNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم التسلسلي'**
+  String get serialNumber;
+
+  /// No description provided for @serialPrefix.
+  ///
+  /// In ar, this message translates to:
+  /// **'بادئة التسلسل'**
+  String get serialPrefix;
+
+  /// No description provided for @serialStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم البداية'**
+  String get serialStart;
+
+  /// No description provided for @serialPadding.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخانات'**
+  String get serialPadding;
+
+  /// No description provided for @collisionDetected.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم اكتشاف تكرار في أسماء المستخدمين على الراوتر'**
+  String get collisionDetected;
+
+  /// No description provided for @commitSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم اعتماد الكروت ورفعها إلى الراوتر بنجاح!'**
+  String get commitSuccess;
+
+  /// No description provided for @umDiagnostics.
+  ///
+  /// In ar, this message translates to:
+  /// **'تشخيص User Manager'**
+  String get umDiagnostics;
 }
 
 class _AppLocalizationsDelegate

@@ -3,6 +3,8 @@ import '../../../core/database/app_database.dart';
 import '../../../core/database/database_provider.dart';
 import '../../../core/session/router_session.dart';
 import '../../../core/session/session_controller.dart';
+import '../../../core/utils/cancellation_token.dart';
+import '../../../core/widgets/task_progress_widget.dart';
 import '../../subscribers/data/subscribers_repository.dart';
 import '../../subscribers/domain/subscribers_notifier.dart';
 import '../data/reports_repository.dart';
@@ -22,6 +24,12 @@ final auditLogsProvider = FutureProvider<List<AuditLogsTableData>>((ref) async {
   return await repo.getAuditLogs();
 });
 
+final reportsProgressProvider =
+    StateProvider<TaskProgressState?>((ref) => null);
+
+final reportsCancellationTokenProvider =
+    StateProvider<CancellationToken?>((ref) => null);
+
 final honestReportProvider =
     FutureProvider.autoDispose<HonestReportData>((ref) async {
   final session = ref.watch(sessionControllerProvider).session;
@@ -35,7 +43,24 @@ final honestReportProvider =
     );
   }
 
-  // 1. Fetch BOTH Hotspot and User Manager subscribers from router
+  final cancelToken = CancellationToken();
+  ref.read(reportsCancellationTokenProvider.notifier).state = cancelToken;
+  ref.onDispose(() {
+    cancelToken.cancel();
+    ref.read(reportsCancellationTokenProvider.notifier).state = null;
+    ref.read(reportsProgressProvider.notifier).state = null;
+  });
+
+  // Stage 1: Fetching subscribers from router
+  ref.read(reportsProgressProvider.notifier).state = const TaskProgressState(
+    currentStage: 1,
+    totalStages: 3,
+    stageTitle: 'جلب بيانات المشتركين',
+    detailText: 'سحب كروت Hotspot و User Manager من الراوتر...',
+    progressPercent: 0.33,
+  );
+  cancelToken.throwIfCancelled();
+
   final List<SubscriberModel> allSubscribers = [];
   try {
     final hs = await subscribersRepo.getHotspotSubscribers(session.adapter);
@@ -44,6 +69,8 @@ final honestReportProvider =
     // Graceful fallback if hotspot table is empty or error
   }
 
+  cancelToken.throwIfCancelled();
+
   try {
     final um = await subscribersRepo.getUserManSubscribers(session.adapter);
     allSubscribers.addAll(um);
@@ -51,22 +78,38 @@ final honestReportProvider =
     // Graceful fallback if userman is not installed or empty
   }
 
-  // 2. Automatically record first-use observations
+  cancelToken.throwIfCancelled();
+
+  // Stage 2: Background processing and observations
+  ref.read(reportsProgressProvider.notifier).state = const TaskProgressState(
+    currentStage: 2,
+    totalStages: 3,
+    stageTitle: 'معالجة البيانات في المعالج المستقل',
+    detailText: 'تسجيل أول استخدام ومطابقة المبيعات وحساب الإحصائيات...',
+    progressPercent: 0.66,
+  );
+
   await repo.recordUsageObservations(
     connectionId: session.connectionId,
     subscribers: allSubscribers,
   );
 
-  // 3. Reseller prefix scoping
+  cancelToken.throwIfCancelled();
+
   final String? resellerPrefix =
       session.role == UserRole.reseller ? session.username : null;
 
-  // 4. Return aggregated honest report with Hotspot and User Manager breakdown
-  return await repo.getHonestReportData(
+  final result = await repo.getHonestReportData(
     connectionId: session.connectionId,
     subscribers: allSubscribers,
     resellerPrefix: resellerPrefix,
   );
+
+  cancelToken.throwIfCancelled();
+
+  // Stage 3: Complete
+  ref.read(reportsProgressProvider.notifier).state = null;
+  return result;
 });
 
 final profilePricesListProvider =

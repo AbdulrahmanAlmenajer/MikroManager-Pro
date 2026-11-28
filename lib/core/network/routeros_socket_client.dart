@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
+import '../utils/cancellation_token.dart';
 import 'routeros_exceptions.dart';
 
 class RouterOsSentence {
@@ -202,21 +203,51 @@ class RouterOsSocketClient {
     return '00${digest.toString()}';
   }
 
+  /// Cancel an active sentence query by its tag
+  Future<void> cancelTag(String tag) async {
+    if (isConnected) {
+      try {
+        _writeWord('/cancel');
+        _writeWord('=tag=$tag');
+        _writeWord('');
+        await _socket?.flush();
+      } catch (_) {}
+    }
+    _pendingRequests.remove(tag);
+    _tempReplies.remove(tag);
+    _activeStreams[tag]?.close();
+    _activeStreams.remove(tag);
+  }
+
   /// Execute command and wait for response.
   /// [commandTimeout] overrides the default [timeout] for this call only.
   /// Use [Duration(seconds: 60)] for large User Manager table fetches.
   Future<RouterOsResponse> executeSentence(
     List<String> words, {
     Duration? commandTimeout,
+    CancellationToken? cancelToken,
   }) async {
     if (!isConnected) {
       throw const RouterOsUnreachableException('الاتصال بميكروتك غير متاح');
     }
 
+    cancelToken?.throwIfCancelled();
+
     final effectiveTimeout = commandTimeout ?? timeout;
     final tag = 'tag_${++_tagCounter}';
     final completer = Completer<RouterOsResponse>();
     _pendingRequests[tag] = completer;
+
+    void onCancel() {
+      cancelTag(tag);
+      if (!completer.isCompleted) {
+        completer.completeError(
+          const OperationCancelledException('تم إلغاء الأمر من قبل المستخدم'),
+        );
+      }
+    }
+
+    cancelToken?.addListener(onCancel);
 
     // Send command with tag
     final List<String> taggedWords = List.from(words)..add('.tag=$tag');
@@ -233,6 +264,8 @@ class RouterOsSocketClient {
       _tempReplies.remove(tag);
       throw RouterOsTimeoutException(
           'انتهت مهلة انتظار رد الراوتر للأمر: ${words.first}');
+    } finally {
+      cancelToken?.removeListener(onCancel);
     }
   }
 

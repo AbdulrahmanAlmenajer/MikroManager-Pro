@@ -109,7 +109,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navReports => 'التقارير';
 
   @override
+  String get navSettings => 'الإعدادات';
+
+  @override
   String get navMore => 'المزيد';
+
+  @override
+  String get safeExit => 'خروج آمن';
 
   @override
   String get dashboardTitle => 'لوحة التحكم';
@@ -325,4 +331,51 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get emptyData => 'لا توجد بيانات متاحة حالياً';
+
+  @override
+  String get systemHotspot => 'هوتسبوت (Hotspot)';
+
+  @override
+  String get systemUserManager => 'يوزر منجر (User Manager)';
+
+  @override
+  String get previewDraft => 'معاينة قبل الاعتماد';
+
+  @override
+  String get commitVouchers => 'اعتماد ورفع الكروت إلى الراوتر';
+
+  @override
+  String get cancelAndEdit => 'إلغاء وتعديل';
+
+  @override
+  String get discardDraftTitle => 'إلغاء المسودة؟';
+
+  @override
+  String get discardDraftMsg =>
+      'هل تريد بالتأكيد إلغاء هذه المسودة والعودة؟ لن يتم حفظ الكروت في الراوتر.';
+
+  @override
+  String get templateEditorTitle => 'محرر القوالب المتقدم';
+
+  @override
+  String get serialNumber => 'الرقم التسلسلي';
+
+  @override
+  String get serialPrefix => 'بادئة التسلسل';
+
+  @override
+  String get serialStart => 'رقم البداية';
+
+  @override
+  String get serialPadding => 'الخانات';
+
+  @override
+  String get collisionDetected =>
+      'تم اكتشاف تكرار في أسماء المستخدمين على الراوتر';
+
+  @override
+  String get commitSuccess => 'تم اعتماد الكروت ورفعها إلى الراوتر بنجاح!';
+
+  @override
+  String get umDiagnostics => 'تشخيص User Manager';
 }

@@ -68,8 +68,8 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.print_outlined),
-            tooltip: 'طباعة كروت User Manager',
-            onPressed: () => context.push('/userman/print'),
+            tooltip: 'توليد وطباعة كروت User Manager',
+            onPressed: () => context.push('/vouchers/generate?isUserManager=true'),
           ),
           IconButton(
             icon: const Icon(Icons.health_and_safety_outlined),
@@ -95,10 +95,10 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
             )
           : (_tabController.index == 1
               ? FloatingActionButton.extended(
-                  onPressed: () => context.push('/userman/print'),
+                  onPressed: () => context.push('/vouchers/generate?isUserManager=true'),
                   backgroundColor: AppColors.navyPrimary,
                   icon: const Icon(Icons.print, color: Colors.white),
-                  label: const Text('طباعة كروت',
+                  label: const Text('توليد كروت',
                       style: TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold)),
                 )
@@ -609,7 +609,8 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
                       ),
                     ),
                     onPressed: () {
-                      context.push('/userman/print?profile=${profile.name}');
+                      context.push(
+                          '/vouchers/generate?isUserManager=true&profile=${profile.name}');
                     },
                     icon: const Icon(Icons.print, size: 16),
                     label: const Text('طباعة كروت',
@@ -786,7 +787,8 @@ class _UsermanScreenState extends ConsumerState<UsermanScreen>
                 ),
                 onPressed: () {
                   Navigator.pop(ctx);
-                  context.push('/userman/print?profile=${profile.name}');
+                  context.push(
+                      '/vouchers/generate?isUserManager=true&profile=${profile.name}');
                 },
                 icon: const Icon(Icons.print, color: Colors.white),
                 label: const Text('طباعة كروت هذا البروفايل',

@@ -34,7 +34,9 @@
   "navSubscribers": "المشتركون",
   "navVouchers": "الكروت",
   "navReports": "التقارير",
+  "navSettings": "الإعدادات",
   "navMore": "المزيد",
+  "safeExit": "خروج آمن",
 
   "dashboardTitle": "لوحة التحكم",
   "cpuUsage": "استخدام المعالج",

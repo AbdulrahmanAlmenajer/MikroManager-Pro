@@ -21,7 +21,6 @@ import '../../features/reports/presentation/reports_screen.dart';
 import '../../features/settings/presentation/more_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/userman/presentation/userman_screen.dart';
-import '../../features/userman/presentation/um_print_cards_screen.dart';
 import '../../features/userman/presentation/um_diagnostic_screen.dart';
 import '../../features/routers/presentation/routers_screen.dart';
 import '../../features/telegram_bot/presentation/telegram_settings_screen.dart';
@@ -81,6 +80,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const ReportsScreen(),
           ),
           GoRoute(
+            path: '/settings',
+            builder: (context, state) => const SettingsScreen(),
+          ),
+          GoRoute(
             path: '/more',
             builder: (context, state) => const MoreScreen(),
           ),
@@ -92,8 +95,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/vouchers/generate',
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
-          final isUm = extra?['isUserManager'] as bool? ?? false;
-          return VoucherGeneratorScreen(initialIsUserManager: isUm);
+          final isUm = (extra?['isUserManager'] as bool?) ??
+              (state.uri.queryParameters['isUserManager'] == 'true');
+          final profile = (extra?['profile'] as String?) ??
+              state.uri.queryParameters['profile'];
+          return VoucherGeneratorScreen(
+            initialIsUserManager: isUm,
+            initialProfile: profile,
+          );
         },
       ),
       GoRoute(
@@ -108,9 +117,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/userman/print',
-        builder: (context, state) => UmPrintCardsScreen(
-          initialProfile: state.uri.queryParameters['profile'],
-        ),
+        builder: (context, state) {
+          final profile = state.uri.queryParameters['profile'];
+          return VoucherGeneratorScreen(
+            initialIsUserManager: true,
+            initialProfile: profile,
+          );
+        },
       ),
       GoRoute(
         path: '/um-diagnostic',
@@ -123,10 +136,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/telegram',
         builder: (context, state) => const TelegramSettingsScreen(),
-      ),
-      GoRoute(
-        path: '/settings',
-        builder: (context, state) => const SettingsScreen(),
       ),
       GoRoute(
         path: '/routers',
@@ -174,7 +183,7 @@ class MainShellNavigation extends StatelessWidget {
     if (location.startsWith('/reports')) {
       return 3;
     }
-    if (location.startsWith('/more')) {
+    if (location.startsWith('/settings') || location.startsWith('/more')) {
       return 4;
     }
     return 0;
@@ -203,7 +212,7 @@ class MainShellNavigation extends StatelessWidget {
               context.go('/reports');
               break;
             case 4:
-              context.go('/more');
+              context.go('/settings');
               break;
           }
         },
@@ -229,9 +238,9 @@ class MainShellNavigation extends StatelessWidget {
             label: l10n?.navReports ?? 'التقارير',
           ),
           NavigationDestination(
-            icon: const Icon(Icons.menu),
-            selectedIcon: const Icon(Icons.menu_open),
-            label: l10n?.navMore ?? 'المزيد',
+            icon: const Icon(Icons.settings_outlined),
+            selectedIcon: const Icon(Icons.settings),
+            label: l10n?.navSettings ?? 'الإعدادات',
           ),
         ],
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/database/app_database.dart';
 import '../../../core/services/app_exit_service.dart';
 import '../../routers/domain/routers_notifier.dart';
 import '../domain/dashboard_notifier.dart';
@@ -122,10 +123,10 @@ class DashboardScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     DashboardState dashState,
-    dynamic activeRouter,
+    RoutersTableData? activeRouter,
   ) {
     final isConnected = dashState.isConnected;
-    final isCloud = (activeRouter?.host ?? '').toString().contains('.sn.mynetname.net');
+    final isCloud = (activeRouter?.ipAddress ?? '').contains('.sn.mynetname.net');
 
     // Parse memory percentage for progress bar
     double memPercent = 0.5;
@@ -193,7 +194,7 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  '${dashState.activeUsersCount} متصل • ${activeRouter?.host ?? "192.168.88.1"}',
+                  '${dashState.activeUsersCount} متصل • ${activeRouter?.ipAddress ?? "192.168.88.1"}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(

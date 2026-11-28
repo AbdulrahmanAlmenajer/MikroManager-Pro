@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/pdf.dart';
@@ -59,31 +60,38 @@ class VoucherCardData {
 class PdfGeneratorHelper {
   static pw.Font? _cachedRegularFont;
   static pw.Font? _cachedBoldFont;
+  static Uint8List? _cachedRegularBytes;
+  static Uint8List? _cachedBoldBytes;
 
   /// Loads and caches Cairo font for Arabic PDF generation
   static Future<void> ensureFontsLoaded() async {
     if (_cachedRegularFont != null && _cachedBoldFont != null) return;
     try {
       final regData = await rootBundle.load('assets/fonts/Cairo-Regular.ttf');
+      _cachedRegularBytes = regData.buffer.asUint8List();
       _cachedRegularFont = pw.Font.ttf(regData);
     } catch (_) {
       try {
         final f = File('assets/fonts/Cairo-Regular.ttf');
         if (f.existsSync()) {
-          _cachedRegularFont =
-              pw.Font.ttf(f.readAsBytesSync().buffer.asByteData());
+          final b = f.readAsBytesSync();
+          _cachedRegularBytes = b;
+          _cachedRegularFont = pw.Font.ttf(b.buffer.asByteData());
         }
       } catch (_) {}
     }
 
     try {
       final boldData = await rootBundle.load('assets/fonts/Cairo-Bold.ttf');
+      _cachedBoldBytes = boldData.buffer.asUint8List();
       _cachedBoldFont = pw.Font.ttf(boldData);
     } catch (_) {
       try {
         final f = File('assets/fonts/Cairo-Bold.ttf');
         if (f.existsSync()) {
-          _cachedBoldFont = pw.Font.ttf(f.readAsBytesSync().buffer.asByteData());
+          final b = f.readAsBytesSync();
+          _cachedBoldBytes = b;
+          _cachedBoldFont = pw.Font.ttf(b.buffer.asByteData());
         }
       } catch (_) {}
     }
@@ -126,7 +134,69 @@ class PdfGeneratorHelper {
     Uint8List? bgImageBytes,
   }) async {
     await ensureFontsLoaded();
-    final theme = _resolveTheme();
+
+    final regBytes = _cachedRegularBytes;
+    final boldBytes = _cachedBoldBytes;
+
+    if (regBytes != null && vouchers.length >= 30) {
+      try {
+        return await Isolate.run(() async {
+          final regularFont = pw.Font.ttf(ByteData.view(regBytes.buffer));
+          final boldFont = boldBytes != null
+              ? pw.Font.ttf(ByteData.view(boldBytes.buffer))
+              : null;
+          return await _buildA4PdfSync(
+            vouchers: vouchers,
+            networkName: networkName,
+            cardsPerRow: cardsPerRow,
+            cardsPerPage: cardsPerPage,
+            showQrCode: showQrCode,
+            showPageNumbers: showPageNumbers,
+            batchName: batchName,
+            template: template,
+            bgImageBytes: bgImageBytes,
+            regularFont: regularFont,
+            boldFont: boldFont,
+          );
+        });
+      } catch (_) {
+        // Fallback to current thread if isolate fails
+      }
+    }
+
+    return await _buildA4PdfSync(
+      vouchers: vouchers,
+      networkName: networkName,
+      cardsPerRow: cardsPerRow,
+      cardsPerPage: cardsPerPage,
+      showQrCode: showQrCode,
+      showPageNumbers: showPageNumbers,
+      batchName: batchName,
+      template: template,
+      bgImageBytes: bgImageBytes,
+      regularFont: _cachedRegularFont,
+      boldFont: _cachedBoldFont,
+    );
+  }
+
+  static Future<Uint8List> _buildA4PdfSync({
+    required List<VoucherCardData> vouchers,
+    required String networkName,
+    required int cardsPerRow,
+    required int cardsPerPage,
+    required bool showQrCode,
+    required bool showPageNumbers,
+    String? batchName,
+    VoucherTemplatesTableData? template,
+    Uint8List? bgImageBytes,
+    pw.Font? regularFont,
+    pw.Font? boldFont,
+  }) async {
+    final theme = (regularFont != null && boldFont != null)
+        ? pw.ThemeData.withFont(base: regularFont, bold: boldFont)
+        : (regularFont != null
+            ? pw.ThemeData.withFont(base: regularFont)
+            : pw.ThemeData());
     final pdf = pw.Document(theme: theme);
 
     final effectiveCardsPerRow = template?.cardsPerRow ?? cardsPerRow;

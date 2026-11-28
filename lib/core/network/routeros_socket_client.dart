@@ -49,6 +49,8 @@ class RouterOsSocketClient {
   int _tagCounter = 0;
 
   final List<int> _readBuffer = [];
+  int _bufferCursor = 0;
+  bool _isProcessingBuffer = false;
 
   // Stream controllers for active queries
   final Map<String, Completer<RouterOsResponse>> _pendingRequests = {};
@@ -306,79 +308,102 @@ class RouterOsSocketClient {
     return controller.stream;
   }
 
-  void _processBuffer() {
-    while (true) {
-      final sentence = _tryParseSentence();
-      if (sentence == null) break;
+  Future<void> _processBuffer() async {
+    if (_isProcessingBuffer) return;
+    _isProcessingBuffer = true;
 
-      final tag = sentence.tag;
-
-      // --- RouterOS 7.18+: untagged `!empty` sentence ---
-      // Sent as an end-of-results marker for empty tables (no .tag).
-      // Resolve the single oldest pending request with an empty success.
-      if (tag == null && sentence.command == '!empty') {
-        if (_pendingRequests.isNotEmpty) {
-          final firstTag = _pendingRequests.keys.first;
-          final completer = _pendingRequests.remove(firstTag)!;
-          _tempReplies.remove(firstTag);
-          completer.complete(
-              RouterOsResponse(isSuccess: true, data: const [], tag: firstTag));
+    try {
+      int sentencesInBatch = 0;
+      while (true) {
+        final sentence = _tryParseSentence();
+        if (sentence == null) {
+          if (_bufferCursor >= _readBuffer.length) {
+            _readBuffer.clear();
+            _bufferCursor = 0;
+          } else if (_bufferCursor > 32768) {
+            _readBuffer.removeRange(0, _bufferCursor);
+            _bufferCursor = 0;
+          }
+          break;
         }
-        continue;
-      }
 
-      if (tag != null) {
-        if (_activeStreams.containsKey(tag)) {
-          final stream = _activeStreams[tag]!;
-          if (sentence.command == '!re') {
-            stream.add(sentence.attributes);
-          } else if (sentence.command == '!done' ||
-              sentence.command == '!empty') {
-            stream.close();
-            _activeStreams.remove(tag);
-          } else if (sentence.command == '!trap') {
-            stream.addError(RouterOsProtocolException(
-                sentence.attributes['message'] ?? 'Trap error'));
-            stream.close();
-            _activeStreams.remove(tag);
+        sentencesInBatch++;
+        if (sentencesInBatch % 50 == 0) {
+          // Yield execution to the Flutter UI event loop to maintain 60fps
+          await Future.delayed(Duration.zero);
+        }
+
+        final tag = sentence.tag;
+
+        // --- RouterOS 7.18+: untagged `!empty` sentence ---
+        // Sent as an end-of-results marker for empty tables (no .tag).
+        // Resolve the single oldest pending request with an empty success.
+        if (tag == null && sentence.command == '!empty') {
+          if (_pendingRequests.isNotEmpty) {
+            final firstTag = _pendingRequests.keys.first;
+            final completer = _pendingRequests.remove(firstTag)!;
+            _tempReplies.remove(firstTag);
+            completer.complete(
+                RouterOsResponse(isSuccess: true, data: const [], tag: firstTag));
           }
           continue;
         }
 
-        if (_pendingRequests.containsKey(tag)) {
-          final completer = _pendingRequests[tag]!;
-          if (sentence.command == '!re') {
-            _tempReplies.putIfAbsent(tag, () => []).add(sentence.attributes);
-          } else if (sentence.command == '!done' ||
-              sentence.command == '!empty') {
-            // `!empty` with a tag = valid empty-result for that tag
-            final data = _tempReplies.remove(tag) ?? [];
-            if (sentence.attributes.isNotEmpty) {
-              data.add(sentence.attributes);
+        if (tag != null) {
+          if (_activeStreams.containsKey(tag)) {
+            final stream = _activeStreams[tag]!;
+            if (sentence.command == '!re') {
+              stream.add(sentence.attributes);
+            } else if (sentence.command == '!done' ||
+                sentence.command == '!empty') {
+              stream.close();
+              _activeStreams.remove(tag);
+            } else if (sentence.command == '!trap') {
+              stream.addError(RouterOsProtocolException(
+                  sentence.attributes['message'] ?? 'Trap error'));
+              stream.close();
+              _activeStreams.remove(tag);
             }
-            _pendingRequests.remove(tag);
-            completer.complete(
-                RouterOsResponse(isSuccess: true, data: data, tag: tag));
-          } else if (sentence.command == '!trap') {
-            _tempReplies.remove(tag);
-            _pendingRequests.remove(tag);
-            completer.complete(RouterOsResponse(
-              isSuccess: false,
-              errorMessage: sentence.attributes['message'] ?? 'Trap error',
-              tag: tag,
-            ));
-          } else if (sentence.command == '!fatal') {
-            _tempReplies.remove(tag);
-            _pendingRequests.remove(tag);
-            close();
-            completer.complete(RouterOsResponse(
-              isSuccess: false,
-              errorMessage: 'Fatal connection error',
-              tag: tag,
-            ));
+            continue;
+          }
+
+          if (_pendingRequests.containsKey(tag)) {
+            final completer = _pendingRequests[tag]!;
+            if (sentence.command == '!re') {
+              _tempReplies.putIfAbsent(tag, () => []).add(sentence.attributes);
+            } else if (sentence.command == '!done' ||
+                sentence.command == '!empty') {
+              // `!empty` with a tag = valid empty-result for that tag
+              final data = _tempReplies.remove(tag) ?? [];
+              if (sentence.attributes.isNotEmpty) {
+                data.add(sentence.attributes);
+              }
+              _pendingRequests.remove(tag);
+              completer.complete(
+                  RouterOsResponse(isSuccess: true, data: data, tag: tag));
+            } else if (sentence.command == '!trap') {
+              _tempReplies.remove(tag);
+              _pendingRequests.remove(tag);
+              completer.complete(RouterOsResponse(
+                isSuccess: false,
+                errorMessage: sentence.attributes['message'] ?? 'Trap error',
+                tag: tag,
+              ));
+            } else if (sentence.command == '!fatal') {
+              _tempReplies.remove(tag);
+              _pendingRequests.remove(tag);
+              close();
+              completer.complete(RouterOsResponse(
+                isSuccess: false,
+                errorMessage: 'Fatal connection error',
+                tag: tag,
+              ));
+            }
           }
         }
       }
+    } finally {
+      _isProcessingBuffer = false;
     }
   }
 
@@ -386,7 +411,7 @@ class RouterOsSocketClient {
 
   RouterOsSentence? _tryParseSentence() {
     final List<String> words = [];
-    int offset = 0;
+    int offset = _bufferCursor;
 
     while (true) {
       final wordResult = _tryReadWord(offset);
@@ -395,7 +420,7 @@ class RouterOsSocketClient {
       offset = wordResult.newOffset;
       if (wordResult.word.isEmpty) {
         // Sentence boundary reached!
-        _readBuffer.removeRange(0, offset);
+        _bufferCursor = offset;
         if (words.isEmpty) return null;
 
         final command = words.first;

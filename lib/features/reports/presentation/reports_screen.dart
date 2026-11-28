@@ -27,6 +27,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
   String _directSalesFilter =
       'all'; // 'all', 'hotspot', 'usermanager', 'printed', 'unprinted'
   String _directSalesSearch = '';
+  int _salesPageLimit = 50;
 
   @override
   void initState() {
@@ -1051,7 +1052,9 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: filtered.length,
+                    itemCount: filtered.length > _salesPageLimit
+                        ? _salesPageLimit
+                        : filtered.length,
                     itemBuilder: (context, idx) {
                       final item = filtered[idx];
                       final isUm = item.cardType == 'usermanager';
@@ -1130,6 +1133,26 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen>
                         ),
                       );
                     },
+                  ),
+                if (filtered.length > _salesPageLimit)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Center(
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.cyanAccent,
+                          side: const BorderSide(color: AppColors.cyanAccent),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _salesPageLimit += 50;
+                          });
+                        },
+                        icon: const Icon(Icons.expand_more),
+                        label: Text(
+                            'عرض المزيد ($_salesPageLimit من ${filtered.length})'),
+                      ),
+                    ),
                   ),
               ],
             ),

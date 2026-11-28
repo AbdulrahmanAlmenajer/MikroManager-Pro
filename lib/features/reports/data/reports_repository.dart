@@ -275,6 +275,9 @@ class ReportsRepository {
     final Set<String> observedCardNames =
         existingRows.map((r) => r.cardName).toSet();
 
+    final List<UsageObservationsTableCompanion> toInsert = [];
+    final now = DateTime.now();
+
     for (final s in subscribers) {
       final hasUptime =
           s.uptime != null && s.uptime!.isNotEmpty && s.uptime != '0s';
@@ -286,20 +289,26 @@ class ReportsRepository {
           final cardType =
               s.type == SubscriberType.userMan ? 'usermanager' : 'hotspot';
 
-          await _db.into(_db.usageObservationsTable).insert(
-                UsageObservationsTableCompanion.insert(
-                  connectionId: connectionId,
-                  cardName: s.username,
-                  profile: s.profile,
-                  cardType: Value(cardType),
-                  firstSeenAt: Value(DateTime.now()),
-                  dateIsApproximate: Value(isApproximate),
-                ),
-              );
+          toInsert.add(
+            UsageObservationsTableCompanion.insert(
+              connectionId: connectionId,
+              cardName: s.username,
+              profile: s.profile,
+              cardType: Value(cardType),
+              firstSeenAt: Value(now),
+              dateIsApproximate: Value(isApproximate),
+            ),
+          );
           observedCardNames.add(s.username);
           newlyObserved++;
         }
       }
+    }
+
+    if (toInsert.isNotEmpty) {
+      await _db.batch((batch) {
+        batch.insertAll(_db.usageObservationsTable, toInsert);
+      });
     }
 
     return newlyObserved;

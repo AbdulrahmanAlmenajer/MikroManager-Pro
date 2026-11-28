@@ -75,7 +75,15 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration {
     return MigrationStrategy(
       beforeOpen: (details) async {
-        // Enforce foreign keys if needed
+        await customStatement('PRAGMA foreign_keys = ON;');
+        await customStatement(
+            'CREATE INDEX IF NOT EXISTS idx_card_sales_conn_user ON card_sales(connection_id, username);');
+        await customStatement(
+            'CREATE INDEX IF NOT EXISTS idx_usage_obs_conn_card ON usage_observations(connection_id, card_name);');
+        await customStatement(
+            'CREATE INDEX IF NOT EXISTS idx_voucher_batches_router ON voucher_batches(router_id);');
+        await customStatement(
+            'CREATE INDEX IF NOT EXISTS idx_checkpoints_status ON task_checkpoints_table(status);');
       },
       onCreate: (Migrator m) async {
         await m.createAll();

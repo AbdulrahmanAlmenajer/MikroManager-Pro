@@ -7,28 +7,29 @@ class AppTheme {
       useMaterial3: true,
       fontFamily: 'Cairo',
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.navyPrimary,
-        primary: AppColors.navyPrimary,
-        secondary: AppColors.cyanAccent,
+        seedColor: AppColors.primary,
+        primary: AppColors.primary,
+        secondary: AppColors.emeraldLight,
         surface: AppColors.surface,
       ),
       scaffoldBackgroundColor: AppColors.background,
       appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.navyPrimary,
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
       ),
       cardTheme: CardThemeData(
-        elevation: 2,
+        elevation: 0.5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppColors.border, width: 1),
         ),
         color: AppColors.cardBackground,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.cyanAccent,
+          backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

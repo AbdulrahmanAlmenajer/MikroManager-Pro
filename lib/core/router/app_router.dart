@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../database/app_database.dart';
-import '../../l10n/app_localizations.dart';
+import '../constants/app_colors.dart';
 import '../session/session_controller.dart';
 import 'route_guard.dart';
 import '../../features/auth/presentation/router_login_screen.dart';
@@ -82,6 +82,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/settings',
             builder: (context, state) => const SettingsScreen(),
+          ),
+          GoRoute(
+            path: '/routers',
+            builder: (context, state) => const RoutersScreen(),
           ),
           GoRoute(
             path: '/more',
@@ -170,79 +174,113 @@ class MainShellNavigation extends StatelessWidget {
 
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.toString();
-    if (location.startsWith('/dashboard')) {
-      return 0;
-    }
-    if (location.startsWith('/subscribers') ||
-        location.startsWith('/hotspot')) {
-      return 1;
-    }
-    if (location.startsWith('/vouchers')) {
-      return 2;
-    }
-    if (location.startsWith('/reports')) {
-      return 3;
-    }
-    if (location.startsWith('/settings') || location.startsWith('/more')) {
-      return 4;
-    }
+    if (location.startsWith('/dashboard')) return 0;
+    if (location.startsWith('/reports')) return 1;
+    if (location.startsWith('/settings')) return 2;
+    if (location.startsWith('/routers')) return 3;
     return 0;
   }
 
   @override
   Widget build(BuildContext context) {
     final selectedIndex = _calculateSelectedIndex(context);
-    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       body: child,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (idx) {
-          switch (idx) {
-            case 0:
-              context.go('/dashboard');
-              break;
-            case 1:
-              context.go('/subscribers');
-              break;
-            case 2:
-              context.go('/vouchers');
-              break;
-            case 3:
-              context.go('/reports');
-              break;
-            case 4:
-              context.go('/settings');
-              break;
-          }
-        },
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.dashboard_outlined),
-            selectedIcon: const Icon(Icons.dashboard),
-            label: l10n?.navHome ?? 'الرئيسية',
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.people_outline),
-            selectedIcon: const Icon(Icons.people),
-            label: l10n?.navSubscribers ?? 'المشتركون',
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.confirmation_number_outlined),
-            selectedIcon: const Icon(Icons.confirmation_number),
-            label: l10n?.navVouchers ?? 'الكروت',
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.bar_chart_outlined),
-            selectedIcon: const Icon(Icons.bar_chart),
-            label: l10n?.navReports ?? 'التقارير',
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.settings_outlined),
-            selectedIcon: const Icon(Icons.settings),
-            label: l10n?.navSettings ?? 'الإعدادات',
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.addGreen,
+        foregroundColor: Colors.white,
+        shape: const CircleBorder(),
+        elevation: 4,
+        onPressed: () => context.push('/vouchers/generate'),
+        tooltip: 'تصميم وتوليد الكروت',
+        child: const Icon(Icons.add_rounded, size: 30),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 6,
+        color: Colors.white,
+        elevation: 8,
+        height: 64,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(
+              context,
+              0,
+              Icons.home_rounded,
+              Icons.home_outlined,
+              'الرئيسية',
+              '/dashboard',
+              selectedIndex == 0,
+            ),
+            _buildNavItem(
+              context,
+              1,
+              Icons.analytics_rounded,
+              Icons.analytics_outlined,
+              'التقارير',
+              '/reports',
+              selectedIndex == 1,
+            ),
+            const SizedBox(width: 44), // Space for centered FloatingActionButton
+            _buildNavItem(
+              context,
+              2,
+              Icons.settings_rounded,
+              Icons.settings_outlined,
+              'الإعدادات',
+              '/settings',
+              selectedIndex == 2,
+            ),
+            _buildNavItem(
+              context,
+              3,
+              Icons.router_rounded,
+              Icons.router_outlined,
+              'الراوترات',
+              '/routers',
+              selectedIndex == 3,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+    BuildContext context,
+    int index,
+    IconData activeIcon,
+    IconData inactiveIcon,
+    String label,
+    String route,
+    bool isSelected,
+  ) {
+    final color = isSelected ? AppColors.primary : AppColors.textSecondary;
+    return InkWell(
+      onTap: () => context.go(route),
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(isSelected ? activeIcon : inactiveIcon, color: color, size: 22),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

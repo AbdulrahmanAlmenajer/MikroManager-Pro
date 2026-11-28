@@ -1,10 +1,63 @@
 import 'dart:async';
+import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/database/database_provider.dart';
 import '../../routers/domain/active_router_provider.dart';
+import '../../routers/domain/routers_notifier.dart';
 import '../data/dashboard_repository.dart';
 
 final dashboardRepositoryProvider = Provider<DashboardRepository>((ref) {
   return DashboardRepository();
+});
+
+class DashboardKpiData {
+  final double totalSalesAmount;
+  final int generatedLast30Days;
+  final int soldCardsCount;
+  final int remainingCardsCount;
+
+  const DashboardKpiData({
+    this.totalSalesAmount = 0.0,
+    this.generatedLast30Days = 0,
+    this.soldCardsCount = 0,
+    this.remainingCardsCount = 0,
+  });
+}
+
+final dashboardKpiProvider =
+    FutureProvider.autoDispose<DashboardKpiData>((ref) async {
+  final db = ref.watch(databaseProvider);
+  final routerState = ref.watch(routersControllerProvider);
+  final activeRouter = routerState.activeRouter;
+  final connId = activeRouter?.id ?? 1;
+
+  try {
+    final sales = await (db.select(db.cardSalesTable)
+          ..where((t) => t.connectionId.equals(connId)))
+        .get();
+    final totalSales = sales.fold<double>(0.0, (acc, s) => acc + s.price);
+    final soldCount = sales.length;
+
+    final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
+    final batches = await (db.select(db.voucherBatchesTable)
+          ..where((t) =>
+              t.routerId.equals(connId) &
+              t.generatedAt.isBiggerOrEqualValue(thirtyDaysAgo)))
+        .get();
+    final generatedCount =
+        batches.fold<int>(0, (acc, b) => acc + b.quantity);
+
+    final remaining = (generatedCount - soldCount).clamp(0, 999999);
+
+    return DashboardKpiData(
+      totalSalesAmount: totalSales,
+      generatedLast30Days: generatedCount,
+      soldCardsCount: soldCount,
+      remainingCardsCount: remaining,
+    );
+  } catch (_) {
+    return const DashboardKpiData();
+  }
 });
 
 class TrafficDataPoint {

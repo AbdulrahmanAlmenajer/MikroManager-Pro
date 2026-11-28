@@ -226,20 +226,30 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
 
   @override
   Future<List<Map<String, dynamic>>> getHotspotUsers() async {
-    final res = await _client.executeSentence(['/ip/hotspot/user/print']);
+    const proplist =
+        '.id,name,password,profile,uptime,bytes-in,bytes-out,limit-uptime,limit-bytes-total,comment,disabled';
+    final res = await _client.executeSentence(
+      withProplist(['/ip/hotspot/user/print'], proplist),
+    );
     return res.isSuccess ? res.data : [];
   }
 
   @override
   Future<List<Map<String, dynamic>>> getHotspotActive() async {
-    final res = await _client.executeSentence(['/ip/hotspot/active/print']);
+    const proplist =
+        '.id,user,address,mac-address,uptime,bytes-in,bytes-out,session-time-left';
+    final res = await _client.executeSentence(
+      withProplist(['/ip/hotspot/active/print'], proplist),
+    );
     return res.isSuccess ? res.data : [];
   }
 
   @override
   Future<List<Map<String, dynamic>>> getHotspotProfiles() async {
-    final res =
-        await _client.executeSentence(['/ip/hotspot/user/profile/print']);
+    const proplist = '.id,name,shared-users,rate-limit';
+    final res = await _client.executeSentence(
+      withProplist(['/ip/hotspot/user/profile/print'], proplist),
+    );
     return res.isSuccess ? res.data : [];
   }
 
@@ -292,7 +302,10 @@ class RouterOsBinaryAdapter implements RouterOsAdapter {
 
   @override
   Future<List<Map<String, dynamic>>> getHotspotIpBindings() async {
-    final res = await _client.executeSentence(['/ip/hotspot/ip-binding/print']);
+    const proplist = '.id,mac-address,address,to-address,type,comment,disabled';
+    final res = await _client.executeSentence(
+      withProplist(['/ip/hotspot/ip-binding/print'], proplist),
+    );
     return res.isSuccess ? res.data : [];
   }
 
